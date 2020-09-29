@@ -161,6 +161,16 @@ p {color:blue}
 </html>
 ```
 
+#### 分区标签
+
+```html
+<div> 标签可以把文档分割为独立的、不同的部分
+<div style="color:#00FF00">
+  <h3>This is a header</h3>
+  <p>This is a paragraph.</p>
+</div>
+```
+
 
 
 ### 链接类
@@ -168,8 +178,10 @@ p {color:blue}
 #### 链接标签
 
 ```
-<a>
+<a>标签
 <a href="http://www.w3school.com.cn">This is a link</a>
+
+<link href="">是指引入css文件
 ```
 
 ### 图像类
