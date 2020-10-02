@@ -15,6 +15,14 @@ int main() {
 }
 ```
 
+## 1.2、命名空间
+
+## 1.3、预处理器
+
+## 1.4、异常处理
+
+
+
 # 二、数据类型
 
 ## 2.1、整型
@@ -221,4 +229,106 @@ int main() {
     array<double, 4> ad2{1.2, 2.1, 3.43, 4.3};    // 使用列表的方式进行初始化
 }
 ```
+
+# 四 数据类型（三）对象[重点]
+
+## 4.1 类
+
+```c++
+/**
+掌握目标：
+1、构造函数/析构函数
+2、复制构造函数
+3、this指针
+4、类指针
+5、友元函数
+6、内联函数
+7、静态成员static关键字
+**/
+//头文件
+#ifndef Person_hpp
+#define Person_hpp
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+#endif /* Person_hpp */
+class Person{
+public:   //     公有的数据成员和成员函数
+    Person();   //无参构造函数
+    ~Person();  //析构函数，
+    Person(string food);  //有参构造函数
+    Person(string food,string time);
+    Person(const Person &person);   //复制构造函数，复制对象用的,深拷贝和浅拷贝
+    void eat();   //成员函数
+private:   //私有的数据成员和成员函数
+    string foodName;
+    string currentTime;
+    
+protected:  //保护的数据成员和和成员函数
+};
+
+//实现文件
+#include "Person.hpp"
+
+void Person::eat(){
+    cout<<"我正在吃："<<foodName<<endl;
+}
+
+//初始化列表来进行初始化数据,可以使用默认参数
+Person::Person(string food,string time="now"):foodName(food),currentTime(time){
+    
+}
+
+Person::Person(const Person &person){
+    
+}
+
+
+Person::~Person(){
+    cout<<"~Person()"<<endl;
+}
+
+Person::Person(){
+    cout<<"Person()"<<endl;
+}
+
+Person::Person(string food){
+    foodName=food;
+}
+
+//调用
+#include <iostream>
+#include "Person.hpp"
+#include <string>
+int main(int argc, const char * argv[]) {
+
+    
+    Person *person1=new Person("汉堡包");   //堆上面分配内存
+    person1->eat();
+    delete person1;   //需要主动释放内存，会调用析构函数
+    
+    Person person("薯条");   //栈上面创建对象，程序结束会自动回收内存，然后自动调用析构函数
+    person.eat();
+    return 0;
+}
+```
+
+## 4.2 继承
+
+## 4.3 运算符重载
+
+## 4.4 多态
+
+# 五 高级
+
+## 5.1 文件处理
+
+## 5.2 模板
+
+## 5.3 信号处理
+
+## 5.4 多线程
 
