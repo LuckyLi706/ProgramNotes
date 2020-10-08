@@ -1,5 +1,3 @@
-# 基础
-
 ## 第一个html
 
 ```html
@@ -110,7 +108,26 @@ reset
 submit    //提交
 text      //输入框
 -->
-<input type="submit" value="Submit" />
+
+<!-- 
+type为submit，提交按钮
+value属性为按钮显示的值
+-->
+<input type="submit" value="提交" />
+```
+
+#### 下拉选择标签
+
+```html
+<!--下拉选择,下面展示的拥有四个选择框
+name属性用于提交到后台的识别
+-->
+<select name=“select”>
+  <option value ="volvo">Volvo</option>
+  <option value ="saab">Saab</option>
+  <option value="opel">Opel</option>
+  <option value="audi">Audi</option>
+</select>
 ```
 
 ### 表格类

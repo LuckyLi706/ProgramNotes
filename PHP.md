@@ -1,8 +1,17 @@
-# 一 基础
+# 基础
 
-## 1.1、输出
+## 安装
 
-### 1.1.1 echo
+### mac安装
+
+```
+//mac默认自带php7.2，安装其他版本
+curl -s http://php-osx.liip.ch/install.sh | bash -s 5.6   //5.6表示版本号，默认安装到/usr/local/php5.6下
+```
+
+## 输出
+
+### echo
 
 ```php
 <?php
@@ -13,7 +22,7 @@ echo $a;       //输出Hello
 echo $a, $b;   //输出HelloWorld,使用逗号拼接两个变量
 ```
 
-### 1.1.2 print
+### print
 
 ```php
 /**
@@ -42,7 +51,7 @@ echo $a, $b;   //输出HelloWorld,使用逗号拼接两个变量
 **/
 ```
 
-## 1.2、$符号
+## $符号
 
 在PHP中单个美元符号变量($str)，表示一个名为str的普通变量，它可以存储字符串、整数、数组、布尔等任何类型的值。
 
@@ -82,9 +91,9 @@ echo $a->age();
 //输出结果：10    
 ```
 
-## 1.3、条件判断和循环
+## 条件判断和循环
 
-### 1.3.1、条件判断
+### 条件判断
 
 ```php
 //if语句
@@ -133,7 +142,7 @@ default:
 ?>
 ```
 
-### 1.3.2、循环
+### 循环
 
 ```php
 //1、for循环语法
@@ -196,9 +205,9 @@ do
 while (条件);
 ```
 
-## 1.4、命名空间
+## 命名空间
 
-## 1.5、include和require
+## include和require
 
 相同点：
   1、都用来包含文件
@@ -215,7 +224,7 @@ while (条件);
   include 会警告，放中间
   include_once require_once 只包含一次
 
-## 1.6、异常捕捉
+## 异常捕捉
 
 ```php
 //try...catch和throw
@@ -247,11 +256,11 @@ catch(Exception $e)
 
 
 
-# 二 数据类型
+# 数据类型
 
 PHP不需要显示声明数据类型
 
-## 2.1、整型
+## 整型
 
 ```php
 <?php 
@@ -277,7 +286,7 @@ int(39)
 **/
 ```
 
-## 2.2、浮点型
+## 浮点型
 
 ```php
 <?php
@@ -292,14 +301,14 @@ var_dump($x);
 ?>
 ```
 
-## 2.3、布尔类型
+## 布尔类型
 
 ```php
 $x=true;
 $y=false;
 ```
 
-## 2.4、字符串
+## 字符串
 
 ```php
 //输出字符串
@@ -326,9 +335,13 @@ echo strpos("Hello world!","world");  //输出6
 ?>    
 ```
 
-## 2.5、数组
+### htmlspecialchars()函数
 
-### 2.5.1、数值数组
+
+
+## 数组
+
+### 数值数组
 
 ```php
 //创建数组
@@ -358,7 +371,7 @@ for($x=0;$x<$arrlength;$x++)
 ?>    
 ```
 
-### 2.5.2、关联数组
+### 关联数组
 
 ```php
 //创建数组
@@ -379,7 +392,7 @@ foreach($age as $x=>$x_value)
 ?>
 ```
 
-### 2.5.3、数组排序
+### 数组排序
 
 ```php
 /**
@@ -394,7 +407,7 @@ krsort() - 根据关联数组的键，对数组进行降序排列
 
 ```
 
-# 三 面向对象
+# 面向对象
 
 ```php
 <?php
@@ -446,4 +459,89 @@ $a->setEat("鸡");
 $a->getEat();
 ?>
 ```
+
+# 表单
+
+## $_GET变量
+
+```php+HTML
+<!--
+$_GET 变量用于收集来自 method="get" 的表单中的值
+-->
+
+<!--form.php,将输入的值通过get请求提交到welcome.php里面去
+点击提交按钮请求地址 http://www.runoob.com/welcome.php?fname=Runoob&age=3
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+<form action="welcome.php" method="get">
+名字: <input type="text" name="fname">
+年龄: <input type="text" name="age">
+<input type="submit" value="提交">
+</form>
+</body>
+</html>
+
+<!--welcome.php接收传过来的值-->
+欢迎 <?php echo $_GET["fname"]; ?>!<br>
+你的年龄是 <?php echo $_GET["age"]; ?>  岁。
+```
+
+## $_POST变量
+
+```php+HTML
+<!--
+$_POST 变量用于收集来自 method="post" 的表单中的值
+-->
+
+<!--
+form.php,将输入的值通过post请求提交到welcome.php里面去
+点击提交按钮请求地址 http://www.runoob.com/welcome.php
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+<form action="welcome.php" method="post">
+名字: <input type="text" name="fname">
+年龄: <input type="text" name="age">
+<input type="submit" value="提交">
+</form>
+</body>
+</html>
+
+<!--welcome.php接收传过来的值-->
+欢迎 <?php echo $_POST["fname"]; ?>!<br>
+你的年龄是 <?php echo $_POST["age"]; ?>  岁。
+```
+
+## $_REQUEST变量
+
+```php+HTML
+<!--
+$_REQUEST 变量包含了 $_GET、$_POST 和 $_COOKIE 的内容。
+$_REQUEST 变量可用来收集通过 GET 和 POST 方法发送的表单数据。
+-->
+
+<!--
+welcome.php 文件修改为如下代码，它可以接受 $_GET、$_POST等数据
+-->
+欢迎 <?php echo $_REQUEST["fname"]; ?>!<br>
+你的年龄是 <?php echo $_REQUEST["age"]; ?>  岁。
+```
+
+# 集成环境
+
++ [XAMPP（支持Mac、Linux、Window )](https://sourceforge.net/projects/xampp/) 
++ 
+
+
+
+
 
