@@ -541,7 +541,137 @@ welcome.php 文件修改为如下代码，它可以接受 $_GET、$_POST等数�
 + [XAMPP（支持Mac、Linux、Window )](https://sourceforge.net/projects/xampp/) 
 + 
 
+# 操作MySQL
 
+[Mysql、Mysqli、Pdo区别](https://blog.csdn.net/Hqs_1020417504/article/details/79670123)
 
+## 连接MySQL
 
+```php
+//使用mysqli进行数据库连接,无法访问将在php安装目录下的php.ini 配置文件中的 extension_dir 去掉分号并且将dir改成自己所对应的php目录！
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "123456";
+
+// 创建连接
+$conn = mysqli_connect($servername, $username, $password);
+
+// 检测连接
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+$conn->close();
+echo "连接成功";
+?>
+```
+
+## 创建数据库和表
+
+```php
+//使用mysqli创建数据库和表,面向对象的方式
+$servername = "localhost";
+$username = "root";
+$password = "123456";
+$dbname = "mydb";
+
+// 创建连接
+$conn = new mysqli($servername, $username, $password);
+// 检测连接
+if ($conn->connect_error) {
+    die("连接失败: " . $conn->connect_error);
+}
+
+// 创建数据库
+$sql = "CREATE DATABASE IF NOT EXISTS myDB";
+if ($conn->query($sql) === TRUE) {
+    echo "数据库创建成功";
+} else {
+    echo "Error creating database: " . $conn->error;
+}
+
+$conn->select_db($dbname);
+// 使用 sql 创建数据表,包含的字段
+$sql = "CREATE TABLE IF NOT EXISTS MyGuests (
+id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+firstname VARCHAR(30) NOT NULL,
+lastname VARCHAR(30) NOT NULL,
+email VARCHAR(50),
+reg_date TIMESTAMP
+)";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Table MyGuests created successfully";
+} else {
+    echo "创建数据表错误: " . $conn->error;
+}
+$conn->close();
+```
+
+## 插入数据
+
+```php
+//单条数据
+$sql = "INSERT INTO mydb.myguests (firstname, lastname, email)   //mydb.myguests表示mydb数据库下的myguests表
+VALUES ('John', 'Doe', 'john@example.com')";
+if ($conn->query($sql) === TRUE) {
+    echo "新记录插入成功";
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+//多条数据
+$sql = "INSERT INTO mydb.myguests (firstname, lastname, email)
+VALUES ('John', 'Doe', 'john@example.com');";
+$sql .= "INSERT INTO mydb.myguests (firstname, lastname, email)
+VALUES ('Mary', 'Moe', 'mary@example.com');";
+$sql .= "INSERT INTO mydb.myguests (firstname, lastname, email)
+VALUES ('Julie', 'Dooley', 'julie@example.com')";
+
+if ($conn->multi_query($sql) === TRUE) {
+    echo "新记录插入成功";
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+//使用预处理插入
+$stmt = $conn->prepare("INSERT INTO MyGuests (firstname, lastname, email) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $firstname, $lastname, $email);
+ 
+// 设置参数并执行
+$firstname = "John";
+$lastname = "Doe";
+$email = "john@example.com";
+$stmt->execute();
+ 
+$firstname = "Mary";
+$lastname = "Moe";
+$email = "mary@example.com";
+$stmt->execute();
+ 
+$firstname = "Julie";
+$lastname = "Dooley";
+$email = "julie@example.com";
+$stmt->execute();
+
+echo "新记录插入成功";
+$stmt->close();
+
+```
+
+## 查询数据
+
+```php
+$sql = "SELECT id, firstname, lastname FROM MyGuests";
+$result = $conn->query($sql);
+ 
+if ($result->num_rows > 0) {
+    // 输出数据
+    while($row = $result->fetch_assoc()) {
+        echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
+    }
+} else {
+    echo "0 结果";
+}
+```
 

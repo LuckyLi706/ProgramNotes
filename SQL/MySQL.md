@@ -8,6 +8,46 @@
 brew install mysql
 ```
 
+### windows
+
+```
+//压缩版
+1、在解压后的文件目录下新建一个my.ini文件
+内容：
+[mysqld]
+# 设置端口
+port=3306
+# 安装目录
+basedir=C:\\ProgramFiles\\mysql-8.0.17-winx64   # 我把和w键那行的反斜线记忆为windows的，另一个为linux版的斜线
+# 设置数据库数据存放目录
+datadir=C:\\ProgramFiles\\mysql-8.0.17-winx64\\data
+# 允许最大连接数
+max_connections=200
+# 允许连接失败的次数。这是为了防止有人从该主机试图攻击数据库系统
+max_connect_errors=10
+# 字符集默认为UTF8
+character-set-server=utf8
+# 创建新表时默认存储引擎
+default-storage-engine=INNODB
+# 默认使用“mysql_native_password”插件认证
+default_authentication_plugin=mysql_native_password
+[mysql]
+# 设置客户端默认字符集
+default-character-set=utf8
+[client]
+# 客户端连接服务端时默认使用的端口
+port=3306
+default-character-set=utf8
+
+2、初始化数据
+mysqld --initialize --console
+在这边拿到初始化密码
+[Server] A temporary password is generated for root@localhost:初始密码
+
+3、mysqld --install
+成功后会提示安装成功
+```
+
 
 
 ## 启动
@@ -28,11 +68,23 @@ service mysqld start  //启动数据库
 service mysqld stop  //关闭数据库
 ```
 
+### windows
+
+```
+net start mysql  //启动数据库
+net stop mysql  //关闭数据库
+```
+
+
+
 ## 运行
 
 ```sql
 //进入mysql工作台
 mysql -u root -p   //mac默认没有密码
+
+//windows,根据初始化密码进入数据库,然后插入修改密码
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';
 ```
 
 # 增删改查
@@ -50,6 +102,7 @@ mysql -u root -p   //mac默认没有密码
 create table Student(id int(4) not null primary key auto_increment,name char(20) not null,sex int(4) not null default '0',degree double(16,2));
 //创建一个学生成绩表
 6.drop table Student   //删除学生成绩表
+7.describe Student;  //展示学生表的内容
 ```
 
 ## 增
