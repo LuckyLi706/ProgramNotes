@@ -790,7 +790,7 @@ Waypoint mWaypoint = new Waypoint(latitude, longitude, altitude);  //参数分�
 //航向,飞机到达航点时，飞机将旋转到的航向。范围在-180-180，0代表真实的北。如果航向任务的航向不同，飞机的航向将逐渐设置为下一个航向，同时在两个相邻的航路点之间飞行
 mWaypoint.heading =50;
 //角半径,默认情况下路径的拐角半径未0.2m
-mWaypoint.cornerRadiusInMeters =0.2f wp.getWaypocornerRadiusInMeters();
+mWaypoint.cornerRadiusInMeters =0.2f    mWaypoint.getWaypocornerRadiusInMeters();
 //转弯模式   顺时针：WaypointTurnMode.CLOCKWISE  逆时针：WaypointTurnMode.COUNTER_CLOCKWISE
 mWaypoint.turnMode=WaypointTurnMode.COUNTER_CLOCKWIS;
 //云台的俯仰角
@@ -992,6 +992,180 @@ waypointMissionOperator.getCurrentState()
 ## 2、虚拟摇杆（遥控飞行）
 
 ```java
+/**
+使用虚拟摇杆来控制飞机飞行
+重要的类：
+FlightController     //DJI飞机控制对象
+**/
 
+//1、启用虚拟摇杆模式
+private FlightController mFlightController=DJISDKManager.getInstance().getProduct().getFlightController();  //初始化飞机控制对象
+            //获取APP控制飞机权限
+        mFlightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
+          @Override
+          public void onResult(DJIError djiError) {
+               if (djiError != null) {
+                   showToast("Enable Virtual Stick Failed" + djiError.getDescription());
+                } else {
+                   //并且在设置成功后再去设置pitch，yaw，roll的模式
+                   /**
+                   设置侧倾/俯仰虚拟控制器是更改飞机相对于水平方向的角度，还是更改飞机在水平轴上的速度。
+                   RollPitchControlMode.ANGLE 将侧倾和俯仰值设置为相对于水平飞机的角度。在身体坐标系中，正俯仰角和负俯仰角分别表示飞机绕着y轴在正方向或负方向上旋转。正侧倾角和负侧倾角分别是绕x轴的正方向或负方向旋转角度。但是，在地面坐标系中，正俯仰角和负俯仰角分别是飞机向南和向北移动的角度值。正侧倾角和负侧倾角分别是飞机向东和向西移动时的角度。最大角度定义为30度。最小角度定义为-30度。
+                   
+                   RollPitchControlMode.VELOCITY 将侧倾和俯仰值设置为速度。在身体坐标系中，正俯仰速度和负俯仰速度分别是指飞机沿俯仰轴和y轴分别向正方向或负方向移动。正和负侧倾速度是指飞机分别沿着侧倾轴和x轴朝正方向或负方向移动时的速度。但是，在地面坐标系中，正俯仰速度和负俯仰速度分别用于向东和向西移动的飞机。正和负侧倾速度是飞机分别向北和向南移动时的速度。最大速度定义为15米/秒。最小速度定义为-15米/秒
+                   **/
+                   mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+                   /**
+                   设置虚拟摇杆控制器是按角度还是按角速度更改飞机的航向。
+                   YawControlMode.ANGLE 将偏航值设置为相对于北方的角度。正偏航角和负偏航角分别表示飞机顺时针和逆时针旋转。最大偏航角定义为180度。最小偏航角定义为-180度
+                   YawControlMode.ANGULAR_VELOCITY 将偏航值设置为角速度。正角速度和负角速度分别用于飞机顺时针和逆时针旋转。最大偏航角速度定义为100度/秒。最小偏航角速度定义为-100度/ s。
+                   **/
+                   mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+                   /**
+                   设置虚拟摇杆垂直控制器是否更改飞机的高度或垂直速度。
+                   VerticalControlMode.VELOCITY 将虚拟杆的垂直控制值设置为垂直速度。正和负垂直速度分别适用于飞机的上升和下降。最大垂直速度定义为4m/s。最小垂直速度定义为-4m/s
+                   VerticalControlMode.POSITION 将虚拟杆垂直控制值设置为高度。最大位置定义为500m。最小位置定义为0m
+                   **/
+                   mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+                   /**
+                   设置水平轴相对于地面或飞机是否固定
+                   FlightCoordinateSystem.GROUND  //地面坐标系
+                   FlightCoordinateSystem.BODY    //机身坐标系
+                   **/
+                   mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY); 
+                 }
+             }
+         });
+
+//2、起飞和降落
+/**
+起飞方法
+用于起飞。它会将飞行器升高到 1.2米，并在升高到0.5米的时候回调callback。若不给飞机装螺旋桨，它会马达空转7秒后停止。再次尝试takeOff()，会报错：the execution of this process is timed out。尝试用手举起飞机，欺骗它已经起飞是不可行的
+**/
+void startTakeoff(CompletionCallback var1);
+/**
+取消飞行方法
+在起飞完成前调用此函数才有效。飞机会停止升高并悬停在当前高度。已经调用的startTakeoff()函数会报错。
+**/
+void cancelTakeoff(CompletionCallback var1);
+/**
+降落方法（并不会正在降落到地面，需配合confirmLanding使用）
+自动降落，然后电机停转。
+**/
+void startLanding(CompletionCallback var1);
+/**
+取消降落方法
+停止飞机的自动降落。如果在startLanding完成之前调用，则自动降落将被取消（startLanding完成框将返回错误），并且飞机将悬停在其当前位置
+**/
+void cancelLanding(CompletionCallback var1);
+/**
+确认降落方法
+确认继续降落行动。当飞机与地面的间隙小于0.3m时，飞机将暂停着陆并等待用户确认。可以使用isLandingConfirmationNeeded在FlightControllerState检查是否需要确认。飞行控制器固件3.2.0.0及更高版本支持它。
+**/
+void confirmLanding(CompletionCallback var1)
+    
+//3、发送数据（官方给的发送频率要求是5-25HZ，也就是40毫秒至200毫秒发送一次）
+//3.1、使用摇杆比来使用
+    /**
+     * 
+     * @param rockerX 杆量比[-1, 1], 前/后(+/-)
+     * @param rockerY 杆量比[-1, 1], 左/右(-/+)
+     * @param rockerZ 杆量比[-1, 1], 上/下(-/+)
+     * @param rockerRotate 杆量比[-1, 1], 顺时针/逆时针(+/-)旋转
+     */
+    private FlightControlData senddata;
+ 
+    private void fly(VirtualStickPB bean) {
+        if (isEnableStick) {
+            float rockX = (null == bean.rockerX ? 0 : bean.rockerX);
+            float rockY = (null == bean.rockerY ? 0 : bean.rockerY);
+            float rockZ = (null == bean.rockerZ ? 0 : bean.rockerZ);
+            float rockerRotation = (null == bean.rockerRotation ? 0 : bean.rockerRotation);
+ 
+            RollPitchControlMode rollPitchControlMode = mFlightController.getRollPitchControlMode();
+            VerticalControlMode verticalControlMode = mFlightController.getVerticalControlMode();
+            YawControlMode yawControlMode = mFlightController.getYawControlMode();
+ 
+            if (rollPitchControlMode == RollPitchControlMode.VELOCITY) {
+                // 前/后
+                mRoll = rockX * Limits.ROLL_PITCH_CONTROL_MAX_VELOCITY;
+                // 左/右
+                mPitch =    * Limits.ROLL_PITCH_CONTROL_MAX_VELOCITY;
+            } else if (rollPitchControlMode == RollPitchControlMode.ANGLE) {
+                // 前/后
+                mPitch = -rockX * Limits.ROLL_PITCH_CONTROL_MAX_ANGLE;
+                // 左/右
+                mRoll = rockY * Limits.ROLL_PITCH_CONTROL_MAX_ANGLE;
+            } else {
+                mPitch = 0;
+                mRoll = 0;
+            }
+ 
+            if (verticalControlMode == VerticalControlMode.VELOCITY) {
+                // 上/下
+                mThrottle = -rockZ * Limits.VERTICAL_CONTROL_MAX_VELOCITY;
+            } else if (verticalControlMode == VerticalControlMode.POSITION) {
+                // 上/下
+                if (rockZ >= 0) {
+                    mThrottle = rockZ * Limits.VERTICAL_CONTROL_MAX_HEIGHT;
+                } else {
+                    mThrottle = 0;
+                    //mThrottle = controller.getCurrentState().getAircraftLocation().getAltitude();
+                }
+            } else {
+                mThrottle = 0;
+            }
+ 
+            if (yawControlMode == YawControlMode.ANGULAR_VELOCITY) {
+                // 旋转
+                mYaw = rockerRotation * Limits.YAW_CONTROL_MAX_ANGULAR_VELOCITY;
+            } else if (yawControlMode == YawControlMode.ANGLE) {
+                // 旋转
+                mYaw = rockerRotation * Limits.YAW_CONTROL_MAX_ANGLE;
+            } else {
+                mYaw = 0;
+            }
+ 
+            senddata = new FlightControlData(mPitch, mRoll, mYaw, mThrottle);
+ 
+            if (null == sendVirtualStickDataTimer) {
+                sendVirtualStickDataTask = new SendVirtualStickDataTask();
+                sendVirtualStickDataTimer = new Timer();
+                sendVirtualStickDataTimer.schedule(sendVirtualStickDataTask, 100, 200);    
+            }
+        } else {
+            Log.e("dispatch", "isenablestick = false");
+        }
+    }
+ 
+    //定时器
+    private class SendVirtualStickDataTask extends TimerTask {
+        @Override
+        public void run() {
+            if (ModuleVerificationUtil.isFlightControllerAvailable()) {
+                App.getAircraftInstance().getFlightController().sendVirtualStickFlightControlData(senddata,
+                        new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+ 
+                            }
+                        });
+            } else {
+                Log.e("SendVirtualStickData", "isFlightControllerAvailable = false");
+            }
+        }
+    }    
+
+//关闭虚拟摇杆模式（在结束的时候别忘了将virtualstick模式设为false，不然遥控器将控制不了飞机）
+mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+                    if (djiError != null) {
+                        showToast(djiError.getDescription());
+                    } else {
+                        showToast("Disable Virtual Stick Success");
+                    }
+                }
+            });      
 ```
 
