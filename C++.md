@@ -241,67 +241,80 @@ int main() {
 2、复制构造函数
 3、this指针
 4、类指针
-5、友元函数
+5、友元函数(有啥用？？？？)
 6、内联函数
 7、静态成员static关键字
+
+//特殊成员变量初始化
+常量变量：必须通过构造函数参数列表进行初始化。
+引用变量：必须通过构造函数参数列表进行初始化。
+普通静态变量：要在类外通过"::"初始化。
+静态整型常量：可以直接在定义的时候初始化。
+静态非整型常量：不能直接在定义的时候初始化。要在类外通过"::"初始化
 **/
 //头文件
-#ifndef Person_hpp
-#define Person_hpp
-
 #include <iostream>
-#include <string>
+
+#ifndef TWOC_PERSON_H
+#define TWOC_PERSON_H
 
 using namespace std;
 
-#endif /* Person_hpp */
-class Person{
+class Person {
 public:   //     公有的数据成员和成员函数
+    static int count;   //记录构造函数次数,构造static变量
+
     Person();   //无参构造函数
     ~Person();  //析构函数，
     Person(string food);  //有参构造函数
-    Person(string food,string time);
+    Person(string food, string time);
+
     Person(const Person &person);   //复制构造函数，复制对象用的,深拷贝和浅拷贝
     void eat();   //成员函数
+
+    static int getCount();    //静态函数
+
 private:   //私有的数据成员和成员函数
     string foodName;
     string currentTime;
-    
+
 protected:  //保护的数据成员和和成员函数
 };
+#endif //TWOC_PERSON_H
 
 //实现文件
-#include "Person.hpp"
+#include "Person.h"
 
-void Person::eat(){
-    cout<<"我正在吃："<<foodName<<endl;
+int Person::count = 0;   // 初始化类 Box 的静态成员，其实是定义并初始化的过程(必须在类外进行)
+
+void Person::eat() {
+    cout << "我正在吃:" << foodName << endl;
 }
 
 //初始化列表来进行初始化数据,可以使用默认参数
-Person::Person(string food,string time="now"):foodName(food),currentTime(time){
-    
+Person::Person(string food, string time = "now") : foodName(food), currentTime(time) {
+    count++;
 }
 
-Person::Person(const Person &person){
-    
+Person::Person(const Person &person) {
+
 }
 
-
-Person::~Person(){
-    cout<<"~Person()"<<endl;
+Person::~Person() {
+    cout << "~Person()" << endl;
 }
 
-Person::Person(){
-    cout<<"Person()"<<endl;
+Person::Person() {
+    cout << "Person()" << endl;
 }
 
-Person::Person(string food){
-    foodName=food;
+int Person::getCount() {
+    return count;
 }
 
 //调用
 #include <iostream>
-#include "Person.hpp"
+#include "Person.h"
 #include <string>
 int main(int argc, const char * argv[]) {
 
@@ -312,15 +325,197 @@ int main(int argc, const char * argv[]) {
     
     Person person("薯条");   //栈上面创建对象，程序结束会自动回收内存，然后自动调用析构函数
     person.eat();
+    cout << "Total objects: " << Person::count << endl;        //输出2
+    cout << "Total objects: " << Person::getCount() << endl;   //输出2
+
     return 0;
 }
 ```
 
 ## 4.2 继承
 
+```c++
+/**
+子类继承了父类所有方法（public和protected）下列除外
+基类的构造函数、析构函数和拷贝构造函数。
+基类的重载运算符。
+基类的友元函数。
+**/
+
+//父类
+#ifndef TWOC_SHAPE_H
+#define TWOC_SHAPE_H
+class Shape {
+public:
+    void setWidth(int w);
+
+    void setHeight(int h);
+
+protected:
+    int width;
+    int height;
+};
+#endif //TWOC_SHAPE_H
+
+#include "Shape.h"
+
+void Shape::setWidth(int w) {
+    width = w;
+}
+
+void Shape::setHeight(int h) {
+    height = h;
+}
+
+//子类
+#ifndef TWOC_RECTANGLE_H
+#define TWOC_RECTANGLE_H
+#include "Shape.h"
+
+class Rectangle : public Shape {
+
+public:
+    int getArea();
+};
+#endif //TWOC_RECTANGLE_H
+
+#include "Rectangle.h"
+
+int Rectangle::getArea() {
+    return (width * height);
+}
+
+//main方法
+#include <iostream>
+#include "Rectangle.h"
+
+using namespace std;
+
+int main() {
+
+    Rectangle Rect;
+
+    Rect.setWidth(5);
+    Rect.setHeight(7);
+    cout << "Total area: " << Rect.getArea() << endl;   //输出35
+    return 0;
+}
+```
+
 ## 4.3 运算符重载
 
+```c++
+/**
+Box operator+(const Box&);  //成员函数定义
+Box operator+(const Box&, const Box&);  //非成员函数定义
+
+可重载的运算符
+双目算术运算符	+ (加)，-(减)，*(乘)，/(除)，% (取模)
+关系运算符	==(等于)，!= (不等于)，< (小于)，> (大于>，<=(小于等于)，>=(大于等于)
+逻辑运算符	||(逻辑或)，&&(逻辑与)，!(逻辑非)
+单目运算符	+ (正)，-(负)，*(指针)，&(取地址)
+自增自减运算符	++(自增)，--(自减)
+位运算符	| (按位或)，& (按位与)，~(按位取反)，^(按位异或),，<< (左移)，>>(右移)
+赋值运算符	=, +=, -=, *=, /= , % = , &=, |=, ^=, <<=, >>=
+空间申请与释放	new, delete, new[ ] , delete[]
+其他运算符	()(函数调用)，->(成员访问)，,(逗号)，[](下标)
+**/
+
+#include <iostream>
+
+using namespace std;
+
+class Box {
+public:
+
+    double getVolume(void) {
+        return length * breadth * height;
+    }
+
+    void setLength(double len) {
+        length = len;
+    }
+
+    void setBreadth(double bre) {
+        breadth = bre;
+    }
+
+    void setHeight(double hei) {
+        height = hei;
+    }
+
+    // 重载 + 运算符，用于把两个 Box 对象相加
+    Box operator+(const Box &b) {
+        Box box;
+        box.length = this->length + b.length;
+        box.breadth = this->breadth + b.breadth;
+        box.height = this->height + b.height;
+        return box;
+    }
+
+private:
+    double length;      // 长度
+    double breadth;     // 宽度
+    double height;      // 高度
+};
+
+// 程序的主函数
+int main() {
+    Box Box1;                // 声明 Box1，类型为 Box
+    Box Box2;                // 声明 Box2，类型为 Box
+    Box Box3;                // 声明 Box3，类型为 Box
+    double volume = 0.0;     // 把体积存储在该变量中
+
+    Box1.setLength(6.0);
+    Box1.setBreadth(7.0);
+    Box1.setHeight(5.0);
+
+    Box2.setLength(12.0);
+    Box2.setBreadth(13.0);
+    Box2.setHeight(10.0);
+
+    volume = Box1.getVolume();
+    cout << "Volume of Box1 : " << volume << endl;  //输出210
+
+    volume = Box2.getVolume();
+    cout << "Volume of Box2 : " << volume << endl;  //输出1560
+
+    Box3 = Box1 + Box2;    //使用重载运算符将两个对象相加,执行operator+方法
+    volume = Box3.getVolume();
+    cout << "Volume of Box3 : " << volume << endl;  //输出5400
+
+    return 0;
+}
+```
+
 ## 4.4 多态
+
+```c++
+/**
+虚函数：使用virtual关键字
+静态链接和动态链接
+**/
+```
+
+## 4.5 抽象和接口
+
+```
+/**
+纯虚函数：  virtual double area() = 0;   //不定义任何方法体
+
+抽象类：
+其实，在c++中并没有抽象类的概念，要实现抽象类则需要通过纯虚函数实现。纯虚函数指的是只定义函数原型的成员函数。在c++的类中，只要存在纯虚函数，那么该类就变成抽象类。
+
+ (1) 每个具体图形的求面积算法不一样，所以加上virtual关键字，表明该函数是虚函数，在子类中重写时可以发生多态； 
+ (2) 为对Shape类求面积无意义，所以加上”= 0”表明该函数声明为纯虚函数，不需要定义函数体。 
+ (3) 抽象类不能生成对象，只能用作父类被继承，子类必须实现纯虚函数的具体功能，在子类中，父类的纯虚函数被实现后就变成虚函数，当然，如果子类没有实现父类的纯虚函数，那么子类也是抽象类一个
+
+接口：
+c++中接口也是一种抽象类，需要满足： 
+ (1) 类中没有定义任何成员变量 
+ (2) 类中所有成员函数都是公有且都是纯虚函数
+**/
+```
 
 # 五 高级
 
