@@ -1,6 +1,6 @@
 # 编程基础知识学习（持续更新）
 
-## 编程语言
+## ProLan
 
 + [Python](Python.md)
 + [C](C.md)
@@ -11,6 +11,11 @@
 + [Java]()
 + [PHP](PHP.md)
 
+## Mobile
+
++ [Android](Mobile/Android.md)
++ [IOS](Mobile/IOS.md)
+
 ## Web
 
 + [HTML](Web/HTML.md)
@@ -18,7 +23,10 @@
 + [JavaScript](Web/JavaScript.md)
 + [Nodejs](Web/Nodejs.md)
 
-## 数据库
+## SQL
 
 + [MySQL](SQL/MySQL.md)
-+ 
+
+## Other
+
++ [Git](Other/Git.md)
