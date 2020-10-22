@@ -243,3 +243,451 @@ int WeekdayStart = (int)Days.Mon;    //返回1
 
 # 集合
 
+![eee](images/C#_collection.png)
+
+## 泛型与非泛型集合类的分析
+
++ 泛型集合是类型安全的，基于固定的泛型T,运行时不需要像非泛型的执行Object和具体类型的类型转换。
+
++ 泛型集合的效率相对较高。
+
++ 两者都能实现数据存储，不同的是泛型只能存放T类型数据，有运行时检测，而非泛型的都转化为Object存储，能存储任意类型，包括值类型，会带来装箱拆箱的性能损耗，同时都是Object类型（弱类型）编译时无法类型检测，运行时会导致类型不一致的安全性问题。
+
+## 使用场景
+
+![](images/C#_collection_scence.jpg)
+
+## 线程安全的集合
+
++ ConcurrentQueue 线程安全版本的Queue 
+
++ ConcurrentStack线程安全版本的Stack 
+
++ ConcurrentBag线程安全的对象集合 
+
++ ConcurrentDictionary线程安全的Dictionary 
+
++ BlockingCollection
+
+## 动态数组（ArrayList）
+
+```c#
+/**
+属性：
+Capacity	获取或设置 ArrayList 可以包含的元素个数。
+Count	获取 ArrayList 中实际包含的元素个数。
+IsFixedSize	获取一个值，表示 ArrayList 是否具有固定大小。
+IsReadOnly	获取一个值，表示 ArrayList 是否只读。
+IsSynchronized	获取一个值，表示访问 ArrayList 是否同步（线程安全）。
+Item[Int32]	获取或设置指定索引处的元素。
+SyncRoot	获取一个对象用于同步访问 ArrayList。
+
+方法:
+1	public virtual int Add( object value );
+在 ArrayList 的末尾添加一个对象。
+2	public virtual void AddRange( ICollection c );
+在 ArrayList 的末尾添加 ICollection 的元素。
+3	public virtual void Clear();
+从 ArrayList 中移除所有的元素。
+4	public virtual bool Contains( object item );
+判断某个元素是否在 ArrayList 中。
+5	public virtual ArrayList GetRange( int index, int count );
+返回一个 ArrayList，表示源 ArrayList 中元素的子集。
+6	public virtual int IndexOf(object);
+返回某个值在 ArrayList 中第一次出现的索引，索引从零开始。
+7	public virtual void Insert( int index, object value );
+在 ArrayList 的指定索引处，插入一个元素。
+8	public virtual void InsertRange( int index, ICollection c );
+在 ArrayList 的指定索引处，插入某个集合的元素。
+9	public virtual void Remove( object obj );
+从 ArrayList 中移除第一次出现的指定对象。
+10	public virtual void RemoveAt( int index );
+移除 ArrayList 的指定索引处的元素。
+11	public virtual void RemoveRange( int index, int count );
+从 ArrayList 中移除某个范围的元素。
+12	public virtual void Reverse();
+逆转 ArrayList 中元素的顺序。
+13	public virtual void SetRange( int index, ICollection c );
+复制某个集合的元素到 ArrayList 中某个范围的元素上。
+14	public virtual void Sort();
+对 ArrayList 中的元素进行排序。
+15	public virtual void TrimToSize();
+设置容量为 ArrayList 中元素的实际个数。
+**/
+```
+
+## 哈希表（Hashtable）
+
+```c#
+/**
+Hashtable 类代表了一系列基于键的哈希代码组织起来的键/值对。它使用键来访问集合中的元素。
+当您使用键访问元素时，则使用哈希表，而且您可以识别一个有用的键值。哈希表中的每一项都有一个键/值对。键用于访问集合中的项目
+
+属性：
+Count	获取 Hashtable 中包含的键值对个数。
+IsFixedSize	获取一个值，表示 Hashtable 是否具有固定大小。
+IsReadOnly	获取一个值，表示 Hashtable 是否只读。
+Item	获取或设置与指定的键相关的值。
+Keys	获取一个 ICollection，包含 Hashtable 中的键。
+Values	获取一个 ICollection，包含 Hashtable 中的值。
+
+方法：
+1	public virtual void Add( object key, object value );
+向 Hashtable 添加一个带有指定的键和值的元素。
+2	public virtual void Clear();
+从 Hashtable 中移除所有的元素。
+3	public virtual bool ContainsKey( object key );
+判断 Hashtable 是否包含指定的键。
+4	public virtual bool ContainsValue( object value );
+判断 Hashtable 是否包含指定的值。
+5	public virtual void Remove( object key );
+从 Hashtable 中移除带有指定的键的元素。
+
+**/
+```
+
+## 排序列表（SortedList）
+
+```c#
+/**
+SortedList 类代表了一系列按照键来排序的键/值对，这些键值对可以通过键和索引来访问。
+排序列表是数组和哈希表的组合。它包含一个可使用键或索引访问各项的列表。如果您使用索引访问各项，则它是一个动态数组（ArrayList），如果您使用键访问各项，则它是一个哈希表（Hashtable）。集合中的各项总是按键值排序。
+
+属性：
+Capacity	获取或设置 SortedList 的容量。
+Count	获取 SortedList 中的元素个数。
+IsFixedSize	获取一个值，表示 SortedList 是否具有固定大小。
+IsReadOnly	获取一个值，表示 SortedList 是否只读。
+Item	获取或设置与 SortedList 中指定的键相关的值。
+Keys	获取 SortedList 中的键。
+Values	获取 SortedList 中的值。
+
+方法：
+1	public virtual void Add( object key, object value );
+向 SortedList 添加一个带有指定的键和值的元素。
+2	public virtual void Clear();
+从 SortedList 中移除所有的元素。
+3	public virtual bool ContainsKey( object key );
+判断 SortedList 是否包含指定的键。
+4	public virtual bool ContainsValue( object value );
+判断 SortedList 是否包含指定的值。
+5	public virtual object GetByIndex( int index );
+获取 SortedList 的指定索引处的值。
+6	public virtual object GetKey( int index );
+获取 SortedList 的指定索引处的键。
+7	public virtual IList GetKeyList();
+获取 SortedList 中的键。
+8	public virtual IList GetValueList();
+获取 SortedList 中的值。
+9	public virtual int IndexOfKey( object key );
+返回 SortedList 中的指定键的索引，索引从零开始。
+10	public virtual int IndexOfValue( object value );
+返回 SortedList 中的指定值第一次出现的索引，索引从零开始。
+11	public virtual void Remove( object key );
+从 SortedList 中移除带有指定的键的元素。
+12	public virtual void RemoveAt( int index );
+移除 SortedList 的指定索引处的元素。
+13	public virtual void TrimToSize();
+设置容量为 SortedList 中元素的实际个数。
+**/
+```
+
+## 堆栈（Stack）
+
+```c#
+/**
+堆栈（Stack）代表了一个后进先出的对象集合。当您需要对各项进行后进先出的访问时，则使用堆栈。当您在列表中添加一项，称为推入元素，当您从列表中移除一项时，称为弹出元素。
+
+属性：
+Count	获取 Stack 中包含的元素个数。
+
+方法：
+1	public virtual void Clear();
+从 Stack 中移除所有的元素。
+2	public virtual bool Contains( object obj );
+判断某个元素是否在 Stack 中。
+3	public virtual object Peek();
+返回在 Stack 的顶部的对象，但不移除它。
+4	public virtual object Pop();
+移除并返回在 Stack 的顶部的对象。
+5	public virtual void Push( object obj );
+向 Stack 的顶部添加一个对象。
+6	public virtual object[] ToArray();
+复制 Stack 到一个新的数组中。
+**/
+```
+
+## 队列（Queue）
+
+```c#
+/**
+队列（Queue）代表了一个先进先出的对象集合。当您需要对各项进行先进先出的访问时，则使用队列。当您在列表中添加一项，称为入队，当您从列表中移除一项时，称为出队。
+
+属性：
+Count	获取 Queue 中包含的元素个数。
+
+方法：
+1	public virtual void Clear();
+从 Queue 中移除所有的元素。
+2	public virtual bool Contains( object obj );
+判断某个元素是否在 Queue 中。
+3	public virtual object Dequeue();
+移除并返回在 Queue 的开头的对象。
+4	public virtual void Enqueue( object obj );
+向 Queue 的末尾添加一个对象。
+5	public virtual object[] ToArray();
+复制 Queue 到一个新的数组中。
+6	public virtual void TrimToSize();
+设置容量为 Queue 中元素的实际个数。
+**/
+```
+
+## 点阵列（BitArray）
+
+```c#
+/**
+BitArray 类管理一个紧凑型的位值数组，它使用布尔值来表示，其中 true 表示位是开启的（1），false 表示位是关闭的（0）。
+当您需要存储位，但是事先不知道位数时，则使用点阵列。您可以使用整型索引从点阵列集合中访问各项，索引从零开始。
+
+属性：
+Count	获取 BitArray 中包含的元素个数。
+IsReadOnly	获取一个值，表示 BitArray 是否只读。
+Item	获取或设置 BitArray 中指定位置的位的值。
+Length	获取或设置 BitArray 中的元素个数。
+
+方法：
+1	public BitArray And( BitArray value );
+对当前的 BitArray 中的元素和指定的 BitArray 中的相对应的元素执行按位与操作。
+2	public bool Get( int index );
+获取 BitArray 中指定位置的位的值。
+3	public BitArray Not();
+把当前的 BitArray 中的位值反转，以便设置为 true 的元素变为 false，设置为 false 的元素变为 true。
+4	public BitArray Or( BitArray value );
+对当前的 BitArray 中的元素和指定的 BitArray 中的相对应的元素执行按位或操作。
+5	public void Set( int index, bool value );
+把 BitArray 中指定位置的位设置为指定的值。
+6	public void SetAll( bool value );
+把 BitArray 中的所有位设置为指定的值。
+7	public BitArray Xor( BitArray value );
+对当前的 BitArray 中的元素和指定的 BitArray 中的相对应的元素执行按位异或操作。
+**/
+```
+
+# 流
+
+## 关系图
+
+![](images/C#_stream.png)
+
+## DirectoryInfo和FileInfo
+
+### DirectoryInfo
+
+```c#
+/**
+DirectoryInfo 类派生自 FileSystemInfo 类。它提供了各种用于创建、移动、浏览目录和子目录的方法。该类不能被继承。
+
+属性：
+1	Attributes
+获取当前文件或目录的属性。
+2	CreationTime
+获取当前文件或目录的创建时间。
+3	Exists
+获取一个表示目录是否存在的布尔值。
+4	Extension
+获取表示文件存在的字符串。
+5	FullName
+获取目录或文件的完整路径。
+6	LastAccessTime
+获取当前文件或目录最后被访问的时间。
+7	Name
+获取该 DirectoryInfo 实例的名称。
+
+方法：
+1	public void Create()
+创建一个目录。
+2	public DirectoryInfo CreateSubdirectory( string path )
+在指定的路径上创建子目录。指定的路径可以是相对于 DirectoryInfo 类的实例的路径。
+3	public override void Delete()
+如果为空的，则删除该 DirectoryInfo。
+4	public DirectoryInfo[] GetDirectories()
+返回当前目录的子目录。
+5	public FileInfo[] GetFiles()
+**/
+```
+
+### FileInfo
+
+```c#
+/**
+FileInfo 类派生自 FileSystemInfo 类。它提供了用于创建、复制、删除、移动、打开文件的属性和方法，且有助于 FileStream 对象的创建。该类不能被继承
+
+属性：
+1	Attributes
+获取当前文件的属性。
+2	CreationTime
+获取当前文件的创建时间。
+3	Directory
+获取文件所属目录的一个实例。
+4	Exists
+获取一个表示文件是否存在的布尔值。
+5	Extension
+获取表示文件存在的字符串。
+6	FullName
+获取文件的完整路径。
+7	LastAccessTime
+获取当前文件最后被访问的时间。
+8	LastWriteTime
+获取文件最后被写入的时间。
+9	Length
+获取当前文件的大小，以字节为单位。
+10	Name
+获取文件的名称。
+
+方法：
+1	public StreamWriter AppendText()
+创建一个 StreamWriter，追加文本到由 FileInfo 的实例表示的文件中。
+2	public FileStream Create()
+创建一个文件。
+3	public override void Delete()
+永久删除一个文件。
+4	public void MoveTo( string destFileName )
+移动一个指定的文件到一个新的位置，提供选项来指定新的文件名。
+5	public FileStream Open( FileMode mode )
+以指定的模式打开一个文件。
+6	public FileStream Open( FileMode mode, FileAccess access )
+以指定的模式，使用 read、write 或 read/write 访问，来打开一个文件。
+7	public FileStream Open( FileMode mode, FileAccess access, FileShare share )
+以指定的模式，使用 read、write 或 read/write 访问，以及指定的分享选项，来打开一个文件。
+8	public FileStream OpenRead()
+创建一个只读的 FileStream。
+9	public FileStream OpenWrite()
+创建一个只写的 FileStream。
+**/
+```
+
+## Path和Environment
+
+```c#
+//文件和文件夹的路径操作都在Path类中。另外还可以用Environment类，里面包含环境和程序的信息。
+string dirPath = @"D:\TestDir";
+string filePath = @"D:\TestDir\TestFile.txt";
+Console.WriteLine("<<<<<<<<<<<{0}>>>>>>>>>>", "文件路径");
+//获得当前路径
+Console.WriteLine(Environment.CurrentDirectory);
+//文件或文件夹所在目录
+Console.WriteLine(Path.GetDirectoryName(filePath));     //D:\TestDir
+Console.WriteLine(Path.GetDirectoryName(dirPath));      //D:\
+//文件扩展名
+Console.WriteLine(Path.GetExtension(filePath));         //.txt
+//文件名
+Console.WriteLine(Path.GetFileName(filePath));          //TestFile.txt
+Console.WriteLine(Path.GetFileName(dirPath));           //TestDir
+Console.WriteLine(Path.GetFileNameWithoutExtension(filePath)); //TestFile
+//绝对路径
+Console.WriteLine(Path.GetFullPath(filePath));          //D:\TestDir\TestFile.txt
+Console.WriteLine(Path.GetFullPath(dirPath));           //D:\TestDir  
+//更改扩展名
+Console.WriteLine(Path.ChangeExtension(filePath, ".jpg"));//D:\TestDir\TestFile.jpg
+//根目录
+Console.WriteLine(Path.GetPathRoot(dirPath));           //D:\      
+//生成路径
+Console.WriteLine(Path.Combine(new string[] { @"D:\", "BaseDir", "SubDir", "TestFile.txt" })); //D:\BaseDir\SubDir\TestFile.txt
+//生成随即文件夹名或文件名
+Console.WriteLine(Path.GetRandomFileName());
+//创建磁盘上唯一命名的零字节的临时文件并返回该文件的完整路径
+Console.WriteLine(Path.GetTempFileName());
+//返回当前系统的临时文件夹的路径
+Console.WriteLine(Path.GetTempPath());
+//文件名中无效字符
+Console.WriteLine(Path.GetInvalidFileNameChars());
+//路径中无效字符
+Console.WriteLine(Path.GetInvalidPathChars()); 
+```
+
+## Stream（都是以字节进行操作）
+
+### FileStream（文件流）
+
+```c#
+/**
+FileStream类主要用于读写磁盘文件。常用于向磁盘存储数据或读取配置文件。
+FileStream <object_name> = new FileStream( <file_name>,<FileMode Enumerator>, <FileAccess Enumerator>, <FileShare Enumerator>);
+
+FileMode	
+FileMode 枚举定义了各种打开文件的方法。FileMode 枚举的成员有：
+Append：打开一个已有的文件，并将光标放置在文件的末尾。如果文件不存在，则创建文件。
+Create：创建一个新的文件。如果文件已存在，则删除旧文件，然后创建新文件。
+CreateNew：指定操作系统应创建一个新的文件。如果文件已存在，则抛出异常。
+Open：打开一个已有的文件。如果文件不存在，则抛出异常。
+OpenOrCreate：指定操作系统应打开一个已有的文件。如果文件不存在，则用指定的名称创建一个新的文件打开。
+Truncate：打开一个已有的文件，文件一旦打开，就将被截断为零字节大小。然后我们可以向文件写入全新的数据，但是保留文件的初始创建日期。如果文件不存在，则抛出异常。
+
+FileAccess	
+FileAccess 枚举的成员有：Read、ReadWrite 和 Write。
+
+FileShare	
+FileShare 枚举的成员有：
+Inheritable：允许文件句柄可由子进程继承。Win32 不直接支持此功能。
+None：谢绝共享当前文件。文件关闭前，打开该文件的任何请求（由此进程或另一进程发出的请求）都将失败。
+Read：允许随后打开文件读取。如果未指定此标志，则文件关闭前，任何打开该文件以进行读取的请求（由此进程或另一进程发出的请求）都将失败。但是，即使指定了此标志，仍可能需要附加权限才能够访问该文件。
+ReadWrite：允许随后打开文件读取或写入。如果未指定此标志，则文件关闭前，任何打开该文件以进行读取或写入的请求（由此进程或另一进程发出）都将失败。但是，即使指定了此标志，仍可能需要附加权限才能够访问该文件。
+Write：允许随后打开文件写入。如果未指定此标志，则文件关闭前，任何打开该文件以进行写入的请求（由此进程或另一进过程发出的请求）都将失败。但是，即使指定了此标志，仍可能需要附加权限才能够访问该文件。
+Delete：允许随后删除文件。
+**/
+
+//文件流：读取
+FileStream fileStream = File.Open(@"D:\test.txt", FileMode.Open);//初始化文件流
+byte[] array = new byte[fileStream.Length];//初始化字节数组，用来暂存读取到的字节
+fileStream.Read(array, 0, array.Length);//读取流中数据，写入到字节数组中
+fileStream.Close(); //关闭流
+string str = Encoding.Default.GetString(array);//将字节数组内容转化为字符串
+Response.Write(str);
+
+//文件流：写入
+FileStream fileStream = File.Open(@"D:\test.txt",FileMode.Append);//初始化文件流
+byte[] array = Encoding.Default.GetBytes("哈哈123abc");//给字节数组赋值
+fileStream.Write(array, 0, array.Length);//将字节数组写入文件流
+fileStream.Close();//关闭流
+```
+
+### **NetWorkStream（网络流**）
+
+```c#
+//NetWorkStream类是专门用来处理服务器与客户端通信的流。它在网络编程中经常使用，主要是用来处理类似Socket、TcpClient和TcpListener这些类中得到的流。
+//服务器：
+TcpListener lis=new TcpListener(5000); //服务器监听
+lis.Start();//启动
+Socket sock=lis.AcceptSocket();//阻塞，直到有客户端连接
+
+NetworkStream networkStream = new NetworkStream(sock);//得到Socket中的流
+if (netStream.DataAvailable)   //如果客户端发送了消息
+{
+   byte[] data = new byte[1024];   //定义一个字节数组，用来存放接收的数据
+   int len = netStream.Read(data, 0, data.Length);  //从位置开始，读取到字节数组末尾
+   string line = Encoding.Default.GetString(data, 0, len);  //把收到的字节转换为字符串
+}
+
+//客户端：
+TcpClient client = new TcpClient();//客户端tcp对象
+client.Connect("127.0.0.1", 5000);//连接服务器
+NetworkStream myStream = client.GetStream();//得到网络流
+                
+byte[] data = Encoding.Default.GetBytes("Hi，你好");  //首先把输入的字符串消息转换为字节
+myStream .Write(data, 0, data.Length);  //向myStream 里写入数据
+myStream .Flush();  //刷新流中的数据
+myStream .Close();
+```
+
+### MemoryStream（内存流）
+
+```c#
+//MemoryStream类主要用于操作内存中的数据。比如说网络中传输数据时可以用流的形式，当我们收到这些流数据时就可以声明MemoryStream类来存储并且处理它们。
+//操作字符串：
+string str = "Hi!你好！";
+byte[] array = Encoding.UTF8.GetBytes(str);//将字符串转化为字节数组
+MemoryStream memory = new MemoryStream(array);//初始化MemoryStream类
+byte[] arrayNew = memory.ToArray();//将内存中的数据转换为字节数组
+string strNew = Encoding.UTF8.GetString(arrayNew);//将字节数组转换为字符串
+```
+
