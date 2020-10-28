@@ -3,6 +3,7 @@
 ## ProLan
 
 + [Python](Python.md)
++ [C#](C#.md)
 + [C](C.md)
 + [C++](C++.md)
 + [Objective-C](Objective-C.md)
@@ -10,11 +11,10 @@
 + [Kotlin](Kotlin.md)
 + [Java]()
 + [PHP](PHP.md)
-+ [C#](C#.md)
 
 ## PC
 
-+ Windows
++ [Windows](PC/Windows.md)
 + Mac
 + Linux
 
