@@ -4,6 +4,10 @@
 
 ## 逆向
 
+### PE结构
+
++ [好文,深度阅读](https://blog.csdn.net/weixin_43655282/article/details/104291312?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param)
+
 ### 工具
 
 + [Detect-It-Easy](https://github.com/horsicq/Detect-It-Easy)（查看用的什么语言写的）
