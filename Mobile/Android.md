@@ -6,7 +6,7 @@
 
 + 进阶
 
-+ 开源库
++ [开源库](AndroidOpenSource.md)
 
 + 安卓源码
   - [在线镜像](http://androidxref.com/9.0.0_r3/xref/)
