@@ -30,8 +30,8 @@ fastboot reboot
 #进入bootloader模式
 adb reboot bootloader     
 
-#刷入img
-fastboot boot twrp-3.2.3-1-marlin.img或者     输入twrp 
+#刷入twrp
+fastboot boot twrp-3.2.3-1-marlin.img或者fastboot recovery twrp-3.2.3-1-marlin.img
 ```
 
 ## TWRP
@@ -43,7 +43,9 @@ fastboot boot twrp-3.2.3-1-marlin.img或者     输入twrp
 ## Root
 
 + [Magisk](https://github.com/topjohnwu/Magisk/releases)
-+ Supersu
+  - 可以Root高版本安卓系统
+  - 自带很多优秀的插件
++ Supersu（已经不维护了，高版本无效）
 
 ## 小米
 
