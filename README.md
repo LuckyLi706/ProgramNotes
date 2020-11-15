@@ -15,13 +15,14 @@
 ## PC
 
 + [Windows](PC/Windows.md)
-+ Mac
-+ Linux
++ [Mac](PC/Mac.md)
++ [Linux](PC/Linux.md)
 
 ## Mobile
 
 + [Android](Mobile/Android.md)
 + [IOS](Mobile/IOS.md)
++ [WechatApp](Mobile/WechatApp.md)
 
 ## Web
 
@@ -38,11 +39,16 @@
 ## SQL
 
 + [MySQL](SQL/MySQL.md)
++ [MongoDB](SQL/MongoDB.md)
 
 ## Network
 
 + Http协议
 + [刨根问底HTTP和WebSocket协议](https://www.jianshu.com/p/0e5b946880b4)
+
+## IDE
+
++ [Qt](IDE/Qt.md)
 
 ## BuildTool
 

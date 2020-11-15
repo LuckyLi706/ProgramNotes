@@ -495,3 +495,58 @@ Student.fun()
 Student.a()
 ```
 
+# 五 第三方库
+
+## 操作Excel
+
+```python
+# 读取Excel
+# This is a sample Python script.
+import xlrd
+
+
+# Press ⌃R to execute it or replace it with your code.
+# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+
+
+def read_excel():
+    try:
+        # 读取文件
+        workbook = xlrd.open_workbook(r'/Users/lijie/Desktop/迁钢气体探测项目车载数据记录（车载1114）.xl')
+        # 读取所有sheets
+        sheets = workbook.sheet_names()
+        print("所有sheet：" + "".join(sheets))
+
+        # 根据sheet索引或者名称获取sheet内容
+        sheet1 = workbook.sheet_by_name('Sheet1')
+
+        # 总的行数
+        rows_num = sheet1.nrows
+        # 总的列数
+        cols_num = sheet1.ncols
+        # 行数，列数
+        print("总行数：" + str(rows_num) + "," + "总列数：" + str(cols_num))
+
+        for i in range(rows_num):
+            for j in range(cols_num):
+                # 获取单元格的值
+                cell_value = sheet1.cell(i, j)
+                if str(cell_value.value).strip() != '':
+                    if str(cell_value.value) == 'PM2.5':
+                        '''
+                        如果i=2,j=3
+                        数据从行数第三行开始算起，列数不变，直到最后一行
+                        '''
+                        # row = i + 1
+                        for row in range(i + 1, rows_num):
+                            print(sheet1.cell_value(row, j))
+    except Exception as e:
+        print("发生异常：" + str(e))
+    pass
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    read_excel()
+```
+
