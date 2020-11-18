@@ -2,6 +2,12 @@
 
 ## 开发
 
++ 开发地址
+  
++ [官方开发文档](https://developers.weixin.qq.com/miniprogram/dev/framework/)
+  + [微信公众平台](https://mp.weixin.qq.com/)
+  + [微信小程序社区](https://wxopen.club/)
+  
 + 入门（预备知识es6、ts等语法）
 
 + [微信小程序开发资源汇总](https://github.com/justjavac/awesome-wechat-weapp#%E7%9B%AE%E5%BD%95)
