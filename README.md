@@ -50,6 +50,7 @@
 ## IDE
 
 + [Qt](IDE/Qt.md)
++ [phpMyAdmin](IDE/phpMyAdmin)
 
 ## BuildTool
 

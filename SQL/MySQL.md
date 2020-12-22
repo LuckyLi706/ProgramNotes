@@ -1,11 +1,19 @@
 # 基础
 
++ [mac数据库操作（忘记密码）](https://blog.csdn.net/w893932747/article/details/89337631)
++ [Mac上修改MySQL默认字符集为utf8](https://www.cnblogs.com/jie-fang/p/10214207.html)
++ [mysql命令行修改字符编码](https://www.cnblogs.com/chcong/p/6197238.html)
+
 ## 安装
 
 ### mac
 
 ```
-brew install mysql
+brew install mysql  //默认安装8.0版本
+
+默认配置文件位置：/usr/local/etc/my.cnf
+
+
 ```
 
 ### windows
@@ -58,7 +66,7 @@ mysqld --initialize --console
 //使用服务
 brew services start mysql
 //不使用服务，只是启动
-mysql.service start
+mysql.server start
 ```
 
 ### linux
@@ -85,6 +93,10 @@ mysql -u root -p   //mac默认没有密码
 
 //windows,根据初始化密码进入数据库,然后插入修改密码
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';
+
+//mac mysql8.0修改验证方式
+1、找到mysql配置文件并加入default_authentication_plugin=mysql_native_password
+2、ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码';
 ```
 
 # 增删改查
