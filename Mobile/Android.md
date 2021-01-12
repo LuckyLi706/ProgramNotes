@@ -38,10 +38,16 @@
     查看pem：keytool -printcert -file [pem绝对路径] 
     ```
 
-  - 参考文章
+  - [申请app为系统应用，使用WebView报错解决方案](https://blog.csdn.net/wxj280306451/article/details/106522384)
 
+  - 参考文章
+  
     1. [Android 生成系统签名文件的可行性分析](https://www.jianshu.com/p/12f27d292ffd)
     2. [Android Studio自动生成带系统签名的apk](https://blog.csdn.net/cxq234843654/article/details/51557025)
+  
++ 其他开发
+
+  + [大疆无人机](大疆SDK（安卓版）.md)
 
 ## 逆向
 
