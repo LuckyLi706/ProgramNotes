@@ -143,3 +143,101 @@ loop@ for (i in 1..100) {
 
 ## 类与对象
 
+### 类
+
+```kotlin
+/**
+ *  Kotlin中默认所有类都是final
+ *  open关键字写在类前面表示该类可以被继承，写在方法前面表示该方法可以被重写
+ *
+ *  主构造函数写在类名后面,使用constructor关键字,如果没有修饰符号或者注解可以省略constructor,(public constructor或者@inject constructor不可省略)
+ *  主构造函数的参数可以直接用val或者var表示,直接作为构造变量来使用
+ *  init{}可以作为主构造函数的初始化
+ *
+ *  如果类有一个主构造函数，每个次构造函数需要委托给主构造函数， 可以直接委托或者通过别的次构造函数间接委托。委托到同一个类的另一个构造函数用 this 关键字即可
+ *
+ *  Kotlin中的继承使用：
+ *  重新方法使用在方法前面加上override关键字
+ *  调用父类的方法使用super
+ *
+ *  实例化对象，无new关键字
+ *  val people=People()
+ */
+open class People constructor(name: String) {
+
+    var name: String? = name
+
+    init {
+        this.name = name
+    }
+
+    //次构造函数
+    constructor(c: String, b: String) : this(c) {
+        print("$c,$b")
+    }
+
+    open fun test() {
+        print(name)
+    }
+}
+
+//继承使用:
+class Student(name: String) : People(name) {
+
+    override fun test() {
+        super.test()
+        println(name)
+    }
+
+    constructor(a: String, b: String) : this(a) {
+
+    }
+}
+
+class Worker : People {
+
+    constructor(name: String) : super(name)
+    constructor(c: String, b: String) : super(c, b)
+}
+```
+
+## 集合
+
+![](images/kotlin_collections.png)
+
+### List
+
+```kotlin
+/**
+Kotlin中的List默认实现时Java的ArrayList
+可重复
+List<T> 不可写,只能读
+创建方式：listOf()
+
+MutableList<T> 可读可写
+创建方式：mutableListOf()
+**/
+```
+
+### Set
+
+```kotlin
+/**
+Kotlin中的Set默认实现是Java的LinkedHashSet
+不可重复,元素顺序是插入顺序
+Set<T> 不可写,只能读
+创建方式：setOf()
+
+MutableSet<T> 可读可写
+创建方式：mutableSetOf()
+
+另一种HashSet<T>,没有顺序,内存占用少
+**/
+```
+
+### Map
+
+```kotlin
+
+```
+

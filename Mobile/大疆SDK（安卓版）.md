@@ -806,6 +806,16 @@ mWaypoint.turnMode=WaypointTurnMode.COUNTER_CLOCKWIS;
 //云台的俯仰角
 mWaypoint.gimbalPitch = -50;
 /**
+等时拍照
+飞机在当前航点和下一个航点之间移动时拍摄两张照片的时间间隔（以秒为单位）。飞机离开当前航路点时将拍摄第一张照片。最大值是6,000.0。最小值大于0.0，并且取决于相机类型和相机参数。照片文件格式为JPEG时，建议的最小值为2.0。照片文件格式为RAW时，最小值为10.0。如果输入超出相机的能力，则将以最大可能的速度拍摄照片。默认值为0.0，并且不会拍照。对于航路点，shootPhotoTimeInterval或shootPhotoDistanceInterval 为0.0。精度大于1个小数位的输入将四舍五入为1。警告：“ speed”shootPhotoTimeInterval 和shootPhotoDistanceInterval与任务中此路标和下一个路标之间的行为有关。相比之下，turnMode，altitude并heading 涉及到最后一个航路点和航路点的航点的任务之间的行为。仅受飞行控制器固件3.2.10.0或更高版本支持。
+**/
+mWaypoint.shootPhotoTimeInterval=1.0f
+/**
+等距拍照
+飞机在当前航点和下一个航点之间移动时拍摄两张照片时的距离间隔（以米为单位）。最大值是6,000.0。最小值大于0.0，并且取决于相机类型，相机参数和飞行速度。当照片文件格式为JPEG时，两张照片之间的时间间隔不能小于2秒。照片文件格式为RAW时，两张照片之间的时间间隔不能小于10秒。如果输入超出相机的能力，则拍摄的照片可能会少于预期。默认值为0.0，并且不会拍照。对于航路点，shootPhotoTimeInterval 或shootPhotoDistanceInterval为0.0。精度大于1个小数位的输入将四舍五入为1。警告：“ speed”shootPhotoTimeInterval 和shootPhotoDistanceInterval与任务中此路标和下一个路标之间的行为有关。相比之下，turnMode，altitude 并heading涉及到最后一个航路点和航路点的航点的任务之间的行为。仅受飞行控制器固件3.2.10.0或更高版本支持。
+**/
+mWaypoint.shootPhotoDistanceInterval=1.0f
+/**
    支持的action
    WaypointActionType.STAY  在航点停留时间（0-32767）毫秒
    WaypointActionType.START_TAKE_PHOTO 拍照,时长最大设置为6秒,超过6s会去执行下个action,如果存在的话
