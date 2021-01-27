@@ -328,6 +328,15 @@ key:
                     }
                 });
     }
+
+//登出当前账号
+public void logout(DjiLoginListener djiLoginListener) {
+        UserAccountManager.getInstance().loginOut(djiError -> {
+            if (djiError != null) {
+                LogUtil.d(djiError.getDescription());
+            }
+        });
+    }
 ```
 
 # 照相机
@@ -782,12 +791,95 @@ gimbal.rotate(builder.time(5).roll(10).mode(RotationMode.RELATIVE_ANGLE).build()
 
 # 飞行
 
-## 1、智能飞行（自动巡航）
+## 1、飞机状态信息
+
+```java
+BaseProduct baseProduct = SkyApplication.getBaseProduct();
+        if (baseProduct == null || !baseProduct.isConnected()) {
+            return;
+        }
+        //遥控器电池
+        Battery battery = ((Aircraft) baseProduct).getBattery();
+        //遥控器控制
+        RemoteController remoteController = ((Aircraft) baseProduct).getRemoteController();
+        //包含飞行控制器的组件,提供向飞行控制器发送不同命令的方法，可以获取到无人机的状态信息，包含位置信息，速度，距离，指南针等
+        FlightController flightController = ((Aircraft) baseProduct).getFlightController();
+
+        //云台实例
+        Gimbal gimbal = baseProduct.getGimbal();
+
+        Camera camera = SkyApplication.getCamera();
+
+        if (gimbal != null) {
+            gimbal.setStateCallback(gimbalState -> {
+                gimbalPitch = gimbalState.getAttitudeInDegrees().getPitch();  //云台俯仰角
+                gimbalRoll = gimbalState.getAttitudeInDegrees().getRoll();   //云台偏航角
+                gimbalYaw = gimbalState.getAttitudeInDegrees().getYaw();   //云台翻滚角
+            });
+        }
+
+        if (battery != null) {
+            battery.setStateCallback(batteryState -> batteryRemainedPlane = batteryState.getChargeRemainingInPercent());
+        }
+
+        if (remoteController != null) {
+            remoteController.setChargeRemainingCallback(batteryState -> {
+                batteryRemainedRemoteControl = batteryState.getRemainingChargeInPercent();  //获取遥控器剩余电量的百分比
+            });
+        }
+
+        if (flightController != null) {
+            flightController.getFlightAssistant().setLandingProtectionEnabled(false, djiError -> {   //取消自动着落保护
+                if (djiError != null) {
+                    
+                }
+            });
+            //每秒更新十次
+            flightController.setStateCallback(flightControllerState -> {
+
+                locationLat = flightControllerState.getAircraftLocation().getLatitude();  //纬度
+                locationLng = flightControllerState.getAircraftLocation().getLongitude(); //经度
+                altitude = flightControllerState.getAircraftLocation().getAltitude();  //高度
+                flyPitch = flightControllerState.getAttitude().pitch;   //俯仰角
+                flyRoll = flightControllerState.getAttitude().roll;   //偏航角
+                flyYaw = flightControllerState.getAttitude().yaw;   //翻滚角
+                satNumber = flightControllerState.getSatelliteCount();  //卫星数
+                velocityX = flightControllerState.getVelocityX();   //x轴速度
+                velocityY = flightControllerState.getVelocityY();   //y轴速度
+                velocityZ = flightControllerState.getVelocityZ();   //z轴速度
+                flightMode = flightControllerState.getFlightMode(); //飞行模式  
+                velocity = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY + velocityZ * velocityZ);  //总速度
+
+                if (camera != null) {
+                    //获取相机焦距
+                    camera.getDigitalZoomFactor(new CommonCallbacks.CompletionCallbackWith<Float>() {
+                        @Override
+                        public void onSuccess(Float aFloat) {
+                            gimbalFocal = aFloat;
+                        }
+
+                        @Override
+                        public void onFailure(DJIError djiError) {
+
+                        }
+                    });
+                }
+            });
+        }
+```
+
+
+
+## 2、智能飞行（自动巡航）
 
 ```java
 /**
 目前官网支持的地图只有谷歌地图和高德地图
-两个航点之间允许设定的最大距离为2km，最小距离为0.5m，最多设定99个航点，但是P4R可以设定200个航点，单条航线最长距离为40km
+两个航点之间允许设定的最大距离为2km，最小距离为0.5m，最多设定99个航点，但是P4R可以设定200个航点，
+总航点任务距离太长。最大总距离为40公里。总距离包括：
+1、当前飞机位置到第一个航点的距离
+2、航点之间的所有距离之和
+3、从最后一个航路点到返航点的距离。
 用的坐标系为WGS84
 重要的类：
 1、WaypointMissionOperator类  //是唯一控制，运行和监视waypoint对象。可以从访问它MissionControl,包括开始、停止、暂停、重启任务
@@ -832,7 +924,6 @@ mWaypoint.actionTimeoutInSeconds = 999;
 **/
 mWaypoint.addAction(new WaypointAction(WaypointActionType.GIMBAL_PITCH, -70));  //添加额外的一些动作
 
-
 //2、管理所有航点,对所有航点设置,优先级低于单独设置航点
 WaypointMission waypointMission = new WaypointMission.Builder()
                     //航点
@@ -851,7 +942,7 @@ WaypointMission waypointMission = new WaypointMission.Builder()
                     定义飞机执行所有的航点后的动作
                     WaypointMissionFinishedAction.NO_ACTION（在完成任务后，将不再采取进一步行动。此时，飞机可由遥控器控制）
                     WaypointMissionFinishedAction.GO_HOME（任务完成后，飞机将返航。如果飞机离返回点有超过20米的距离，它就会回家着陆。否则，它将直接降落在目前的位置。）
-                    WaypointMissionFinishedAction.AUTO_LAND（飞机将在最后一个方向自动着陆）
+                    WaypointMissionFinishedAction.AUTO_LAND（飞机将在最后一个方向自动着陆,默认飞机开了着陆保护,下降到2m就悬停,如果需要降落到地面,需要关闭着陆保护）
                     WaypointMissionFinishedAction.GO_FIRST_WAYPOINT（飞机将返回其第一个航向，并在适当位置盘旋。。）
                     WaypointMissionFinishedAction.CONTINUE_UNTIL_END（当飞机到达最后一个航点时，它将在不结束任务的情况下盘旋。操纵杆仍然可以用来把飞机沿着以前的航向向后拉。唯一能结束这一任务的方法就是召唤停止任务）
                     **/
@@ -1016,7 +1107,7 @@ waypointMissionOperator.getCurrentState()
     };
 ```
 
-## 2、虚拟摇杆（遥控飞行）
+## 3、虚拟摇杆（遥控飞行）
 
 ```java
 /**
