@@ -754,6 +754,9 @@ Rotation.Builder //云台数据构造对象
 Rotation.Builder构造
 time    //旋转到角度所需要的时间
 mode    //相对角度、绝对角度、速度模式、Rotation.NO_ROTATION表示在该方向上不进行旋转
+
+御2 目前只能俯仰变化，待查证
+俯仰、偏航、翻滚参考 https://blog.csdn.net/chengyq116/article/details/89195271
 **/
 //2、X轴旋转,云台旋转操作的俯仰属性，即云台在俯仰轴上旋转多少。如果为null，则不会对螺距轴进行任何操作。
 gimbal.rotate(builder.time(5).pitch(10).mode(RotationMode.RELATIVE_ANGLE).build(), new CommonCallbacks.CompletionCallback() {
