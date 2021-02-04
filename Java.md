@@ -55,6 +55,10 @@
   - [基本方法](#%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95)
   - [例子](#%E4%BE%8B%E5%AD%90)
   - [反射之集合泛型的本质](#%E5%8F%8D%E5%B0%84%E4%B9%8B%E9%9B%86%E5%90%88%E6%B3%9B%E5%9E%8B%E7%9A%84%E6%9C%AC%E8%B4%A8)
+- [JVM](#jvm)
+  - [学习路线](#%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF)
+  - [双亲委托机制](#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6)
+  - [工作原理](#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
