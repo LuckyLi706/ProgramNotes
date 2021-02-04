@@ -9,7 +9,7 @@
 + [Objective-C](Objective-C.md)
 + [Swift](Swift.md)
 + [Kotlin](Kotlin.md)
-+ [Java]()
++ [Java](Java.md)
 + [PHP](PHP.md)
 
 ## PC
@@ -60,3 +60,4 @@
 ## Other
 
 + [Git](Other/Git.md)
++ [Markdown](Other/Markdown.md)
