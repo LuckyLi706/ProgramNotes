@@ -2,7 +2,11 @@
 
 ## 开发
 
-+ 入门（预备知识Java或者Kotlin）
++ 入门
+  1. [Java](../Java.md)
+  2. [Kotlin](../Kotlin.md)
+  3. [Java官方学习](https://www.oracle.com/technetwork/cn/java/newtojava-100451-zhs.html)
+  4. [Kotlin官方学习](https://www.kotlincn.net/docs/reference/)
 
 + 进阶
 
@@ -55,7 +59,9 @@
 + [工具](AndroidDecompileTool.md)
 + [调试](AndroidDebug.md)
 + Hook
-+ ELF文件（预备知识C++和ARM汇编）
++ ELF文件
+  1. [C++](../C++.md)
+  2. ARM汇编
 + 脱壳
 
 ## 其他
