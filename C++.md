@@ -1,10 +1,174 @@
-# 一、基础
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-## 1.1、输入输出
+- [知识储备](#%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87)
+  - [开发工具](#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7)
+  - [MinGW、Cygwin、MSVC区别](#mingwcygwinmsvc%E5%8C%BA%E5%88%AB)
+  - [编译过程](#%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B)
+  - [make、Makefile、cmake、qmake](#makemakefilecmakeqmake)
+  - [GCC、Clang和LLVM](#gccclang%E5%92%8Cllvm)
+- [基础](#%E5%9F%BA%E7%A1%80)
+  - [输入输出](#%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA)
+  - [命名空间](#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4)
+  - [预处理器](#%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8)
+  - [异常处理](#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86)
+- [数据类型](#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
+  - [整型](#%E6%95%B4%E5%9E%8B)
+    - [sizeof运算符](#sizeof%E8%BF%90%E7%AE%97%E7%AC%A6)
+    - [limits头文件](#limits%E5%A4%B4%E6%96%87%E4%BB%B6)
+    - [无符号类型](#%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%B1%BB%E5%9E%8B)
+    - [十六进制和八进制表示](#%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E5%92%8C%E5%85%AB%E8%BF%9B%E5%88%B6%E8%A1%A8%E7%A4%BA)
+  - [字符型](#%E5%AD%97%E7%AC%A6%E5%9E%8B)
+  - [布尔型](#%E5%B8%83%E5%B0%94%E5%9E%8B)
+  - [const关键字](#const%E5%85%B3%E9%94%AE%E5%AD%97)
+  - [浮点型](#%E6%B5%AE%E7%82%B9%E5%9E%8B)
+  - [auto关键字](#auto%E5%85%B3%E9%94%AE%E5%AD%97)
+  - [字符串（c++的string类，c风格的见C语言）](#%E5%AD%97%E7%AC%A6%E4%B8%B2c%E7%9A%84string%E7%B1%BBc%E9%A3%8E%E6%A0%BC%E7%9A%84%E8%A7%81c%E8%AF%AD%E8%A8%80)
+  - [结构体](#%E7%BB%93%E6%9E%84%E4%BD%93)
+  - [共用体](#%E5%85%B1%E7%94%A8%E4%BD%93)
+  - [枚举](#%E6%9E%9A%E4%B8%BE)
+- [数据类型（二）](#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BA%8C)
+  - [数组](#%E6%95%B0%E7%BB%84)
+    - [c类型数组（不建议使用）](#c%E7%B1%BB%E5%9E%8B%E6%95%B0%E7%BB%84%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8)
+    - [模板类vector动态数组](#%E6%A8%A1%E6%9D%BF%E7%B1%BBvector%E5%8A%A8%E6%80%81%E6%95%B0%E7%BB%84)
+    - [模板类array固定数组（c++11）](#%E6%A8%A1%E6%9D%BF%E7%B1%BBarray%E5%9B%BA%E5%AE%9A%E6%95%B0%E7%BB%84c11)
+- [数据类型（三）对象[重点]](#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%89%E5%AF%B9%E8%B1%A1%E9%87%8D%E7%82%B9)
+  - [类](#%E7%B1%BB)
+  - [继承](#%E7%BB%A7%E6%89%BF)
+  - [运算符重载](#%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD)
+  - [多态](#%E5%A4%9A%E6%80%81)
+  - [抽象和接口](#%E6%8A%BD%E8%B1%A1%E5%92%8C%E6%8E%A5%E5%8F%A3)
+- [高级](#%E9%AB%98%E7%BA%A7)
+  - [文件处理](#%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86)
+  - [模板](#%E6%A8%A1%E6%9D%BF)
+  - [信号处理](#%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86)
+  - [多线程](#%E5%A4%9A%E7%BA%BF%E7%A8%8B)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# 知识储备
+
+## 开发工具
+
++ [Dev C++](https://sourceforge.net/projects/dev-cpp/)
+
+  Dev C++是一款用于C和C++语言开发的不错的IDE，它是一个开源的IDE，但只支持Windows平台，而不支持Linux和OS X。下载完就可以用，比较方便。
+
++ [CLion](https://www.jetbrains.com/clion/)
+
+  CLion支持多平台，Window下需要配置环境，MinGW、Cygwin、MSVC、远程LInux服务器都可以进行配置
+
++ [Visual Studio](https://visualstudio.microsoft.com/)
+
+  自带MSVC编译器
+
++ Qt
+
+  和CLion有点类似			
+
+## MinGW、Cygwin、MSVC区别
+
++ MinGW
+
+  MinGW是指是Minimalist GNU on Windows的缩写。它是一个可自由使用和自由发布的Windows特定头文件和使用GNU工具集导入库的集合，允许你在GNU/Linux和Windows平台生成本地的Windows程序而不需要第三方C运行时库
+
++ Cygwin
+
+  Cygwin 提供完整的类Unix 环境，Windows 用户不仅可以使用GNU 工具，理论上Linux 上的程序只要用Cygwin 重新编译，就可以在Windows 上运行
+
++ MSVC
+
+  MSVC是指微软的VC编译器
+
+## 编译过程
+
+![](images/C++_build_1.jpg)
+
+![](images/C++_build_2.jpg)
+
+1. 预编译
+
+   将.c 文件转化成 .i文件
+
+   使用的gcc命令是：gcc –E
+
+   对应于预处理命令cpp
+
+2. 编译
+
+   将.c/.h文件转换成.s文件
+
+   使用的gcc命令是：gcc –S
+
+   对应于编译命令 cc –S
+
+3. 汇编
+
+   将.s 文件转化成 .o文件
+
+   使用的gcc 命令是：gcc –c
+
+   对应于汇编命令是 as
+
+4. 链接
+
+   将.o文件转化成可执行程序
+
+   使用的gcc 命令是： gcc
+
+   对应于链接命令是 ld
+
+   总结起来编译过程就上面的四个过程：预编译处理(.c) －－> 编译、优化程序（.s、.asm）－－> 汇编程序(.obj、.o、.a、.ko) －－> 链接程序（.exe、.elf、.axf等）
+
+## make、Makefile、cmake、qmake
+
+![](images/C++_make.jpg)
+
+autotools,cmake,qmake 用来生成Makefile。make用来执行Makefile
+
++ make和Makefile
+
+  make 是用来执行Makefile的
+
+  Makefile是类unix环境下(比如Linux)的类似于批处理的"脚本"文件。其基本语法是: **目标+依赖+命令**，只有在**目标**文件不存在，或**目标**比**依赖**的文件更旧，**命令**才会被执行。由此可见，Makefile和make可适用于任意工作，不限于编程。比如，可以用来管理latex
+
++ cmake
+
+  cmake是跨平台项目管理工具，它用更抽象的语法来组织项目。它CMakeLists.txt文件（学名：组态档）去生成makefile。
+
++ qmake
+
+  qmake是Qt专用的项目管理工具，对应的工程文件是*.pro
+
+## GCC、Clang和LLVM
+
++ GCC
+
+​        GCC（GNU Compiler Collection，GNU编译器套装），是一套由 GNU 开发的编程语言编译器。
+
++ Clang
+
+​        一种编译器，类似于GCC，但编译Objective-C语言时，比GCC快3倍之多！支持C家族语言：C,C++,Objective-C, Objective-C++等。
+
++ LLVM
+
+(low level virtual machine)优化代码，优化：编译时间，链接时间，运行时间，空闲优化。 它是构架编译器的框架系统，用于优化使用任何语言编写的程序。
+
+LLVM是一个project ,包含许多组件。 包含许多把中间代码转为obj文件的工具、库、头文件。 包含汇编器、反汇编器、bitcode分析器和bitcode优化器。也包含基本的回归测试。
+
+- 相关性：
+
+Clang编译C家族语言到LLVM bitcode , 然后再用LLVM转为obj文件。
+
+非常酷的一点，支持任何平台！！！
+
+# 基础
+
+## 输入输出
 
 ```c++
 #include <iostream>  //C++输入输出的库,没有.h后缀，与c的区别
-
 using namespace std;  //使用输入输出的命名空间
 
 int main() {
@@ -15,17 +179,17 @@ int main() {
 }
 ```
 
-## 1.2、命名空间
+## 命名空间
 
-## 1.3、预处理器
+## 预处理器
 
-## 1.4、异常处理
+## 异常处理
 
 
 
-# 二、数据类型
+# 数据类型
 
-## 2.1、整型
+## 整型
 
 short、int、long、long long
 
@@ -34,7 +198,7 @@ short、int、long、long long
 - long至少32位，至少与int一样长
 - long long至少64位，至少与long一样长
 
-### 2.1.1、sizeof运算符
+### sizeof运算符
 
 可对类型名或者变量名使用sizeof运算符，输出字节数。
 
@@ -44,7 +208,7 @@ cout << sizeof(a) << endl;
 //输出4，表示变量a占四个字节
 ```
 
-### 2.1.2 limits头文件
+### limits头文件
 
 包含当前操作系统下的最大值和最小值
 
@@ -59,44 +223,44 @@ int main() {
 }
 ```
 
-### 2.1.3 无符号类型
+### 无符号类型
 
 无符号类型只有在非负数情况下才可以使用
 
 unsigned short、unsigned（表示无符号int整形）、unsigned long、unsigned long long
 
-### 2.1.4 十六进制和八进制表示
+### 十六进制和八进制表示
 
 ```c++
 int a=0x16;   //这边的16为十六进制
 int b=016;    //这边的16为八进制
 ```
 
-## 2.2、字符型
+## 字符型
 
 存储0~128个ASCII码
 
 c++11 新增char16_t和char32_t
 
-## 2.3、布尔型
+## 布尔型
 
 true和false。true为1，false为0
 
-## 2.4 const关键字
+## const关键字
 
 使用const来代替define声明常量。
 
-## 2.5 浮点型
+## 浮点型
 
 float、double、long double
 
-## 2.6 auto关键字
+## auto关键字
 
 ```c++
 auto a = 'a';   //不显示的指明类型，使用auto关键字系统会自动识别
 ```
 
-## 2.7 字符串（c++的string类，c风格的见C语言）
+## 字符串（c++的string类，c风格的见C语言）
 
 ```c++
 #include <iostream>  //C++输入输出的库,没有.h后缀，与c的区别
@@ -121,15 +285,15 @@ int main() {
 }
 ```
 
-## 2.8 结构体
+## 结构体
 
-## 2.9 共用体
+## 共用体
 
-## 2.10 枚举
+## 枚举
 
-# 三 数据类型（二）
+# 数据类型（二）
 
-## 3.1、数组
+## 数组
 
 ```c++
 共同点
@@ -149,7 +313,7 @@ int main() {
 （10.）vector和array在声明变量后，在声明周期完成后，会自动地释放其所占用的内存。对于数组如果用new[ ]/malloc申请的空间，必须用对应的delete[ ]和free来释放内存
 ```
 
-### 3.1.1 c类型数组（不建议使用）
+### c类型数组（不建议使用）
 
 ```c++
 #include <iostream>  //C++输入输出的库,没有.h后缀，与c的区别
@@ -166,7 +330,7 @@ int main() {
 }
 ```
 
-### 3.1.2 模板类vector动态数组
+### 模板类vector动态数组
 
 ```c++
 /**
@@ -216,7 +380,7 @@ int main() {
 }
 ```
 
-### 3.1.3 模板类array固定数组（c++11）
+### 模板类array固定数组（c++11）
 
 ```c++
 #include <array>    //array类头文件
@@ -230,9 +394,9 @@ int main() {
 }
 ```
 
-# 四 数据类型（三）对象[重点]
+# 数据类型（三）对象[重点]
 
-## 4.1 类
+##  类
 
 ```c++
 /**
@@ -332,7 +496,7 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
-## 4.2 继承
+## 继承
 
 ```c++
 /**
@@ -402,7 +566,7 @@ int main() {
 }
 ```
 
-## 4.3 运算符重载
+## 运算符重载
 
 ```c++
 /**
@@ -488,7 +652,7 @@ int main() {
 }
 ```
 
-## 4.4 多态
+## 多态
 
 ```c++
 /**
@@ -497,7 +661,7 @@ int main() {
 **/
 ```
 
-## 4.5 抽象和接口
+## 抽象和接口
 
 ```
 /**
@@ -517,9 +681,9 @@ c++中接口也是一种抽象类，需要满足：
 **/
 ```
 
-# 五 高级
+# 高级
 
-## 5.1 文件处理
+## 文件处理
 
 ```c++
 /**
@@ -598,9 +762,9 @@ int main() {
 }
 ```
 
-## 5.2 模板
+## 模板
 
-## 5.3 信号处理
+## 信号处理
 
-## 5.4 多线程
+## 多线程
 
