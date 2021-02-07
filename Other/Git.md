@@ -253,6 +253,9 @@ git push [remote] [branch]
 # 强行推送当前分支到远程仓库，即使有冲突
 git push [remote] --force
 
+# 重定向地址
+git remote set-url origin [新地址]
+
 # 推送所有分支到远程仓库
 ```
 
