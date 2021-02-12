@@ -270,7 +270,7 @@ public class EventButton extends AppCompatButton {
 ## TextView
 
 ### 自动定位到最后一行
-```
+```java
 textView.append(msg + "\n");
 int offset = textView.getLineCount() * textView.getLineHeight();
 if (offset > textView.getHeight()) {
@@ -281,7 +281,7 @@ if (offset > textView.getHeight()) {
 ## WebView
 
 ### 加载html的几种方式
-```
+```java
 1、打开本包内assets目录下的index.html文件
 webview.loadUrl("file:///android_assets/index.html");
 
@@ -295,7 +295,7 @@ webview.loadUrl("file:"+Environment.getExternalStorageDirectory()+File.separator
 webview.loadUrl("www.google.com");
 ```
 ### WebSettings
-```
+```java
 WebSettings settings = getSettings();
  //默认是false 设置true允许和js交互
  settings.setJavaScriptEnabled(true);
@@ -319,7 +319,7 @@ WebSettings settings = getSettings();
 ```
 
 ### WebviewClient
-```
+```java
 1、shouldOverrideUrlLoading(WebView view, String url)
 在API 24以后过时，当一个url即将被webview加载时，给Application一个机会来接管处理这个url，方法返回true代表Application自己处理url；返回false代表Webview处理url。
 举个例子，项目中需要处理传过来的URL是一个事件还是一个HTTP链接，可以通过自定义协议头 (nativeapi://) 来过滤，如：
@@ -368,7 +368,7 @@ WebSettings settings = getSettings();
 ```
 
 ### WebChromeClient
-```
+```java
 1、onProgressChanged(WebView view, int newProgress)
 通知Application的加载进度，newProgress取值范围[0,100]，可以通过这个方法来编写一个带加载进度条的Webview，具体例子请参考：Android 编写一个带进度条的Webview
 2、onReceivedTitle(WebView view, String title)
@@ -391,7 +391,7 @@ WebView重写URL加载时,它会自动累积的历史访问的web页面。可以
 ```
 
 ### WebView和js交互
-```
+```java
 js调用java接口
 public class WebAppInterface {
     Context mContext;
@@ -452,7 +452,7 @@ java调用js接口
 ```
 
 ### 优化和坑
-```
+```java
 1、Webview打开一个链接，播放一段音乐，退出Activity时音乐还在后台播放，可以通过在Activity的onPause中调用webview.onPause()解决，并在Activity的onResume中调用webview.onResume()恢复，如下：
 @Override
     protected void onPause() {
@@ -506,7 +506,7 @@ Does a best-effort attempt to pause any processing that can be paused safely, su
 悬浮按钮
 
 ### 使用
-```
+```java
 <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_camera_exit"
                 android:layout_width="wrap_content"
