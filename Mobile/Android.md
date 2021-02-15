@@ -15,8 +15,14 @@
 
 + [JNI（native层）](AndroidJNI.md)
 + [IPC（跨进程）](AndroidIPC.md)
-
 + [开源库](AndroidOpenSource.md)
+
+### 学习资料
+
++ [Android 开发中的日常积累](https://github.com/lizhangqu/CoreLink)
++ [Android 学习资料收集](https://github.com/Freelander/Android_Data)
++ [收集利用 Kotlin 进行 Android 开发的开源库，扩展，工具，开源项目，资料等高质量资源的集合](https://github.com/adisonhuang/awesome-kotlin-android)
++ [Android面试总结](https://github.com/ddnosh/BestReview)
 
 ### 安卓源码
 
