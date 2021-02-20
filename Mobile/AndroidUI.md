@@ -500,6 +500,12 @@ Does a best-effort attempt to pause any processing that can be paused safely, su
 
 # 原生扩展UI
 
+引入方式
+
+```java
+implementation 'com.google.android.material:material:1.2.1'
+```
+
 ## FloatingActionButton
 
 ### 介绍
@@ -599,3 +605,103 @@ setSupportActionBar(toolbar);
 
 ### [沉浸式效果](https://github.com/laobie/StatusBarUtil)
 ### [详细使用](https://blog.csdn.net/da_caoyuan/article/details/79557704)
+
+## RecyclerView
+
+### 设置
+
+```java
+setLayoutManager(new LinearLayoutManager(context))  //默认条目垂直展示
+
+//修改为水平展示    
+LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+setLayoutManager(layoutManager);    
+
+//刷新库    
+mPullDownLoadView.setRefreshFooter(new ClassicsFooter(context));
+mPullDownLoadView.setEnableAutoLoadMore(false);   //取消滚动到底部刷新
+mPullDownLoadView.setEnableRefresh(false);
+//mPullDownLoadView.setEnableRefresh(false);//是否启用下拉刷新功能
+mPullDownLoadView.setOnLoadMoreListener(refreshLayout -> {
+           
+});    
+```
+
+### 布局
+
+```xml
+//添加底部刷新和头部刷新
+implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-4'
+implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-4'
+
+//
+<com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smartRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll_head">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_data_query_show"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fadeScrollbars="false"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@color/login_blue"   <!-- 设置下滑bar展示的颜色 -->
+                />
+
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+```
+
+### 适配器
+
+```java
+public class BlueScanAdapter extends RecyclerView.Adapter<BlueScanAdapter.MyViewHolder> {
+
+    private Context context;
+    private List<BluetoothDevice> mDatas;
+
+
+    public BlueScanAdapter(Context context, List<BluetoothDevice> mDatas) {
+        this.mDatas = mDatas;
+        this.context = context;
+    }
+
+    @NonNull
+    @Override
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.activity_blue_scan_sub, parent, false));
+    }
+
+
+    @SuppressLint({"SetTextI18n", "ResourceAsColor"})
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return mDatas == null ? 0 : mDatas.size();
+    }
+
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView tv_name;
+        TextView tv_mac;
+        Button btn_connect;
+
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            tv_name = itemView.findViewById(R.id.tv_name);
+            tv_mac = itemView.findViewById(R.id.tv_mac);
+            btn_connect = itemView.findViewById(R.id.btn_connect);
+        }
+    }
+}
+```
+
