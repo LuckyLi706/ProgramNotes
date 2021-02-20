@@ -1,3 +1,30 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [梳理](#%E6%A2%B3%E7%90%86)
+  - [1、Android_SDK梳理](#1android_sdk%E6%A2%B3%E7%90%86)
+  - [2、Android_UX_SDK梳理](#2android_ux_sdk%E6%A2%B3%E7%90%86)
+- [集成](#%E9%9B%86%E6%88%90)
+  - [1、build.gradle配置](#1buildgradle%E9%85%8D%E7%BD%AE)
+  - [2、创建MApplication类](#2%E5%88%9B%E5%BB%BAmapplication%E7%B1%BB)
+  - [3、AndroidManifest.xml配置](#3androidmanifestxml%E9%85%8D%E7%BD%AE)
+- [准备动作](#%E5%87%86%E5%A4%87%E5%8A%A8%E4%BD%9C)
+  - [1、动态权限申请（略）](#1%E5%8A%A8%E6%80%81%E6%9D%83%E9%99%90%E7%94%B3%E8%AF%B7%E7%95%A5)
+  - [2、检测key是否合法](#2%E6%A3%80%E6%B5%8Bkey%E6%98%AF%E5%90%A6%E5%90%88%E6%B3%95)
+  - [3、登录大疆账号](#3%E7%99%BB%E5%BD%95%E5%A4%A7%E7%96%86%E8%B4%A6%E5%8F%B7)
+- [照相机](#%E7%85%A7%E7%9B%B8%E6%9C%BA)
+  - [1、展示照相机视频](#1%E5%B1%95%E7%A4%BA%E7%85%A7%E7%9B%B8%E6%9C%BA%E8%A7%86%E9%A2%91)
+  - [2、拍照/录像](#2%E6%8B%8D%E7%85%A7%E5%BD%95%E5%83%8F)
+  - [3、拍照照片和录像视频保存到手机上](#3%E6%8B%8D%E7%85%A7%E7%85%A7%E7%89%87%E5%92%8C%E5%BD%95%E5%83%8F%E8%A7%86%E9%A2%91%E4%BF%9D%E5%AD%98%E5%88%B0%E6%89%8B%E6%9C%BA%E4%B8%8A)
+  - [4、云台角度](#4%E4%BA%91%E5%8F%B0%E8%A7%92%E5%BA%A6)
+- [飞行](#%E9%A3%9E%E8%A1%8C)
+  - [1、飞机状态信息](#1%E9%A3%9E%E6%9C%BA%E7%8A%B6%E6%80%81%E4%BF%A1%E6%81%AF)
+  - [2、智能飞行（自动巡航）](#2%E6%99%BA%E8%83%BD%E9%A3%9E%E8%A1%8C%E8%87%AA%E5%8A%A8%E5%B7%A1%E8%88%AA)
+  - [3、虚拟摇杆（遥控飞行）](#3%E8%99%9A%E6%8B%9F%E6%91%87%E6%9D%86%E9%81%A5%E6%8E%A7%E9%A3%9E%E8%A1%8C)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # 梳理
 
 ## 1、Android_SDK梳理
