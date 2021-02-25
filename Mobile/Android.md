@@ -74,7 +74,7 @@
 + Hook
 + ELF文件
   1. [C++](../C++.md)
-  2. ARM汇编
+  2. [ARM汇编](AndroidARM.md)
 + 脱壳
 
 ## 其他

@@ -47,17 +47,22 @@
 + Http协议
 + [刨根问底HTTP和WebSocket协议](https://www.jianshu.com/p/0e5b946880b4)
 
+## BuildTool
+
++ [Gradle](BuildTool/Gradle.md)
+
++ [Maven](BuildTool/Maven.md)
++ [CMake](BuildTool/CMake.md)
+
 ## IDE
 
 + [Qt](IDE/Qt.md)
 + [phpMyAdmin](IDE/phpMyAdmin)
 
-## BuildTool
-
-+ [Maven](BuildTool/Maven.md)
-+ [CMake](BuildTool/CMake.md)
-
 ## Other
 
 + [Git](Other/Git.md)
 + [Markdown](Other/Markdown.md)
+
+## Software
+
