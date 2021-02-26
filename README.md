@@ -14,7 +14,7 @@
 
 ## Assembler
 
-+ [ARM](Assembler/ARM.md)
++ [ARM](Assembler/arm.md)
 + [x86](Assembler/x86.md)
 
 ## PC
