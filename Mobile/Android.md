@@ -80,13 +80,9 @@
 ## 其他
 
 + [命令（SDK的命令工具）](AndroidCommand.md)
-
 + [刷机和Root](AndroidBrushRoot.md)
-
 + [多开](AndroidMultiboxing.md)
-
 + [模拟器](AndroidSimulator.md)
-
 + [上传自己的库到jcenter](https://blog.csdn.net/linglongxin24/article/details/53415932)
 
   ```groovy
