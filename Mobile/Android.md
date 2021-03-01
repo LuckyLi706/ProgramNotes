@@ -85,7 +85,6 @@
 + [多开](AndroidMultiboxing.md)
 + [模拟器](AndroidSimulator.md)
 + [上传自己的库到jcenter](https://blog.csdn.net/linglongxin24/article/details/53415932)
-
   ```groovy
   /** 以下开始是将Android Library上传到jcenter的相关配置**/
   
