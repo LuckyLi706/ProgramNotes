@@ -56,7 +56,6 @@
 ## BuildTool
 
 + [Gradle](BuildTool/Gradle.md)
-
 + [Maven](BuildTool/Maven.md)
 + [CMake](BuildTool/CMake.md)
 
