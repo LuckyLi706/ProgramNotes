@@ -15,6 +15,7 @@
 + [JNI（native层）](AndroidJNI.md)
 + [IPC（跨进程）](AndroidIPC.md)
 + [开源库](AndroidOpenSource.md)
++ [App防护](AndroidProtect.md)
 
 ### 学习资料
 
@@ -23,7 +24,7 @@
 + [收集利用 Kotlin 进行 Android 开发的开源库，扩展，工具，开源项目，资料等高质量资源的集合](https://github.com/adisonhuang/awesome-kotlin-android)
 + [Android面试总结](https://github.com/ddnosh/BestReview)
 
-### 安卓源码
+### [安卓源码](AndroidSourceCode.md)
 
   - [在线镜像](http://androidxref.com/9.0.0_r3/xref/)
   - [官网](https://github.com/aosp-mirror)
@@ -61,20 +62,22 @@
     1. [Android 生成系统签名文件的可行性分析](https://www.jianshu.com/p/12f27d292ffd)
     2. [Android Studio自动生成带系统签名的apk](https://blog.csdn.net/cxq234843654/article/details/51557025)
   
-### 其他开发
+### 其他
 
   + [大疆无人机](大疆SDK（安卓版）.md)
+  + [PC端下载Google Play的apk](https://apkpure.com/cn/ )
 
 ## 逆向
 
-+ [Smail语法（Dalvik指令）](AndroidSmail.md)
++ 学习
+  1. [Smail语法（Dalvik指令）](AndroidSmail.md)
+  2. [C++](../C++.md)
+  3. [ARM汇编](../Assembler/arm.md)
+
 + [工具](AndroidDecompileTool.md)
 + [调试](AndroidDebug.md)
-+ Hook
-+ ELF文件
-  1. [C++](../C++.md)
-  2. [ARM汇编](AndroidARM.md)
-+ 脱壳
++ [Hook](AndroidHook.md)
++ [脱壳](AndroidUnpacking.md)
 
 ## 其他
 
