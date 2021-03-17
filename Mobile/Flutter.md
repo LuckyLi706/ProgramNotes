@@ -16,6 +16,6 @@
 
 ### 学习
 
-+ [Dart]
++ [Flutter中文网](https://flutterchina.club/)
 + [非常全的组件集合](https://github.com/toly1994328/FlutterUnit)
 

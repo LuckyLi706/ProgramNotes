@@ -238,3 +238,22 @@ public interface UserDao {
 
 ## 数据库升级
 
+## 相关问题
+
+```java
+/**
+     * 修复Row too big to fit into CursorWindow（上限为2M）
+     * <p>
+     * https://www.it-swarm.dev/zh/android/sqlite-android%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B8%B8%E6%A0%87%E7%AA%97%E5%8F%A3%E5%88%86%E9%85%8D2048-kb%E5%A4%B1%E8%B4%A5/1068546317/
+     */
+    private static void fix() {
+        try {
+            Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 102400 * 1024); //the 102400 is the new size added
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+```
+

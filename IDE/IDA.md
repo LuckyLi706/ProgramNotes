@@ -42,7 +42,11 @@ alt+g
 ctrl+s
 ```
 
-## 安卓调试
+## IDA问题解决
+
++ [ida pro 7.0 无法显示中文的问题解决方法](https://blog.csdn.net/fuchaosz/article/details/104827280)
+
+## 安卓
 
 ### 启动式调试
 
