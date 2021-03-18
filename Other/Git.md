@@ -306,3 +306,8 @@ git stash pop
    + [安装教程](https://www.cnblogs.com/your-Name/p/10365286.html)
    + 部署完成，web入口地址：http://ip:12301/user/admin，默认用户名和密码都是admin
 2. 
+
+## Github clone慢的解决
+
++ [1分钟解决git clone 速度慢的问题](https://blog.csdn.net/weixin_42886104/article/details/106454331)
++ [github的镜像](https://gitclone.com/)
