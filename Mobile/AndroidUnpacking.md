@@ -106,7 +106,9 @@
 + [针对梆梆的壳](https://github.com/lambdalang/DexExtractor)
 + [FDex2脱壳--腾讯乐固、360加固一键脱壳（需要Xposed）](https://zhuanlan.zhihu.com/p/45591754)
 + [dumpDex脱壳（需要Xposed，还在更新中）]( https://github.com/WrBug/dumpDex)
-+ [frida脱壳]( https://github.com/smartdone/Frida-Scripts/tree/master/unpack )
++ frida脱壳，三秒脱个壳
+  - [吾爱破解地址](https://www.52pojie.cn/forum.php?mod=viewthread&tid=1116812&highlight=frida)
+  - [github地址](https://github.com/hluwa/FRIDA-DEXDump)
 
 ## so修复工具
 
