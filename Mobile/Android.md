@@ -16,6 +16,7 @@
 + [IPC（跨进程）](AndroidIPC.md)
 + [开源库](AndroidOpenSource.md)
 + [App防护](AndroidProtect.md)
++ [Gradle](../BuildTool/Gradle.md)
 
 ### 学习资料
 

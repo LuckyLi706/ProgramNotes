@@ -522,3 +522,113 @@ MALE
 static method
 ```
 
+## Android
+
+```groovy
+android {
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
+    defaultConfig {
+        applicationId "com.lucky.app"
+        minSdkVersion 17
+        targetSdkVersion 29
+        versionCode 5
+        versionName "1.5.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        flavorDimensions "versionCode"
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
+        multiDexEnabled true
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+    signingConfigs {
+        release {
+            keyAlias ''
+            keyPassword ''
+            storeFile file('')
+            storePassword ''
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            //混淆
+            //minifyEnabled true
+            // Zipalign优化
+            //zipAlignEnabled true
+            // 移除无用的resource文件
+            //shrinkResources true
+            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            /**
+            配置BuildConfig变量
+            **/
+            buildConfigField("String", "PACK_TIME", "\"" + getTime() + "\"")
+            buildConfigField("String", "BASE_URL", '"https://yzp.ssl.ysten.com/ysp-tv-api/"')
+            buildConfigField("String", "MQTT_URL", '"tcp://36.155.71.242:8099"')
+            buildConfigField("boolean", "IS_TEST", "false")
+        }
+        debug {
+
+            //测试环境
+            signingConfig signingConfigs.release
+            buildConfigField("String", "PACK_TIME", "\"" + getTime() + "\"")
+            buildConfigField("String", "BASE_URL", '"https://yzpdev.ssl.ysten.com/ysp-tv-api/"')
+            buildConfigField("String", "MQTT_URL", '"tcp://39.99.189.185:1883"')
+            buildConfigField("boolean", "IS_TEST", "true")
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    sourceSets.main {
+        jniLibs.srcDirs = ['src/main/libs'];
+    }
+
+    /**
+     针对不同的渠道来生成不同参数
+     xml配置：
+     <meta-data
+            android:name="LAUNCHER"
+            android:value="${IS_LAUNCHER}" />
+     java配置：       
+     */
+    productFlavors {
+        cmcc {
+            manifestPlaceholders = [CATEGORY_VALUE: "android.intent.category.DEFAULT", IS_LAUNCHER: false, CHANNEL_VALUE: "cmcc", IS_NEED_UPDATE: false]
+        }
+        launcher {
+            manifestPlaceholders = [CATEGORY_VALUE: "android.intent.category.HOME", IS_LAUNCHER: true, CHANNEL_VALUE: "launcher", IS_NEED_UPDATE: true]
+        }
+        normal {
+            manifestPlaceholders = [CATEGORY_VALUE: "android.intent.category.DEFAULT", IS_LAUNCHER: false, CHANNEL_VALUE: "normal", IS_NEED_UPDATE: true]
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    //输出release包
+    applicationVariants.all { variant ->
+        if (variant.buildType.name.equals('release')) {//防止AS无法安装debug包(apk)
+            if (!isPack()) {
+                return;
+            }
+            variant.outputs.all { output ->
+                outputFileName = 'yst.cs' + "_" + "${variant.productFlavors[0].name}" + "_" + variant.versionName + "_" + variant.versionCode + '.apk'
+                //outputFileName2  = "app-release.apk"
+                //打包路径
+                variant.packageApplication.outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+            }
+        }
+    }
+}
+```
+
