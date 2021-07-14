@@ -7,10 +7,6 @@
 + [百度云盘地址，密码www.52pojie.cn](https://pan.baidu.com/s/1gwKmbEiSJ9pygG80MF354g)
 + [模板地址](https://github.com/strazzere/010Editor-stuff)
 
-## [Fiddler](https://www.telerik.com/fiddler)
-
-+ [使用教程](https://www.oschina.net/p/fiddler?hmsr=aladdin1e1)
-
 ## [Navicat Premium]()
 
 + [破解1](https://www.jianshu.com/p/5f693b4c9468/)
