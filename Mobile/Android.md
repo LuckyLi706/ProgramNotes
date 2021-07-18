@@ -63,7 +63,6 @@
   
     1. [Android 生成系统签名文件的可行性分析](https://www.jianshu.com/p/12f27d292ffd)
     2. [Android Studio自动生成带系统签名的apk](https://blog.csdn.net/cxq234843654/article/details/51557025)
-  
 ### 其他
 
   + [大疆无人机](大疆SDK（安卓版）.md)

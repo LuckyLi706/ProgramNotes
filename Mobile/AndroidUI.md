@@ -250,7 +250,11 @@ public class EventButton extends AppCompatButton {
 
  ```
 
-# 自定义View
+## 滑动冲突
+
+
+
+# 自定义View和ViewGroup
 
 ## 分类
 + 继承View重写onDraw方法（采用这种方法需要自己支持wrap_content）,并且padding也需要自己处理
@@ -265,7 +269,15 @@ public class EventButton extends AppCompatButton {
 + View中如果有线程和动画,需要即时停止（参考View的onDetachedFromWindow方法）
 + View带有滑动嵌套情形时,需要处理好滑动冲突.
 
-# 原生View
+# 原生View和ViewGroup
+
+## LinearLayout和RelativeLayout
+
++ 同等情况下，LinearLayout的性能优于RelativeLayout，所以setContentView()的父布局是LinearLayout
+
++ 在尽量减少布局嵌套的情况下，RelativeLayout可以比LinearLayout写出更复杂的布局
++ RelativeLayout的对子View测量了两次
++ 在LinearLayout中，是先判断方向，然后onMeasure()。但是如果遇到有weight属性的子View，会对其进行第二次的onMeasure()。
 
 ## TextView
 
@@ -498,7 +510,7 @@ Does a best-effort attempt to pause any processing that can be paused safely, su
 ```
 4、WebView中存在的漏洞，参看：[你不知道的 Android WebView 使用漏洞](https://blog.csdn.net/carson_ho/article/details/64904635)
 
-# 原生扩展UI
+# 原生扩展View和ViewGroup
 
 引入方式
 
@@ -506,12 +518,161 @@ Does a best-effort attempt to pause any processing that can be paused safely, su
 implementation 'com.google.android.material:material:1.2.1'
 ```
 
-## FloatingActionButton
+## ConstraintLayout （约束布局）
 
-### 介绍
-悬浮按钮
+```xml
+implementation 'androidx.constraintlayout:constraintlayout:2.0.1'  //添加依赖
+```
 
-### 使用
+## DrawerLayout（侧滑）
+
+```
+<androidx.drawerlayout.widget.DrawerLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        //android:layout_gravity="start" 子控件设置这个属性左边侧滑
+        //android:layout_gravity="end" 子控件设置这个属性右边侧滑
+
+
+</androidx.drawerlayout.widget.DrawerLayout>
+    
+//禁止手势滑动
+mDrawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+//打开手势滑动
+mDrawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+//java代码打开和关闭
+mDrawerLayout.openDrawer(GravityCompat.START);  //打开左边
+mDrawerLayout.openDrawer(GravityCompat.END);  //打开右边
+mDrawerLayout.closeDrawer(GravityCompat.START); //关闭左边
+mDrawerLayout.closeDrawer(GravityCompat.END); //关闭右边
+mDrawerLayout.closeDrawers(); //关闭所有
+
+//事件监听
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View view, float v) {
+                Log.i("---", "滑动中");
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View view) {
+                Log.i("---", "打开");
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View view) {
+                Log.i("---", "关闭");
+            }
+
+            @Override
+            public void onDrawerStateChanged(int i) {
+                Log.i("---", "状态改变");
+            }
+        });
+```
+
+## NavigationView（滑动菜单）
+
+```xml
+<com.google.android.material.navigation.NavigationView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"  //展示在侧滑的左边
+            app:menu="@menu/nav_menu"  //下面的菜单项
+            app:headerLayout="@layout/nav_head"/>  //头部布局
+
+//nav_menu.xml
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="ExtraText">
+    用一个group来放item，checkableBehavior设置为single表示为一个组
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/friends"
+            android:title="我的好友" />
+        <item
+            android:id="@+id/mail"
+            android:title="我的邮件" />
+        <item
+            android:id="@+id/location"
+            android:title="我的位置" />
+    </group>
+</menu>
+
+//nav_head.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp">
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+//菜单点击事件
+//设置默认选中的菜单
+mNavigationView.setCheckedItem(R.id.friends);
+//给菜单设置监听
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected( MenuItem item) {
+                //关闭弹出菜单
+                drawerLayout.closeDrawers();
+                return true;
+            }
+        });
+```
+
+## CardView（卡片布局）
+
+```
+//常用属性
+card_view:cardElevation	阴影的大小
+card_view:cardMaxElevation	阴影最大高度
+card_view:cardBackgroundColor	卡片的背景色
+card_view:cardCornerRadius	卡片的圆角大小
+card_view:contentPadding	卡片内容于边距的间隔
+card_view:contentPaddingBottom	卡片内容与底部的边距
+card_view:contentPaddingTop	卡片内容与顶部的边距
+card_view:contentPaddingLeft	卡片内容与左边的边距
+card_view:contentPaddingRight	卡片内容与右边的边距
+card_view:contentPaddingStart	卡片内容于边距的间隔起始
+card_view:contentPaddingEnd	卡片内容于边距的间隔终止
+card_view:cardUseCompatPadding	设置内边距，V21+的版本和之前的版本仍旧具有一样的计算方式
+card_view:cardPreventCornerOverlap	在V20和之前的版本中添加内边距，这个属性为了防止内容和边角的重叠
+
+<androidx.cardview.widget.CardView
+            android:id="@+id/cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            app:cardBackgroundColor="@color/colorAccent"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
+            app:contentPadding="8dp">
+            <!--子布局控件-->
+        </androidx.cardview.widget.CardView>
+```
+
+## NestedScrollView（滑动）
+
+用于处理滑动嵌套的，滑动冲突替代ScrollView
+
+```xml
+<androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            //添加子控件
+        </androidx.core.widget.NestedScrollView>
+
+layout_behavior这是一个系统behavior, 从字面意思就可以看到, 是为appbar设置滚动动作的一个behavior. 没有这个属性的话, Appbar就是死的, 有了它就有了灵魂
+```
+
+## FloatingActionButton（悬浮按钮）
+
 ```java
 <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_camera_exit"
@@ -593,7 +754,7 @@ public class MainActivity extends Activity {
     }
 }
 ```
-4. ToolBar(5.0之后推出,代替ActionBar)
+4. ToolBar(5.0之后推出，代替ActionBar，推荐)
 ```java
 Toolbar 是android 5.0的推出的，放在了v7包中作为控件，它是为了取代actionbar而产生的.由于ActionBar在各个安卓版本和定制Rom中的效果表现不一，导致严重的碎片化问题，ToolBar应运而生。
 优点：自定义视图的操作更加简单，状态栏的颜色可以调（Android 4.4以上）。
@@ -601,9 +762,188 @@ setSupportActionBar ，Toolbar即能取代原本的 actionbar 了.
 
 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 setSupportActionBar(toolbar);
+
+//基本属性
+<androidx.appcompat.widget.Toolbar
+     android:id="@+id/toolbar"
+     android:layout_width="match_parent"
+     android:layout_height="?attr/actionBarSize"
+     android:background="@color/purple_500"
+     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"   //菜单弹出样式
+     app:title="标题"  //显示的标题
+     app:logo="@mipmap/ic_launcher" //显示的logo
+     app:navigationIcon="@mipmap/ic_launcher_round" //左边显示的图标
+     app:titleMarginStart="90dp"  //标题的距离
+     app:titleTextAppearance="@style/ToolbarTitle"  //标题的字体属性
+     app:titleTextColor="@color/white/>    //标题的颜色
+//toolbar作为独立控件点击左边的图标的事件         
+toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this,"33",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//菜单栏
+1.在res下新建menu文件夹用来存放菜单资源xml
+    <item />标签属性
+    icon：菜单项图标
+    title：菜单项标题
+    showAsAction：菜单项展示的位置,五个属性值
+always 总是显示在Toolbar上。
+ifRoom 如果Toolbar上还有空间，则显示，否则会隐藏在溢出列表中。
+never 永远不会显示在Toolbar上，只会在溢出列表中出现。
+withText 文字和图标一起显示。
+collapseActionView 声明了这个操作视窗应该被折叠到一个按钮中，当用户选择这个按钮时，这个操作视窗展开。一般要配合ifRoom一起使用才会有效
+    
+2.展示和事件
+    Toolbar作为ActionBar使用
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_main, menu);
+    return true;
+}
+
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+    return super.onOptionsItemSelected(item);
+}
+
+     Toolbar作为独立控件使用
+toolbar.inflateMenu(R.menu.menu_main);
+toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return true;
+    }
+});
+```
+
+### AppBarLayout和CoordinatorLayout
+
+AppBarLayout是LinearLayout的子类，必须在它的子view上设置app:layout_scrollFlags属性或者是在代码中调用setScrollFlags()设置这个属性。
+
+AppBarLayout的子布局有5种滚动标识：
+
+scroll：所有想滚动出屏幕的view都需要设置这个flag， 没有设置这个flag的view将被固定在屏幕顶部。
+
+enterAlways：这个flag让任意向下的滚动都会导致该view变为可见，启用快速“返回模式”。
+
+enterAlwaysCollapsed：假设你定义了一个最小高度（minHeight）同时enterAlways也定义了，那么view将在到达这个最小高度的时候开始显示，并且从这个时候开始慢慢展开，当滚动到顶部的时候展开完。
+
+exitUntilCollapsed：当你定义了一个minHeight，此布局将在滚动到达这个最小高度的时候折叠。
+
+snap：当一个滚动事件结束，如果视图是部分可见的，那么它将被滚动到收缩或展开。例如，如果视图只有底部25%显示，它将折叠。相反，如果它的底部75%可见，那么它将完全展开。
+
+
+
+CoordinatorLayout主要通过Behavior来实现协调者，一般我们会给相应的子View添加一个类似app:layout_behavior="@string/appbar_scrolling_view_behavior"。当然我们这里也可以自定义。
+
+```xml
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+ 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:title="标题"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+    </com.google.android.material.appbar.AppBarLayout>
+ 
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:lineSpacingMultiplier="2"
+                android:text="@string/text" />
+        </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+```
+
+### CollapsingToolbarLayout
+
+是提供了一个可以折叠的Toolbar，它继承自FrameLayout，给它设置layout_scrollFlags，它可以控制包含在CollapsingToolbarLayout中的控件(如：ImageView、Toolbar)在响应layout_behavior事件时作出相应的scrollFlags滚动事件(移除屏幕或固定在屏幕顶端)。CollapsingToolbarLayout可以通过app:contentScrim设置折叠时工具栏布局的颜色，通过
+
+app:statusBarScrim设置折叠时状态栏的颜色。默认contentScrim是colorPrimary的色值，statusBarScrim是colorPrimaryDark的色值。CollapsingToolbarLayout的子布局有3种折叠模式（Toolbar中设置的app:layout_collapseMode）
+
+```xml
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true"
+        >
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            tools:ignore="MissingConstraints">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                android:fitsSystemWindows="true"
+                app:titleEnabled="false"
+                app:contentScrim="@color/purple_700"
+                >
+
+                <ImageView
+                    android:id="@+id/img_activity_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    android:background="@mipmap/ic_launcher"
+                    app:layout_collapseMode="parallax"/>
+
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:logo="@mipmap/ic_launcher"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@mipmap/ic_launcher_round"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:title="标题" />
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:lineSpacingMultiplier="2"
+                android:text="@string/text" />
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 ```
 
 ### [沉浸式效果](https://github.com/laobie/StatusBarUtil)
+
 ### [详细使用](https://blog.csdn.net/da_caoyuan/article/details/79557704)
 
 ## RecyclerView
@@ -653,6 +993,34 @@ implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-4'
 
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 ```
+
+### SwipeRefreshLayout（下拉刷新）
+
+```
+//添加依赖   
+implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+//刷新事件
+swip_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    @Override
+    public void onRefresh() {
+        
+    }
+});    
+
+//修改进度条颜色
+swip_refresh_layout.setColorSchemeResources(R.color.colorPrimary);     //转圈圈的颜色 swip_refresh_layout.setProgressBackgroundColorSchemeColor(R.color.colorPrimaryDark); //进度条背景色
+```
+
+
 
 ### 适配器
 

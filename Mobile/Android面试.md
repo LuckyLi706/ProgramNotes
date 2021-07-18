@@ -309,7 +309,9 @@
 
   onMeasure()、onDraw()、onTouchEvent()、onLayout()
 
-+ RecyleView
++ RecyleView和ListView的区别和优化
+
++ 约束布局
 
 ### 开源库
 
@@ -348,7 +350,7 @@
 
     观察者模式、
 
-  - 
+  - 操作符
 
 + Glide
 
@@ -358,9 +360,13 @@
 
 ### 适配
 
+**toc应用基本都会问道**
+
 + [今日头条适配方案](https://www.jianshu.com/p/76f060a9cbae)
 
 ### 优化
+
+**基本都会问到**
 
 + [性能优化](https://www.jianshu.com/p/88d1f9d7a8d3)
 + 启动优化
@@ -401,9 +407,11 @@
 + LiveData
 + ROOM
 
-### 组件化
+### 组件化和模块化
 
-### React和Flutter
+### 热修复
+
+### React Native和Flutter
 
 
 
