@@ -706,6 +706,10 @@ layout_behavior这是一个系统behavior, 从字面意思就可以看到, 是�
 8. app:layout_anchor="@id/container" FloatingActionButton   Google推荐是放在CoordinatorLayout里面,也可以在FramLayout
 ```
 
+## BottomNavigationView（底部导航栏）
+
+
+
 ## Toolbar
 
 ### 介绍

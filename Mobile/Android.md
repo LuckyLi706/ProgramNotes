@@ -66,6 +66,12 @@
 ### 其他
 
   + [大疆无人机](大疆SDK（安卓版）.md)
+    - [DJI官方调参工具](https://www.dji.com/cn/downloads)
+    - [DJI SDK开发文档](https://developer.dji.com/api-reference/android-api/Components/SDKManager/DJISDKManager.html)
+    - [DJI SDK waypoint mission 使用教程（上）：属性详解](https://xiaozhuanlan.com/topic/4397205168)
+    - [DJI MSDK waypoint mission开发](https://blog.csdn.net/qq_43547555/article/details/108104682)
+    - [如何通过 DJI SDK 控制无人机运动](https://xiaozhuanlan.com/topic/0931426785)
+    - [开源飞控以及地面站](https://dev.qgroundcontrol.com/master/en/getting_started/)
   + [PC端下载Google Play的apk](https://apkpure.com/cn/ )
   + [安卓面试整理](Android面试.md)
 
