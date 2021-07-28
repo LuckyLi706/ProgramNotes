@@ -10,7 +10,16 @@
 
 ### 工具
 
-+ [Detect-It-Easy](https://github.com/horsicq/Detect-It-Easy)（查看用的什么语言写的）
++ [Detect-It-Easy](https://github.com/horsicq/Detect-It-Easy)（查看exe信息）
+
+  ![images/DIE.png](images/DIE.png)
+
++ [Exeinfo PE](http://www.exeinfo.xn.pl/)（exe查壳工具）
+
+  ![](images/Exeinfo PE.png)
+
 + [CFF Explorer](https://www.52pojie.cn/thread-321284-1-1.html)（查看PE结构）
+
 + 静态分析IDA
+
 + 动态调试x64dbg或者Ollydbg
