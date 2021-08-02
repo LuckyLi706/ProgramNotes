@@ -514,7 +514,7 @@ ArrayList（线程不安全）
 ArrayList是基于数组实现的，最大长度不会超过数组的长度2147483647(最大值是int的最大值是,2的31次方减去1 ).如果业务中可能存在超过这个长度的数据,使用LinkedArrayList
 ArrayList是基于索引的数据接口，它的底层是数组。它可以以O(1)时间复杂度对元素进行随机访问
 
-LinkedList（既实现了List也实现了Deque接口）
+LinkedList（既实现了List也实现了Deque接口,底层是双向链表）
 
 ArrayList和LinkedList的区别？
 1.、ArrayList是基于索引的数据接口，它的底层是数组。它可以以O(1)时间复杂度对元素进行随机访问。与此对应，LinkedList是以元素列表的形式存储它的数据，每一个元素都和它的前一个和后一个元素链接在一起，在这种情况下，查找某个元素的时间复杂度是O(n)。
@@ -540,7 +540,7 @@ ArrayList 与 Vector 都有一个初始的容量大小，当存储进它们里�
 Queue实现了Collection接口（用于模拟队列这种数据结构，不允许随机访问队列中的元素）
 
 ### Deque(接口)
-Deque实现了Queue接口,叫做双端队列
+Deque实现了Queue接口,叫做双端队列，两个实现类分别是LinkedList和ArrayDeque
 
 #### ArrayDeque(类)
 ArrayDeque实现了Deque接口,双端循环队列,既可以当作栈也可以当作队列使用,线程不安全.
@@ -602,6 +602,24 @@ PriorityQueue实现了Queue接口,叫做优先队列.优先队列的作用是能
      remove()和poll() 都是获取并删除队首元素,区别是当方法失败时前者抛出异常，后者返回null
 ```
 
+### 效率比较
+
+1. PriorityQueue可以作为堆使用，而且可以根据传入的Comparator实现大小的调整，会是一个很好的选择。
+2. ArrayDeque通常作为栈或队列使用，但是栈的效率不如LinkedList高。
+3. LinkedList通常作为栈或队列使用，但是队列的效率不如ArrayQueue高
+
+### BlockingQueue(接口)
+
+BlockingQueue即阻塞队列，它是基于ReentrantLock，它的实现类有ArrayBlockingQueue、DelayQueue、 LinkedBlockingDeque、LinkedBlockingQueue、PriorityBlockingQueue、SynchronousQueue等，它们的区别主要体现在存储结构上或对元素操作上的不同，但是对于take与put操作的原理，却是类似的、
+
+#### LinkedBlockingQueue
+
+LinkedBlockingQueue是BlockingQueue的一种使用Link List的实现，它对头和尾（取和添加操作）采用两把不同的锁，相对于ArrayBlockingQueue提高了吞吐量。它也是一种阻塞型的容器，适合于实现“消费者生产者”模式。
+
+#### ArrayBlockingQueue
+
+ArrayBlockingQueue是对BlockingQueue的一个数组实现，它使用一把全局的锁并行对queue的读写操作，同时使用两个Condition阻塞容量为空时的取操作和容量满时的写操作。
+
 ## Map
 
 ```java
@@ -637,6 +655,16 @@ HashMap和Hashtable都实现了Map接口，并且都是key-value的数据结构�
 2、Hashtable是线程安全的，也就是说是线程同步的，而HashMap是线程不安全的。也就是说在单线程环境下应该用HashMap，这样效率更高。
 3、HashMap允许将null值作为key或value，但Hashtable不允许（会抛出NullPointerException）。
 ```
+
+### LinkedHashMap
+
+```
+//通过维护一个运行于所有条目的双向链表 (doubly-linked list)，LinkedHashMap保证了元素迭代的顺序。该迭代顺序可以是插入顺序或者是访问顺序
+1、LinkedHashMap可以认为是HashMap+LinkedList，即它既使用HashMap操作数据结构，又使用LinkedList维护插入元素的先后顺序。
+2、LinkedHashMap的基本实现思想就是-多态。可以说，理解多态，再去理解LinkedHashMap原理会事半功倍；反之也是，对于LinkedHashMap原理的学习，也可以促进和加深对于多态的理解。
+```
+
+
 
 # 流
 

@@ -13,6 +13,11 @@
 + [Dart](Dart.md)
 + [PHP](PHP.md)
 
+## DataStructuresAlgorithms
+
++ [DataStructures](DataStructuresAlgorithms/DataStructures.md)
++ [Algorithms](DataStructuresAlgorithms/Algorithms.md)
+
 ## Assembler
 
 + [ARM](Assembler/arm.md)
@@ -71,6 +76,10 @@
 + [VisualStudio](IDE/VisualStudio.md)
 + [IDA Pro](IDE/IDA.md)
 + [Other](IDE/Other.md)
+
+## Audio/ Video
+
++ [FFmpeg](Audio_Video/FFmpeg.md)
 
 ## Other
 
