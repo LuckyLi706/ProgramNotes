@@ -22,4 +22,15 @@
 
 + 静态分析IDA
 
-+ 动态调试x64dbg或者Ollydbg
++ 动态调试
+
+  - 64位调试：x64dbg或者IDA Pro
+  - 32调试：OllyDbg
+
+### 汇编
+
++ x86
++ x64
+
+### Widnows API
+

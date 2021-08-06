@@ -22,6 +22,7 @@
 
 + [ARM](Assembler/arm.md)
 + [x86](Assembler/x86.md)
++ [x64](Assembler/x64.md)
 
 ## PC
 
