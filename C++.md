@@ -58,6 +58,8 @@
   - [智能指针（Smart Point）](#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88smart-point)
   - [信号处理（signal）](#%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86signal)
   - [多线程](#%E5%A4%9A%E7%BA%BF%E7%A8%8B)
+    - [thread](#thread)
+    - [pthread_create](#pthread_create)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1343,6 +1345,8 @@ int main()
 
 ## 多线程
 
+### thread
+
 ```c++
 //c++ 11 的多线程库
 
@@ -1370,9 +1374,42 @@ int main()
         t.join();  //等当前线程执行完了再去执行主线程
 	}
 	Sleep(10000);
-
 	return 0;
 }
 
+```
+
+### pthread_create
+
+```c++
+#include <pthread.h>  //头文件
+int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,(void*)(*start_rtn)(void*) ,void *arg);
+ 
+//第一个参数为指向线程标识符的指针。
+//第二个参数用来设置线程属性。
+//第三个参数是线程运行函数的起始地址。
+//第四个参数是运行函数的参数。
+//pthread_create() 在调用成功完成之后返回零。其他任何返回值都表示出现了错误。
+
+//例子
+
+void* thread( void* ){
+	int i;
+	for( int i=0; i<3; i++ ){
+		cout << " This is a thread " << endl;
+	}
+}
+int main( int arg, char** argv ){
+	pthread_t id;
+	int i, ret;
+	ret = pthread_create( &id, NULL, thread, NULL);
+	if( ret != 0 ) {
+		cout << " Create thread error!" << endl;
+		exit(1);
+	}
+	cout << "This is the main process" << endl;
+	pthread_join( id, NULL );
+	return(0);
+}
 ```
 

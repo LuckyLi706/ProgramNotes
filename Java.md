@@ -1296,33 +1296,31 @@ OutputStreamWriter
 
 ## 线程池
 
++ [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
+
 ### Java中的四类线程池（Executors的静态类）
 
    Android中最常见的四类具有不同特性的线程池分别为FixThreadPool、CachedThreadPool、ScheduleThreadPool以及SingleThreadExecutor。
 
-+ FixThreadPool（一堆人排队上公厕）
++ FixThreadPool
 
 ​         （1）从配置参数来看，FixThreadPool只有核心线程，并且数量固定的，也不会被回收，所有线程都活动时，因为队列没有限制大小，新任务会等待执行。
 
-​         （2）【前方高能，笔者脑洞】FixThreadPool其实就像一堆人排队上公厕一样，可以无数多人排队，但是厕所位置就那么多，而且没人上时，厕所也不会被拆迁，哈哈o(∩_∩)o ，很形象吧。
+​         （2）定长线程池的大小最好根据系统资源进行设置如Runtime.getRuntime().availableProcessors()。
 
-​         （3）由于线程不会回收，FixThreadPool会更快地响应外界请求，这也很容易理解，就好像有人突然想上厕所，公厕不是现用现建的。
+​         （3）缺点：在线程池空闲时，即线程池中没有可运行任务时，它不会释放工作线程，还会占用一定的系统资源。
 
-+ SingleThreadPool（公厕里只有一个坑位）
++ SingleThreadPool
 
 ​         （1）从配置参数可以看出，SingleThreadPool只有一个核心线程，确保所有任务都在同一线程中按顺序完成。因此不需要处理线程同步的问题。
 
-​         （2）【前方高能，笔者脑洞】可以把SingleThreadPool简单的理解为FixThreadPool的参数被手动设置为1的情况，即Executors.newFixThreadPool(1).execute(r)。所以SingleThreadPool可以理解为公厕里只有一个坑位，先来先上。为什么只有一个坑位呢，因为这个公厕是收费的，收费的大爷上年纪了，只能管理一个坑位，多了就管不过来了（线程同步问题）。
++ CachedThreadPool
 
-+ CachedThreadPool（一堆人去一家很大的咖啡馆喝咖啡）
-
-​         （1）CachedThreadPool只有非核心线程，最大线程数非常大，所有线程都活动时，会为新任务创建新线程，否则利用空闲线程（60s空闲时间，过了就会被回收，所以线程池中有0个线程的可能）处理任务。
+​         （1）CachedThreadPool只有非核心线程，最大线程数Interger. MAX_VALUE，所有线程都活动时，会为新任务创建新线程，否则利用空闲线程（60s空闲时间，过了就会被回收，所以线程池中有0个线程的可能）处理任务。
 
 ​         （2）任务队列SynchronousQueue相当于一个空集合，导致任何任务都会被立即执行。
 
-​         （3）【前方高能，笔者脑洞】CachedThreadPool就像是一堆人去一个很大的咖啡馆喝咖啡，里面服务员也很多，随时去，随时都可以喝到咖啡。但是为了响应国家的“光盘行动”，一个人喝剩下的咖啡会被保留60秒，供新来的客人使用，哈哈哈哈哈，好恶心啊。如果你运气好，没有剩下的咖啡，你会得到一杯新咖啡。但是以前客人剩下的咖啡超过60秒，就变质了，会被服务员回收掉。
-
-​        （4）比较适合执行大量的耗时较少的任务。喝咖啡人挺多的，喝的时间也不长。
+​         （3）缺点：在使用CachedThreadPool时，一定要注意控制任务的数量，否则，由于大量线程同时运行，很有会造成系统瘫痪。
 
 + ScheduledThreadPool（4个里面唯一一个有延迟执行和周期重复执行的线程池）
 
@@ -1336,31 +1334,171 @@ OutputStreamWriter
 
 + 就是相当于说如果你传的任务是需要结果的，那你就使用你的类去继承Callable接口，然后告诉submit方法就行了，如果你只需要一个特定的结果，就把那个特定的结果告诉submit方法然后把你想要的特定结果也告诉他，它只是帮你完成以前使用Future模式的时候你自己需要做的那些步骤而已，如果你不需要一个结果，那么就老老实实使用execute，如果你需要的是一个空结果，那么submit(yourRunnable)与submit(yourRunnable,null)是等价的！
 
+### shutdown 和 shutdownNow 的区别
+
+- shutdown 设置状态为 SHUTDOWN，而 shutdownNow 设置状态为 STOP
+- shutdown 只中断空闲的线程，已提交的任务可以继续被执行，而 shutdownNow 中断所有线程
+- shutdown 无返回值，shutdownNow 返回任务队列中还未执行的任务
+
+### 手动创建线程池
+
+![](images/Java_thread_pool_task.png)
+
+```java
+
+/**
+核心线程（corePool）：线程池最终执行任务的角色肯定还是线程，同时我们也会限制线程的数量，所以我们可以这样理解核心线程，有新任务提交时，首先检查核心线程数，如果核心线程都在工作，而且数量也已经达到最大核心线程数，则不会继续新建核心线程，而会将任务放入等待队列。
+
+线程池最大线程数（maximumPoolSize）：当任务大小到达coreSize大小时，任务可以正常运行，当任务个数大于coreSize的大小时，任务就先会放在等待队列中，当等待队列也放满了，接下来才会创建线程，直到当前线程数等于maximumPoolSize，当队列也满了，也达到最大线程数了，新来的任务会使用RejectedExecutionHandler 进行处理；
+
+等待队列 (workQueue)：等待队列用于存储当核心线程都在忙时，继续新增的任务，核心线程在执行完当前任务后，也会去等待队列拉取任务继续执行，这个队列一般是一个线程安全的阻塞队列，它的容量也可以由开发者根据业务来定制。
+
+ArrayBlockingQueue是一个有边界的阻塞队列，它的内部实现是一个数组。有边界的意思是它的容量是有限的，我们必须在其初始化的时候指定它的容量大小，容量大小一旦指定就不可改变。
+
+队列选择：
+ArrayBlockingQueue
+DelayQueue
+LinkedBlockingQueue
+PriorityBlockingQueue
+SynchronousQueue
+
+ArrayBlockingQueue是一个有边界的阻塞队列，它的内部实现是一个数组。有边界的意思是它的容量是有限的，我们必须在其初始化的时候指定它的容量大小，容量大小一旦指定就不可改变
+DelayQueue阻塞的是其内部元素，DelayQueue中的元素必须实现 java.util.concurrent.Delayed接口，该接口只有一个方法就是long getDelay(TimeUnit unit)，返回值就是队列元素被释放前的保持时间，如果返回0或者一个负值，就意味着该元素已经到期需要被释放，此时DelayedQueue会通过其take()方法释放此对象，DelayQueue可应用于定时关闭连接、缓存对象，超时处理等各种场景。
+LinkedBlockingQueue阻塞队列大小的配置是可选的，如果我们初始化时指定一个大小，它就是有边界的，如果不指定，它就是无边界的。说是无边界，其实是采用了默认大小为Integer.MAX_VALUE的容量 。它的内部实现是一个链表。
+PriorityBlockingQueue是一个没有边界的队列，它的排序规则和 java.util.PriorityQueue一样。需要注意，PriorityBlockingQueue中允许插入null对象。所有插入PriorityBlockingQueue的对象必须实现 java.lang.Comparable接口，队列优先级的排序规则就是按照我们对这个接口的实现来定义的。
+SynchronousQueue队列内部仅允许容纳一个元素。当一个线程插入一个元素后会被阻塞，除非这个元素被另一个线程消费。
+使用的最多的应该是LinkedBlockingQueue，注意一般情况下要配置一下队列大小，设置成有界队列，否则JVM内存会被撑爆！
+
+线程活动保持时间 (keepAliveTime)：线程空闲下来之后，保持存货的持续时间，超过这个时间还没有任务执行，该工作线程结束。
+
+线程工厂(threadFactory)：主要用来创建线程，比如可以指定线程的名字；
+
+饱和策略 (RejectedExecutionHandler)：当等待队列已满，线程数也达到最大线程数时，线程池会根据饱和策略来执行后续操作，默认的策略是抛弃要加入的任务。
+
+几种饱和策略：
+在默认的 ThreadPoolExecutor.AbortPolicy 中，处理程序遭到拒绝将抛出运行时RejectedExecutionException。
+在 ThreadPoolExecutor.CallerRunsPolicy 中，线程调用运行该任务的execute 本身。此策略提供简单的反馈控制机制，能够减缓新任务的提交速度。
+在 ThreadPoolExecutor.DiscardPolicy 中，不能执行的任务将被删除。
+在 ThreadPoolExecutor.DiscardOldestPolicy 中，如果执行程序尚未关闭，则位于工作队列头部的任务将被删除，然后重试执行程序（如果再次失败，则重复此过程）
+当然也可以自己实现处理策略类，继承RejectedExecutionHandler接口即可，该接口只有一个方法：
+void rejectedExecution(Runnable r, ThreadPoolExecutor executor);
+**/
+public ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+.....
+}
+```
+
 ## 线程安全
 
-+ CountDownLatch类
+### 同步
 
-一个同步辅助类，常用于某个条件发生后才能执行后续进程。给定计数初始化CountDownLatch，调用countDown(）方法，在计数到达零之前，await方法一直受阻塞。
+#### synchronized和ReentrantLock
 
-重要方法为countdown()与await()；
+```java
+/**
+synchronized关键字
+1、同步代码块
+synchronized(变量)    对某个变量作为同步监视器，当代码块执行完了，该线程会释放同步监视器的锁定。
+2、同步方法
+使用synchronized来同步整个方法
+*/
 
-+ synchronized关键字
 
-​      1.同步代码块
-
-​          synchronized(变量)    对某个变量作为同步监视器，当代码块执行完了，该线程会释放同步监视器的锁定。
-
-​       2.同步方法
-
-​          使用synchronized来同步整个方法
-
-类锁和对象锁
-
-+ 同步锁（Lock）
-
+/**
+同步锁（Lock）
 Lock、ReadWriteLock是提供的两个根接口
+实现类分别为ReentrantLock和ReentrantReadWriteLock（jdk1.8新增StampedLock类，可以代替ReentrantReadWriteLock
+*/
+```
 
-实现类分别为ReentrantLock和ReentrantReadWriteLock（jdk1.8新增StampedLock类，可以代替ReentrantReadWriteLock）
+#### 原子类（Atomic）
+
+```java
+/**
+基本类型 使用原子的方式更新基本类型
+AtomicInteger：整形原子类
+AtomicLong：长整型原子类
+AtomicBoolean：布尔型原子类
+
+数组类型 使用原子的方式更新数组里的某个元素
+AtomicIntegerArray：整形数组原子类
+AtomicLongArray：长整形数组原子类
+AtomicReferenceArray：引用类型数组原子类
+
+引用类型
+AtomicReference：引用类型原子类
+AtomicStampedReference：原子更新带有版本号的引用类型。该类将整数值与引用关联起来，可用于解决原子的更新数据和数据的版本号，可以解决使用 CAS 进行原子更新时可能出现的 ABA 问题。
+AtomicMarkableReference ：原子更新带有标记位的引用类型
+
+对象的属性修改类型
+AtomicIntegerFieldUpdater：原子更新整形字段的更新器
+AtomicLongFieldUpdater：原子更新长整形字段的更新器
+AtomicReferenceFieldUpdater：原子更新引用类型字段的更新器
+**/
+
+/**
+AtomicInteger 
+常用方法：
+public final int get() //获取当前的值
+public final int getAndSet(int newValue)//获取当前的值，并设置新的值
+public final int getAndIncrement()//获取当前的值，并自增
+public final int getAndDecrement() //获取当前的值，并自减
+public final int getAndAdd(int delta) //获取当前的值，并加上预期的值
+boolean compareAndSet(int expect, int update) //如果输入的数值等于预期值，则以原子方式将该值设置为输入值（update）
+public final void lazySet(int newValue)//最终设置为newValue,使用 lazySet 设置之后可能导致其他线程在之后的一小段时间内还是可以读到旧的值。
+**/
+//例子：
+class AtomicIntegerTest {
+    private AtomicInteger count = new AtomicInteger();
+    //使用AtomicInteger之后，不需要对该方法加锁，也可以实现线程安全。
+    public void increment() {
+        count.incrementAndGet();
+    }
+
+    public int getCount() {
+        return count.get();
+    }
+}
+```
+
+#### ThreadLocal
+
+```java
+//ThreadLocal类是用来提供线程内部的局部变量。让这些变量在多线程环境下访问（get/set）时能保证各个线程里的变量相对独立于其他线程内的变量
+```
+
+### 辅助类
+
+#### CountDownLatch
+
+```java
+//一个同步辅助类，常用于某个条件发生后才能执行后续进程。给定计数初始化CountDownLatch，调用countDown(）方法，在计数到达零之前，await方法一直受阻塞。
+//重要方法为countdown()与await()；
+```
+
+#### Semaphore 
+
+```java
+//信号量是一类经典的同步工具。信号量通常用来限制线程可以同时访问的（物理或逻辑）资源数量。
+```
+
+#### CyclicBarrier
+
+```java
+// 一种可重置的多路同步点，在某些并发编程场景很有用。它允许一组线程互相等待，直到到达某个公共的屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier在释放等待线程后可以重用，所以称它为循环的barrier。
+```
+
+#### Phaser 
+
+```java
+//一种可重用的同步屏障，功能上类似于CyclicBarrier和CountDownLatch，但使用上更为灵活。非常适用于在多线程环境下同步协调分阶段计算任务（Fork/Join框架中的子任务之间需同步时，优先使用Phaser）
+```
+
+#### Exchanger
+
+```java
+//允许两个线程在某个汇合点交换对象，在某些管道设计时比较有用。Exchanger提供了一个同步点，在这个同步点，一对线程可以交换数据。每个线程通过exchange()方法的入口提供数据给他的伙伴线程，并接收他的伙伴线程提供的数据并返回。当两个线程通过Exchanger交换了对象，这个交换对于两个线程来说都是安全的。Exchanger可以认为是 SynchronousQueue 的双向形式，在运用到遗传算法和管道设计的应用中比较有用。
+```
 
 ## 线程间通信
 

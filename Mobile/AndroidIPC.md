@@ -143,49 +143,71 @@ bindService(intent, connection, BIND_AUTO_CREATE);
 https://blog.csdn.net/luoyanglizi/article/details/51958091
 + aidl接口中只支持方法，不支持声明静态变量。这一点不同于传统的接口
 
+### 操作步骤（双向通信）
 
-### [操作步骤](https://blog.csdn.net/ding3106/article/details/83506819)
++ [android之AIDL跨进程通信详解 (四)AIDL中RemoteCallbackList的使用及权限验证方式](https://blog.csdn.net/q610098308/article/details/80939393)
++ [AIDL实现进程间通信](https://blog.csdn.net/ding3106/article/details/83506819)
+
 #### 操作AIDL
-+ 通过New---AIDL来创建aidl文件的接口方法
-```java
-// 创建IBookManager.aidl文件
-// 内部的Book对象需要序列化
-package com.lucky.newsandroid.aidl;
 
-// Declare any non-default types here with import statements
-import com.lucky.newsandroid.aidl.Book;
-interface IBookManager {
+右击工程main/java目录下的包名，New -> AIDL -> AIDL File，根据弹出的窗口，命名 Parcelable 数据封装类的类名，以 "Book" 为例，生成 Book.aidl 文件。生成的aidl文件默认保存在main/java的同级aidl目录（新生成）下。默认生成的Book.aidl中Book是Interface类型，修改为parcelable关键字，注意首字母是小写
 
-    List<Book> getBookList();
-    void addBook(in Book book);
-}
-```
-+ 右击工程main/java目录下的包名，New -> AIDL -> AIDL File，根据弹出的窗口，命名 Parcelable 数据封装类的类名，以 "Book" 为例，生成 Book.aidl 文件。生成的aidl文件默认保存在main/java的同级aidl目录（新生成）下
-默认生成的Book.aidl中Book是Interface类型，修改为parcelable关键字，注意首字母是小写。内容如下
+1. Book.aidl
+
 ```java
 // Book.aidl
-package com.lucky.newsandroid.aidl;
+package com.lucky.learn;
+
 // Declare any non-default types here with import statements
 
-parcelable Book;
+parcelable Book; //表示这是个序列号对象
 ```
-+ 再次右击工程 main/java 目录下的包名（此包要和aidl中的包名保持一致），New -> Java Class，在弹出的窗口中输入和步骤一中同名的类名，并实现Parcelable 接口。
+
+2. IBookManager.aidl
+
 ```java
-package com.lucky.newsandroid.aidl;
+// IBookManager.aidl
+package com.lucky.learn;
+import com.lucky.learn.Book;
+import com.lucky.learn.AddBookListener;
+interface IBookManager {
+    //basicTypes 方法是示例，意思是支持的基本数据类型，可以直接删除
+    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
+            double aDouble, String aString);
+
+    List<Book> getBookList();  //获取所有的书
+
+    void addBook(in Book book); //添加书
+
+    //我想每添加一本书都能通知客户端
+    void registerListener(AddBookListener listener);  //注册回调接口
+    void unregisterListener(AddBookListener listener); //解除回调接口
+}
+```
+3. AddBookListener.aidl
+
+```java
+// AddBookListener.aidl
+package com.lucky.learn;
+import com.lucky.learn.Book;
+// Declare any non-default types here with import statements
+
+interface AddBookListener {
+    void onAddBookListener(in Book book);
+}
+```
+
++ Book.java（再次右击工程 main/java 目录下的包名（此包要和aidl中的包名保持一致），New -> Java Class，在弹出的窗口中输入和步骤一中同名的类名，并实现Parcelable 接口。）
+```java
+package com.lucky.learn;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
-/**
- * 作者：jacky on 2019/9/26 14:59
- * 邮箱：jackyli706@gmail.com
- */
 public class Book implements Parcelable {
 
-    public int bookId;
-    public String bookName;
+    private int bookId;
+    private String bookName;
 
     public Book(int bookId, String bookName) {
         this.bookId = bookId;
@@ -220,81 +242,127 @@ public class Book implements Parcelable {
         parcel.writeString(bookName);
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return bookId + "," + bookName;
+        return "Book{" +
+                "bookId=" + bookId +
+                ", bookName='" + bookName + '\'' +
+                '}';
     }
 }
-
 ```
 #### 操作客户端和服务端
-+ 服务端
++ 服务端（ServerService.java）
 ```java
-package com.lucky.newsandroid.ui.service;
+package com.lucky.learn.service;
 
+import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.util.Log;
 
-import androidx.annotation.Nullable;
-
-import com.lucky.newsandroid.aidl.Book;
-import com.lucky.newsandroid.aidl.IBookManager;
-import com.lucky.newsandroid.base.BaseService;
+import com.lucky.learn.AddBookListener;
+import com.lucky.learn.Book;
+import com.lucky.learn.IBookManager;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * 作者：jacky on 2019/9/26 15:01
- * 邮箱：jackyli706@gmail.com
- */
-public class aidlService extends BaseService {
+public class ServerService extends Service {
 
-    private CopyOnWriteArrayList<Book> mBookList = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Book> books = new CopyOnWriteArrayList<>();
+    //通过系统提供的类来注册和解除回调
+    private RemoteCallbackList<AddBookListener> addBookListenerRemoteCallbackList = new RemoteCallbackList<>();
 
-    private Binder binder = new IBookManager.Stub() {
+    public ServerService() {
+    }
+
+    private final Binder binder = new IBookManager.Stub() {
+        @Override
+        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+        }
+
         @Override
         public List<Book> getBookList() throws RemoteException {
-            return mBookList;
+            return books;
         }
 
         @Override
         public void addBook(Book book) throws RemoteException {
-            mBookList.add(book);
+            books.add(book);
+            int pid = android.os.Process.myPid();
+            Log.d("FFF", "收到客户端消息：" + book.toString() + "," + pid);
+            callBackBook(book);  //收到消息,回调给客户端
+        }
+
+        @Override
+        public void registerListener(AddBookListener listener) throws RemoteException {
+            if (listener != null) {
+                addBookListenerRemoteCallbackList.register(listener);
+            }
+        }
+
+        @Override
+        public void unregisterListener(AddBookListener listener) throws RemoteException {
+            if (listener != null) {
+                addBookListenerRemoteCallbackList.unregister(listener);
+            }
         }
     };
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mBookList.add(new Book(1, "Android"));
-        mBookList.add(new Book(2, "IOS"));
+    private void callBackBook(Book book) {
+        final int N = addBookListenerRemoteCallbackList.beginBroadcast(); //可能有多个客户端存在
+        for (int i = 0; i < N; i++) {
+            try {
+                addBookListenerRemoteCallbackList.getBroadcastItem(i).onAddBookListener(book);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        addBookListenerRemoteCallbackList.finishBroadcast();
+
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
 }
 ```
-+ 客户端
++ 客户端（MainActivity.java）
 ```java
 Intent intent = new Intent(MainActivity.this, aidlService.class);
 bindService(intent, aidiConn, BIND_AUTO_CREATE);
 
-private ServiceConnection aidiConn = new ServiceConnection() {
+public class MainActivity extends AppCompatActivity {
+
+    private IBookManager iBookManager;
+
+    private final AddBookListener addBookListener = new AddBookListener.Stub() {
+        @Override
+        public void onAddBookListener(Book book) throws RemoteException {
+            int pid = android.os.Process.myPid();
+            Log.d("FFF", "收到服务端消息：" + book.toString() + "," + pid);
+        }
+    };
+
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            IBookManager iBookManager = IBookManager.Stub.asInterface(iBinder);
+            iBookManager = IBookManager.Stub.asInterface(iBinder);
             try {
-                List<Book> bookList = iBookManager.getBookList();
-                Logutil.d(bookList.toString());
+                iBookManager.registerListener(addBookListener);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                Log.d("FFF", e.getMessage());
             }
         }
 
@@ -303,6 +371,41 @@ private ServiceConnection aidiConn = new ServiceConnection() {
 
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bindService(new Intent(this, ServerService.class), serviceConnection, BIND_AUTO_CREATE);
+
+        //添加book
+        if (iBookManager != null) {
+                    try {
+                        iBookManager.addBook(new Book(3, "10"));
+
+                        //List<Book> bookList = iBookManager.getBookList();
+                        //Log.d("FFF", bookList.toString());
+                    } catch (RemoteException e) {
+                        Log.d("FFF", e.getMessage());
+                    }
+                }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //解绑
+        if (iBookManager != null && iBookManager.asBinder().isBinderAlive()) {
+            try {
+                iBookManager.unregisterListener(addBookListener);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        unbindService(serviceConnection);
+    }
 ```
 
 #### 不同App调用(另一个App要将包以及包下的所有文件都复制过去)

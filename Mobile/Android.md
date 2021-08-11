@@ -17,6 +17,7 @@
 + [开源库](AndroidOpenSource.md)
 + [App防护](AndroidProtect.md)
 + [Gradle](../BuildTool/Gradle.md)
++ [架构相关](AndroidStructure.md)
 
 ### 学习资料
 

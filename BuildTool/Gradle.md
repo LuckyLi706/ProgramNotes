@@ -524,6 +524,119 @@ static method
 
 ## Android
 
+### [ndk配置](https://developer.android.com/studio/projects/gradle-external-native-builds)
+
+```groovy
+//cmake相关属性
+ANDROID_TOOLCHAIN	clang (default)
+gcc (deprecated)	
+指定 Cmake 编译所使用的工具链。
+使用示例：arguments "-DANDROID_TOOLCHAIN=clang"
+
+ANDROID_PLATFORM	API版本	
+指定 NDK 所用的安卓平台的版本是多少。
+使用示例：arguments "-DANDROID_PLATFORM=android-21"
+
+ANDROID_STL	
+gnustl_static（default）
+详细见附表（C++ 库支持）
+指定 Cmake 编译所使用的标准模版库。
+使用示例：arguments "-DANDROID_STL=gnustl_static"
+
+ANDROID_PIE	ON （android-16 以上默认为 ON）
+OFF （android-15 以下默认为 OFF）	
+使得编译的 elf 文件可以加载到内存中的任意位置就叫 pie（position independent executables）。
+出于安全保护，在 Android 4.4 之后可执行文件必须是采用PIE编译的。
+使用示例：arguments "-DANDROID_PIE=ON"
+
+ANDROID_CPP_FEATURES	空（default）
+rtti（支持 RTTI）
+exceptions（支持 C++ 异常）	
+指定是否需要支持 RTTI（RunTime Type Information）和 C++ 的异常，默认为空。
+使用示例：arguments "-DANDROID_CPP_FEATURES=rtti exceptions"
+
+ANDROID_ALLOW_UNDEFINED_SYMBOLS	TRUE
+FALSE（default）	
+指定在编译时，如果遇到未定义的引用时是否抛出错误。如果要允许这些类型的错误，请将该变量设置为 TRUE。
+使用示例：arguments "-DANDROID_ALLOW_UNDEFINED_SYMBOLS=TRUE"
+
+ANDROID_ARM_MODE	arm
+thumb (default)	
+如果是 thumb 模式，每条指令的宽度是 16 位，如果是 arm 模式，每条指令的宽度是 32 位。
+使用示例：arguments "-DANDROID_ARM_MODE=arm"
+
+ANDROID_ARM_NEON	TRUE
+FALSE（default）	
+指定在编译时，是否使用 NEON 对代码进行优化。NEON 只适用于 armeabi-v7a 和 x86 ABI，且并非所有基于 ARMv7 的 Android 设备都支持 NEON，但支持的设备可能会因其支持标量/矢量指令而明显受益。
+更多参考：https://developer.android.com/ndk/guides/cpu-arm-neon#rd
+使用示例：arguments "-DANDROID_ARM_NEON=TRUE"
+
+ANDROID_DISABLE_NO_EXECUTE	TRUE
+FALSE（default）	
+指定在编译时是否启动 NX（No eXecute）。NX 是一种应用于 CPU 的技术，帮助防止大多数恶意程序的攻击。如果要禁用 NX，请将该变量设置为 TRUE。
+使用示例：arguments "-DANDROID_DISABLE_NO_EXECUTE=TRUE"
+
+ANDROID_DISABLE_RELRO	TRUE
+FALSE（default）	
+RELocation Read-Only (RELRO) 重定位只读，它能够保护库函数的调用不受攻击者重定向的影响。如果要禁用 RELRO，请将该变量设置为 TRUE。
+使用示例：arguments "-DANDROID_DISABLE_RELRO=FALSE"
+
+ANDROID_DISABLE_FORMAT_STRING_CHECKS	TRUE
+FALSE（default）	
+在类似 printf 的方法中使用非常量格式字符串时是否抛出错误。如果为 TRUE，即不检查字符串格式。
+使用示例：arguments "-DANDROID_DISABLE_FORMAT_STRING_CHECKS=FALSE"
+
+附表（C++ 库支持）
+libstdc++	 默认最小系统 C++ 运行时库	 不适用
+gabi++_static	 GAbi++ 运行时（静态）。	 C++ 异常和 RTTI
+gabi++_shared	 GAbi++ 运行时（共享）。	 C++ 异常和 RTTI
+stlport_static	 STLport 运行时（静态）。	 C++ 异常和 RTTI；标准库
+stlport_shared	 STLport 运行时（共享）。	 C++ 异常和 RTTI；标准库
+gnustl_static	 GNU STL（静态）。	 C++ 异常和 RTTI；标准库
+gnustl_shared	 GNU STL（共享）。	 C++ 异常和 RTTI；标准库
+c++_static	 LLVM libc++ 运行时（静态）。	 C++ 异常和 RTTI；标准库
+c++_shared	 LLVM libc++ 运行时（共享）。	 C++ 异常和 RTTI；标准库
+
+android {
+  ...
+  defaultConfig {
+    ...
+    //配置cmake的属性    
+    externalNativeBuild {
+      cmake {
+        // 指定一些编译选项
+        cppFlags "-std=c++11 -frtti -fexceptions"
+        // 也可以使用下面这种语法向变量传递参数：
+        // arguments "-D变量名=参数".
+        arguments "-DANDROID_ARM_NEON=TRUE",
+        // 使用下面这种语法向变量传递多个参数（参数之间使用空格隔开）：
+        // arguments "-D变量名=参数1 参数2"
+                  "-DANDROID_CPP_FEATURES=rtti exceptions"
+ 
+        // 指定ABI
+        abiFilters "armeabi-v7a" , "arm64-v8a"
+      }
+    }
+    //或者这样来指定ABI
+    ndk {
+      // Specifies the ABI configurations of your native
+      // libraries Gradle should build and package with your app.
+      abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a',
+                   'arm64-v8a'
+    }
+  }
+  buildTypes {...}
+  
+  externalNativeBuild {
+    cmake {
+        path "CMakeLists.txt"  //指定CMakeLists文件
+    }
+  }
+}
+```
+
+
+
 ```groovy
 android {
     compileSdkVersion 29
