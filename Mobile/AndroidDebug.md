@@ -70,3 +70,17 @@ QQ浏览器需要下载开发版apk，连接studio会自动帮你下载
 + [spy-debugger](https://github.com/wuchangming/spy-debugger)
 
 + [vConsole](https://github.com/Tencent/vConsole/blob/dev/README_CN.md)
+
+## Smail
+
++ [smaliidea插件（手动导入Android Studio）](https://bitbucket.org/JesusFreke/smalidea/downloads/)
+
++ 手机先安装apk，反编译apk，使用Android studio open反编译apk的资源，src目录右击，选择Source Root。（如果手机不是模拟器，在xml里面配置debug未true）
++ 然后远程Server，选择Remote，端口随便设置
++ ps -x   获取手机进程的pid  
++ 端口转发     adb forward  tcp:Server端口  jdwp:app的pid
++ 然后点击手机右上角的Attach Debug to Android Process，选择自己的程序。
++ 通过Watch选择对应的寄存器进行观察
++ 参考
+  + https://www.cnblogs.com/gordon0918/p/5570811.html
+

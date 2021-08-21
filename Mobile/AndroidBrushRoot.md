@@ -118,7 +118,10 @@ H：开发的月份，约定A为八月。
 
 ### 刷机
 
-[小米解锁地址](http://www.miui.com/unlock/index.html)
++ 解锁
+  - 1. 下载[小米解锁工具](http://www.miui.com/unlock/index.html)
+  - 2. 开发者选项下面的设备解锁状态，绑定账号和设备（要等168小时）
+  - 3. 手机进入bootloader状态，打开解锁工具，进行解锁。
 
 + RedMi Note 3（全网通和双网通）（需要解锁）
   - [所有的线刷包和卡刷包，包含开发版本](http://www.miui.com/thread-6988405-1-1.html)

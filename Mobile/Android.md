@@ -87,11 +87,29 @@
 
 + 学习
   1. [Smail语法（Dalvik指令）](AndroidSmail.md)
-  2. [C++](../C++.md)
-  3. [ARM汇编](../Assembler/arm.md)
-+ [工具](AndroidDecompileTool.md)
+  2. [ELF](AndroidELF.md)
+  3. [Dex](AndroidDex.md)
+  4. [C++](../C++.md)
+  5. [ARM汇编](../Assembler/arm.md)
+  
++ 工具
+
+  - AndroidKiller
+
+  - [Jadx](https://github.com/skylot/jadx)
+
+  - [Enjarify](https://github.com/Storyyeller/enjarify)
+
+  ​       Enjarify是Google最近出的一款反编译工具，它可以将Dalvik字节码转换成相对应的Java字节码。
+
+  - [ApkTool](https://github.com/iBotPeaches/Apktool)
+
+  - [IDA Pro](../IDE/IDA.md)
+
 + [调试](AndroidDebug.md)
+
 + [Hook](AndroidHook.md)
+
 + [脱壳](AndroidUnpacking.md)
 
 ## 其他

@@ -93,6 +93,19 @@
 
 # JNI
 
+## so加载过程
+
+### Java层
+
+```
+System.loadLibrary(libName)
+                      ->Runtime.loadLibrary(...)
+                      ->Runtime.doLoad(...)
+                      ->Runtime.nativeLoad(...)
+```
+
+### Native层
+
 ## 添加C/C++支持的两种方式(cmake)
 
 ```
