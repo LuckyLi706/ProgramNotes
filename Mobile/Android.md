@@ -16,7 +16,6 @@
   - [Service](android_four_components/Service.md)
   - [BroadcastReceiver](android_four_components/BroadcastReceiver.md)
   - [ContentProvider](android_four_components/ContentProvider.md)
-
 + [UI](AndroidUI.md)
 + [Resourse（资源）](AndrioidResource.md)
 + [JNI（native层）](AndroidJNI.md)
@@ -90,8 +89,7 @@
   2. [ELF](AndroidELF.md)
   3. [Dex](AndroidDex.md)
   4. [C++](../C++.md)
-  5. [ARM汇编](../Assembler/arm.md)
-  
+  5. [ARM汇编](../Assembler/arm.md)  
 + 工具
   - AndroidKiller
   - [Jadx](https://github.com/skylot/jadx)
