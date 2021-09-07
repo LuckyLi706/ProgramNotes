@@ -396,7 +396,11 @@ int main()
 }
 ```
 
+## <u>_</u><u>_</u>attribute<u>_</u><u>_</u>机制
 
++ [define AB_EXTERN extern "C" __attribute__((visibility ("default")))](https://blog.csdn.net/u012496940/article/details/46953607)
++ [Linux下__attribute__((visibility ("default")))的使用](https://blog.csdn.net/fengbingchun/article/details/78898623)
++ [__attribute__((visibility("default")))](https://www.jianshu.com/p/1e6315145fcf)
 
 # 数据类型
 
