@@ -390,7 +390,7 @@
 
 ### 网络层
 
-#### 数据包
+#### 数据包格式
 
 由首部和数据段两部分组成
 
@@ -479,9 +479,9 @@ ping ip地址 -i TTL    //设置TTL的值
 + UDP尽最大能力交付，不保证可靠交付
 + 因此不需要维护一些复杂的参数，首部只有8个字节（TCP的首部至少20个字节）
 
-##### 数据格式
+##### 数据包格式
 
-![](images/network_network_udp_format.png)
+![](images/network_transport_udp_format.png)
 
 + UDP长度（Length）占16位
 
@@ -491,7 +491,7 @@ ping ip地址 -i TTL    //设置TTL的值
 
   伪首部：仅在计算检验和时起作用，并不会传递给网络层
 
-  ![](images/network_network_udp_checksum.png)
+  ![](images/network_transport_udp_checksum.png)
 
 + 端口（Port）
 
@@ -511,9 +511,19 @@ ping ip地址 -i TTL    //设置TTL的值
     安装telnet：控制面板– 程序– 启用或关闭Windows功能– 勾选“Telnet Client” – 确定
     ```
 
-![](images/network_network_tcp_udp_port.png)
-
 #### TCP
+
+##### 数据包格式
+
+![](images/network_transport_tcp_format.bmp)
+
+```
+
+```
+
+#### 默认端口号
+
+![](images/network_transport_tcp_udp_port.png)
 
 ### 应用层
 
