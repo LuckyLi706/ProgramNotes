@@ -521,9 +521,7 @@ ping ip地址 -i TTL    //设置TTL的值
 
   和UDP一样，检验和的计算内容：伪首部+ 首部+ 数据，伪首部：12个字节，仅在计算检验和时起作用，并不会传递给网络层
 
-  ![](images/network_transport_tcp_checksum.png)
-
-+ 
+  ![](images/network_transport_tcp_checksum.bmp)
 
 ```
 数据偏移 4位
@@ -532,13 +530,46 @@ ping ip地址 -i TTL    //设置TTL的值
 
 保留 6位（也可以说占3位，后面的前三个字节没有用）
 目前全为0
+
+标识位（保留位后面的）
+1、URG（Urgent）
+当URG=1时，紧急指针字段才有效。表明当前报文段中有紧急数据，应优先尽快传送
+2、ACK（Acknowledgment）
+当ACK=1时，确认号字段才有效
+3、PSH（Push）
+4、RST（Reset）
+当RST=1时，表明连接中出现严重差错，必须释放连接，然后再重新建立连接
+5、SYN（Synchronization）
+当SYN=1、ACK=0时，表明这是一个建立连接的请求，若对方同意建立连接，则回复SYN=1、ACK=1。
+6、FIN（Finish）
+当FIN=1时，表明数据已经发送完毕，要求释放连接
+
+序号（Sequence Number）占4字节
+首先，在传输过程的每一个字节都会有一个编号
+在建立连接后，序号代表：这一次传给对方的TCP数据部分的第一个字节的编号
+
+确认号（Acknowledgment Number）占4字节
+在建立连接后，确认号代表：期望对方下一次传过来的TCP数据部分的第一个字节的编号
+
+窗口（Window） 占2字节
+这个字段有流量控制功能，用以告知对方下一次允许发送的数据大小（字节为单位）
 ```
 
 ##### 可靠传输
 
+停止等待ARQ协议（ARQ：自动重传请求）
+
+![](images/network_transport_tcp_reliable_transfer_ arq_1.bmp)
+
+![](images/network_transport_tcp_reliable_transfer_ arq_2.bmp)
+
 ##### 流量控制
 
 ##### 拥塞控制
+
+##### 连接管理
++ 建立连接
++ 释放连接
 
 #### 默认端口号
 
