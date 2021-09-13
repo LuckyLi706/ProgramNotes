@@ -362,19 +362,12 @@
 + 用交换机组建的网络，已经支持全双工通信，不需要再使用CSMA/CD，但它传输的帧依然是以太网帧。所以，用交换机组建的网络，依然可以叫做以太网
 
 #### Ethernet V2
-
 + Ethernet  V2帧的格式
-
   ![](images/network_datalink_v2_format.png)
-
 + Ethernet  V2帧的格式
-
   ![](images/network_datalink_v2_standard.png)
-
 #### 网卡
-
-![](images/network_datalink_network_ card.png)
-
+![](images/network_datalink_network_card.png)
 #### PPP协议
 
 ![](images/network_datalink_ppp.png)
@@ -565,23 +558,23 @@ ping ip地址 -i TTL    //设置TTL的值
 
 2. 停止等待ARQ协议（ARQ：自动重传请求）（四种情况）
 
-![](images/network_transport_tcp_reliable_transfer_ arq_1.png)
+![](images/network_transport_tcp_reliable_transfer_arq_1.png)
 
-![](images/network_transport_tcp_reliable_transfer_ arq_2.png)
+![](images/network_transport_tcp_reliable_transfer_arq_2.png)
 
 3. 连续ARQ协议+滑动窗口协议
 
-   ![](images/network_transport_tcp_reliable_transfer_ arq_3.png)
+   ![](images/network_transport_tcp_reliable_transfer_arq_3.png)
 
-   ![](images/network_transport_tcp_reliable_transfer_ arq_4.png)
+   ![](images/network_transport_tcp_reliable_transfer_arq_4.png)
 
-   ![](images/network_transport_tcp_reliable_transfer_ arq_5.png)
+   ![](images/network_transport_tcp_reliable_transfer_arq_5.png)
 
 4. SACK（选择确认）
 
-   ![](images/network_transport_tcp_reliable_transfer_ sack_1.png)
+   ![](images/network_transport_tcp_reliable_transfer_sack_1.png)
 
-   ![](images/network_transport_tcp_reliable_transfer_ sack_2.png)
+   ![](images/network_transport_tcp_reliable_transfer_sack_2.png)
 
 5. 思考
 
@@ -665,9 +658,7 @@ rwnd=receive window（接收窗口）
   ```
 
   ![](images/network_transport_tcp_block_control_fast_retransimit.png)
-
 + 快速恢复（fast recovery）
-
   ```
   当发送方连续收到三个重复确认，说明网络出现阻塞
   就执行“乘法减小“算法，把ssthresh减小为拥塞峰值的一半
@@ -676,11 +667,8 @@ rwnd=receive window（接收窗口）
   而是把cwnd值设置为新的ssthresh值（减小后的值）
   然后开始执行拥塞避免算法（”加分增大“），使拥塞窗口慢慢的线性增大。
   ```
-
   ![](images/network_transport_tcp_block_control_fast_retransimit_recovery.png)
-
 + 发送窗口的最大值
-
   ```
   //几个缩写
   MSS（Maximum Segment Size）每个段最大的数据部分大小，在连接时确认
@@ -696,13 +684,9 @@ rwnd=receive window（接收窗口）
   ```
 
 ##### 建立连接
-
 + 三次握手
-
   ![](images/network_transport_tcp_connect_three_hand.png)
-
 + 状态解读
-
   ```
   CLOSED：客户端处于关闭状态
   LISTEN：服务器处于监听状态，等待客户端连接
@@ -710,7 +694,6 @@ rwnd=receive window（接收窗口）
   SYN-SENT：表示客户端已发送SYN报文，等待服务端的第二次握手
   ESTABLISHED：表示连接已经建立
   ```
-
 + 前两次握手特点
 
   ```
@@ -736,41 +719,23 @@ rwnd=receive window（接收窗口）
   
   如果服务端多次重发SYN+ACK都等不到客户端的ACK，就会发送RST包，强制关闭连接
   ```
-
 ##### 释放连接
-
 + 四次挥手
-
   ![](images/network_transport_tcp_disconnect_four_hand.png)
-
 + 状态解读
-
   ![](images/network_transport_tcp_disconnect_state_1.png)
-
   ![](images/network_transport_tcp_disconnect_state_2.png)
-
 + 细节
-
   ![](images/network_transport_tcp_disconnect_detail.png)
-
 + 相关疑问
-
   ![](images/network_transport_tcp_disconnect_questions.png)
-
 + 抓包信息
-
   ![](images/network_transport_tcp_disconnect_wireshark.png)
-
 #### 默认端口号
-
 ![](images/network_transport_tcp_udp_port.png)
-
 ### 应用层
-
 ## 工具
-
 + [Packet Tracer](https://www.packettracernetwork.com/)
-
   Packet Tracer是一种创新的网络仿真和可视化工具。它可以帮助你通过桌面电脑或基于Android或iOS的移动设备练习网络配置和故障排除技能。Packet Tracer可用于Linux和Windows以及Mac桌面环境。
 
 + 
