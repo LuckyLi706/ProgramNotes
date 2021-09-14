@@ -362,19 +362,12 @@
 + 用交换机组建的网络，已经支持全双工通信，不需要再使用CSMA/CD，但它传输的帧依然是以太网帧。所以，用交换机组建的网络，依然可以叫做以太网
 
 #### Ethernet V2
-
 + Ethernet  V2帧的格式
-
   ![](images/network_datalink_v2_format.png)
-
 + Ethernet  V2帧的格式
-
   ![](images/network_datalink_v2_standard.png)
-
 #### 网卡
-
-![](images/network_datalink_network_ card.png)
-
+![](images/network_datalink_network_card.png)
 #### PPP协议
 
 ![](images/network_datalink_ppp.png)
@@ -557,30 +550,192 @@ ping ip地址 -i TTL    //设置TTL的值
 
 ##### 可靠传输
 
-停止等待ARQ协议（ARQ：自动重传请求）
+1. 重连机制
 
-![](images/network_transport_tcp_reliable_transfer_ arq_1.bmp)
+    如果有个包重传N次还是失败，不会一直重新传输，取决于系统的设置，有的系统比如传送5次还是失败就会发送reset报文断开TCP连接。
 
-![](images/network_transport_tcp_reliable_transfer_ arq_2.bmp)
+   ![](images/network_transport_tcp_reliable_transfer_ reconnect.png)
+
+2. 停止等待ARQ协议（ARQ：自动重传请求）（四种情况）
+
+![](images/network_transport_tcp_reliable_transfer_arq_1.png)
+
+![](images/network_transport_tcp_reliable_transfer_arq_2.png)
+
+3. 连续ARQ协议+滑动窗口协议
+
+   ![](images/network_transport_tcp_reliable_transfer_arq_3.png)
+
+   ![](images/network_transport_tcp_reliable_transfer_arq_4.png)
+
+   ![](images/network_transport_tcp_reliable_transfer_arq_5.png)
+
+4. SACK（选择确认）
+
+   ![](images/network_transport_tcp_reliable_transfer_sack_1.png)
+
+   ![](images/network_transport_tcp_reliable_transfer_sack_2.png)
+
+5. 思考
+
+   为什么选择在传输层或者应用层就将数据分成很多段，而不是等到网络层在分片传递给数据链路层
+
+   + 因为可以提高重传的性能
+
+   + 需要明确的是：可靠传输是在传输层进行控制的（网络层和物理链路层没有重传功能）
+
+     如果在传输层不分层，一旦出现数据丢失，整个传输层的数据都必须重传
+
+     如果在传输层分层，一旦出现数据丢失，只需要重传丢失的数据即可
 
 ##### 流量控制
 
+rwnd=receive window（接收窗口）
+
+![](images/network_transport_tcp_flow_control.png)
+
++ 如果接收方的缓存存满了，发送方还在疯狂发数据
+
+  - 接收方只能把接收的数据包丢掉，大量的丢包会极大的浪费网络资源
+  - 所以要进行流量控制
+
++ 什么是流量控制
+
+  让发送方的发送速率不要太快，让接收方来得及接收数据
+
++ 原理
+
+  - 通过确认报文中接收字段来控制发送方的发送速率
+  - 发送方的发送窗口大小不能超过接收方的接收窗口大小
+  - 当发送发收到接收方窗口大小为0时，发送方就会停止发送数据
+
++ 特殊情况
+
+  ```
+  一开始，接收方给发送方发送了0窗口的报文段，
+  后面接收方又有了一些存储空间，给发送方发送非0窗口的报文段丢失了
+  发送方的发送窗口一直为0，双方陷入僵局
+  
+  //解决方案
+  当发送方收到0窗口通知时，这时发送方停止发送报文
+  并且同时开启一个定时器，隔一段时间就发个测试报文去询问接收方最新的窗口大小
+  如果接收方的窗口大小还是为0，则发送方再次刷新启动定时器
+  ```
+
 ##### 拥塞控制
 
-##### 连接管理
-+ 建立连接
-+ 释放连接
+防止过多的数据注入网络，避免网络中的路由器或链路过载
 
++ 拥塞过程是个全局性的过程
+
+  - 涉及到所有主机、路由器
+  - 以及与降低网络传输性能有关的所有因素
+  - 是大家共同努力的结果
+
++ 相比而言，流量控制是点对点通信的控制
+
++ 慢开始（slow start，慢启动）
+
+  ![](images/network_transport_tcp_block_control_slow_start_1.png)
+
+  ![](images/network_transport_tcp_block_control_slow_start_2.png)
+
++ 拥塞避免（congestion avoidance）
+
+  ![](images/network_transport_tcp_block_control_block_avoid.png)
+
++ 快速重传（fast retransimit）
+
+  ```
+  //接收方
+  每收到一个失序的分组后就立刻发出重复确认
+  使发送方及时知道有分组没有到达
+  而不用等待自己发送数据时才进行确认
+  
+  //发送方
+  只要连续收到三个重复确认（总共四个相同的确认），就应当立即重传对方尚未收到的报文段
+  而不必等待继续重传计时器到期后再重传
+  ```
+
+  ![](images/network_transport_tcp_block_control_fast_retransimit.png)
++ 快速恢复（fast recovery）
+  ```
+  当发送方连续收到三个重复确认，说明网络出现阻塞
+  就执行“乘法减小“算法，把ssthresh减小为拥塞峰值的一半
+  
+  与慢开始不同之处现在不执行慢开始算法，即cwnd现在不恢复到初始值
+  而是把cwnd值设置为新的ssthresh值（减小后的值）
+  然后开始执行拥塞避免算法（”加分增大“），使拥塞窗口慢慢的线性增大。
+  ```
+  ![](images/network_transport_tcp_block_control_fast_retransimit_recovery.png)
++ 发送窗口的最大值
+  ```
+  //几个缩写
+  MSS（Maximum Segment Size）每个段最大的数据部分大小，在连接时确认
+  
+  cwnd（congestion window）拥塞窗口
+  
+  rwnd（receive window）接收窗口
+  
+  swnd（send window）发送窗口
+  swnd=min(cwnd,rwnd)
+  当rwnd<cwnd,是接收方的接收能力限制发送窗口的最大值
+  当rwnd>cwnd,是网络的拥塞限制发送窗口的最大值
+  ```
+
+##### 建立连接
++ 三次握手
+  ![](images/network_transport_tcp_connect_three_hand.png)
++ 状态解读
+  ```
+  CLOSED：客户端处于关闭状态
+  LISTEN：服务器处于监听状态，等待客户端连接
+  SYN-RCVD：表示服务端接收到了SYN报文，当收到客户端的ACK报文后，他会进入到ESTABLISHED状态
+  SYN-SENT：表示客户端已发送SYN报文，等待服务端的第二次握手
+  ESTABLISHED：表示连接已经建立
+  ```
++ 前两次握手特点
+
+  ```
+  SYN都设置为1
+  
+  数据部分长度都为0
+  
+  TCP头部的长度一般都为32字节，固定头部20字节，选项部分12字节
+  
+  双方会交换确认一些信息
+  比如MSS，是否支持SACK、Windows scale(窗口缩放系数)等
+  这些数据都存放在头部信息的选项部分中（12字节）
+  ```
+
++ 为什么需要3次握手，2次不行吗？
+
+  ![](images/network_transport_tcp_connect_three_hand_2.png)
+
++ 第三次握手失败了，怎么处理？
+
+  ```
+  此时服务端的状态为SYN-RCVD，如果等不到客户端的ACK，服务端会重新发送SYN+ACK包
+  
+  如果服务端多次重发SYN+ACK都等不到客户端的ACK，就会发送RST包，强制关闭连接
+  ```
+##### 释放连接
++ 四次挥手
+  ![](images/network_transport_tcp_disconnect_four_hand.png)
++ 状态解读
+  ![](images/network_transport_tcp_disconnect_state_1.png)
+  ![](images/network_transport_tcp_disconnect_state_2.png)
++ 细节
+  ![](images/network_transport_tcp_disconnect_detail.png)
++ 相关疑问
+  ![](images/network_transport_tcp_disconnect_questions.png)
++ 抓包信息
+  ![](images/network_transport_tcp_disconnect_wireshark.png)
 #### 默认端口号
-
 ![](images/network_transport_tcp_udp_port.png)
-
 ### 应用层
-
 ## 工具
-
 + [Packet Tracer](https://www.packettracernetwork.com/)
-
   Packet Tracer是一种创新的网络仿真和可视化工具。它可以帮助你通过桌面电脑或基于Android或iOS的移动设备练习网络配置和故障排除技能。Packet Tracer可用于Linux和Windows以及Mac桌面环境。
 
 + 
