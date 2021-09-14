@@ -635,6 +635,38 @@ android {
 }
 ```
 
+### jar脚本
+
+```groovy
+/**
+高版本archiveName和destinationDir参数会提示过时
+可以使用下面两个替换
+destinationDir is replaced by destinationDirectory
+archiveName is replaced by archiveFileName
+**/
+task generateJar(type: Jar, dependsOn: ['build']) {   //当前的脚本依赖于build脚本
+    archiveName = "yyyyy.jar" //打包后的jar包名
+    //打包的资源路径
+    from('build/intermediates/javac/debug/classes')
+    destinationDir = file('release') //打包后jar文件的存放路径
+    //添加一些忽略文件
+    exclude('android')   //忽略android目录下的所有文件
+    //忽略掉全部BuiuldConfig文件
+    exclude('**/BuildConfig.class')
+    exclude('**/BuildConfig\$*.class')
+    //忽略掉全部R文件
+    exclude('**/R.class')
+    exclude('**/R\$*.class')
+}
+
+//删除已存在的 Jar 包
+task deleteOldJar(type: Delete) {
+  delete 'build/libs/analytics.jar'
+}
+```
+
+### aar脚本
+
 
 
 ```groovy
