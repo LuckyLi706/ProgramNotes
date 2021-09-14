@@ -62,8 +62,8 @@ HTTP报文可分为报文首部和报文实体两块,二者由最初的空行来
 + 状态行(包含表明响应结果的状态码,原因短句和HTTP版本)
 + [首部字段(包含请求和响应的的各种条件和属性的各类首部)](https://blog.csdn.net/alexshi5/article/details/80379086)
 
-# 一次HTTP请求的解析
-## 参考文字
+## 一次HTTP请求的解析
+### 参考文章
 + https://blog.csdn.net/u013777975/article/details/80496121（DNS解析过程很详细）
 + https://www.jianshu.com/p/ed5735c663d7
 
@@ -87,7 +87,123 @@ HTTP报文可分为报文首部和报文实体两块,二者由最初的空行来
 
 ![](images/http_5.png)
 
+## 代理服务器
+
+### 正向代理、反向代理
+
++ 正向代理：代理的对象是客户端
++ 反向代理：代理的对象是服务器
+
+![](images/network_http_proxy_type.png)
+
+#### 正向代理作用
+
++ 隐藏客户端身份
++ 绕过防火墙（突破访问限制）
++ Internet访问控制
++ 数据过滤
++ ......
+
++ 一些免费的正向代理网站
+  - https://ip.jiangxianli.com/
+  - https://www.kuaidaili.com/free/inha/
+
+#### 反向代理作用
+
++ 隐藏服务器身份
++ 安全防护
++ 负载均衡
+
+### 相关头部字段
+
+![](images/network_http_proxy_field.png)
+
+## CDN
+
+CDN（ContentDeliveryNetwork或ContentDistributionNetwork），译为：内容分发网络
+
++ 利用最靠近每位用户的服务器
++ 更快更可靠地将音乐、图片、视频等资源文件（一般是静态资源）传递给用户
+
+### 使用CDN前后
+
+![](images/network_http_before_after.png)
+
++ CDN运营商在全国、乃至全球的各个大枢纽城市都建立了机房
+  - 部署了大量拥有高存储高带宽的节点，构建了一个跨运营商、跨地域的专用网络内容
++ 所有者向CDN运营商支付费用，CDN将其内容交付给最终用户
+
+### 使用CDN前
+
+![](images/network_http_before.png)
+
+### 使用CDN后
+
+![](images/network_http_after_1.png)
+
+![](images/network_http_after_2.png)
+
+## 缓存（Cache）
+
+### 响应头
+
++ Pragma
+
+  作用类似于Cache-Control，HTTP/1.0的产物
+
++ Expires
+
+  缓存的过期时间（GMT格式时间），HTTP/1.0的产物
+
++ Cache-Control
+
+  设置缓存策略
+
+  - no-storage：不缓存数据到本地
+  - public：允许用户、代理服务器缓存数据到本地
+  - private：只允许用户缓存数据到本地
+  - max-age：缓存的有效时间（多长时间不过期），单位秒
+  - no-cache：每次需要发请求给服务器询问缓存是否有变化，再来决定如何使用缓存
+
++ 优先级：Pragma>Cache-Control>Expires
+
++ Last-Modified
+
+  资源的最后一次修改时间
+
++ ETag
+
+  资源的唯一标识（根据文件内容计算出来的摘要值）
+
++ 优先级：ETag>Last-Modified
+
+### 请求头
+
++ If-None-Match 
+  - 如果上一次的响应头中有ETag，就会将ETag的值作为请求头的值
+  - 如果服务器发现资源的最新摘要值跟If-None-Match不匹配，就会返回新的资源（200OK）
+  - 否则，就不会返回资源的具体数据（304NotModified）
++ If-Modified-Since 
+  - 如果上一次的响应头中没有ETag，有Last-Modified，就会将Last-Modified的值作为请求头的值
+  - 如果服务器发现资源的最后一次修改时间晚于If-Modified-Since，就会返回新的资源（200OK）
+  - 否则，就不会返回资源的具体数据（304NotModified）
+
+### Last-Modified和ETag
+
++ Last-Modified的缺陷
+  - 只能精确到秒级别，如果资源在1秒内被修改了，客户端将无法获取最新的资源数据
+  - 如果某些资源被修改了（最后一次修改时间发生了变化），但是内容并没有任何变化
+  - 会导致相同数据重复传输，没有使用到缓存
++ ETag可以办到
+  - 只要资源的内容没有变化，就不会重复传输资源数据
+  - 只要资源的内容发生了变化，就会返回最新的资源数据给客户端
+
+### 流程图
+
+![](images/network_http_cache.png)
+
 # [HTTPS](https://blog.csdn.net/xiaoming100001/article/details/81109617)
+
 ## HTTP的缺点
 + 通信使用明文(不加密),内容可能会被窃听
 + 不验证通信方的身份,可能被伪装
