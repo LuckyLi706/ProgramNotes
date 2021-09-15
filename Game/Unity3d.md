@@ -31,7 +31,7 @@
 
 + 资源目录如下
 
-  ![](images/unity3d_assets.png)
+  ![](images/unity3D_assets.png)
 
   - Plugins：assets 下的根目录(下面可能有Android或者IOS) 
   - Android：主目录 
