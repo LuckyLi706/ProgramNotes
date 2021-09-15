@@ -1,4 +1,4 @@
-# HTTPs
+# HTTPS
 
 ## 概念
 
