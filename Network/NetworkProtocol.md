@@ -554,7 +554,7 @@ ping ip地址 -i TTL    //设置TTL的值
 
     如果有个包重传N次还是失败，不会一直重新传输，取决于系统的设置，有的系统比如传送5次还是失败就会发送reset报文断开TCP连接。
 
-   ![](images/network_transport_tcp_reliable_transfer_ reconnect.png)
+   ![](images/network_transport_tcp_reliable_transfer_reconnect.png)
 
 2. 停止等待ARQ协议（ARQ：自动重传请求）（四种情况）
 
@@ -734,6 +734,11 @@ rwnd=receive window（接收窗口）
 #### 默认端口号
 ![](images/network_transport_tcp_udp_port.png)
 ### 应用层
+
+#### [HTTP](HTTP.md)
+
+#### [HTTPS](HTTPS.md)
+
 ## 工具
 + [Packet Tracer](https://www.packettracernetwork.com/)
   Packet Tracer是一种创新的网络仿真和可视化工具。它可以帮助你通过桌面电脑或基于Android或iOS的移动设备练习网络配置和故障排除技能。Packet Tracer可用于Linux和Windows以及Mac桌面环境。
