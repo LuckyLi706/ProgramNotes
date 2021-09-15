@@ -524,6 +524,10 @@ static method
 
 ## Android
 
++ [CommonExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/CommonExtension#buildtypes_1)
++ [LibraryExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/LibraryExtension)
++ [ApplicationExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/ApplicationExtension)
+
 ### [ndk配置](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
 ```groovy
@@ -666,6 +670,20 @@ task deleteOldJar(type: Delete) {
 ```
 
 ### aar脚本
+
+```groovy
+android.libraryVariants.all { variant ->
+        if(variant.name.equalsIgnoreCase("release")) {
+            variant.outputs.all { output ->
+                def f = output.outputFileName
+                if (f != null && f.endsWith('.aar')) {  
+                    def fileName = "zidingyi-v${defaultConfig.versionName}.aar"   //自定义aar名字
+                    output.outputFileName = fileName
+                }
+            }
+        }
+    }
+```
 
 
 
