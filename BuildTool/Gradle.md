@@ -524,9 +524,288 @@ static method
 
 ## Android
 
-+ [CommonExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/CommonExtension#buildtypes_1)
-+ [LibraryExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/LibraryExtension)
-+ [ApplicationExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/ApplicationExtension)
+### 源码相关
+
++ [Gradle插件和Gradle版本对应关系](https://developer.android.com/studio/releases/gradle-plugin)
+
++ [Gradle API](https://developer.android.com/reference/tools/gradle-api)
+
++ 几个重要的类
+
+  - [CommonExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/CommonExtension#buildtypes_1)
+  - [LibraryExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/LibraryExtension)
+  - [ApplicationExtension](https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/ApplicationExtension)
+
+  ```
+  CommonExtension  里面定义了大量的闭包
+  LibraryExtension 对应Library
+  ApplicationExtension 对应了Application
+  ```
+
+#### AndroidStudio关联Gradle源码
+
+```groovy
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    compileOnly("com.android.tools.build:gradle:4.1.1"){   //在moudle这边添加这个依赖,4.1.1表示当前使用的Gradle插件版本
+        //移除这两个依赖，会有冲突，然后Ctrl+右击就可以进入相关源码了
+        exclude module: 'common'    
+        exclude module: 'bundletool'
+    }
+}
+```
+
+### setting.gradle
+
+大多数setting.gradle的作用是为了配置子工程，再Gradle多工程是通过工程树表示的
+
+```groovy
+include ':demo1app', ':demo2app'    //指定Module的名字
+
+project(':demo1app').projectDir = new File("Demo1\\demo1app") //可以手动指定Module的路径（非必须）
+project(':demo2app').projectDir = new File("Demo2\\demo2app")
+```
+
+### build.gradle（外）
+
+```groovy
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {//这里是gradle脚本执行所需依赖，分别是对应的maven库和插件
+    
+    repositories {
+        google()//从Android Studio3.0后新增了google()配置，可以引用google上的开源项目
+        jcenter()//是一个类似于github的代码托管仓库，声明了jcenter()配置，可以轻松引用 jcenter上的开源项目
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'此处是android的插件gradle，gradle是一个强大的项目构建工具
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {//这里是项目本身需要的依赖，比如项目所需的maven库
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+// 运行gradle clean时，执行此处定义的task任务。
+// 该任务继承自Delete，删除根目录中的build目录。
+// 相当于执行Delete.delete(rootProject.buildDir)。
+// gradle使用groovy语言，调用method时可以不用加（）。
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+
+### build.gradle（内）
+
++ [flavorDimensions多维度理解](https://blog.csdn.net/chen_xi_hao/article/details/80526049)
+
+```groovy
+/**
+plugins 闭包，定义当前的项目类型
+com.android.application //表示当前为app项目
+com.android.library   //表示当前为库文件
+
+之前可以这样写
+apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
+
+**/
+plugins {
+    id 'com.android.application'
+}
+
+/**
+android{} 闭包
+主要为了配置项目构建的各种属性
+**/
+android{
+    compileSdkVersion 27//设置编译时用的Android版本
+    //defaultConfig{}闭包
+    defaultConfig {
+        applicationId "com.billy.myapplication"//项目的包名
+        minSdkVersion 16//项目最低兼容的版本
+        targetSdkVersion 27//项目的目标版本
+        versionCode 1//版本号
+        versionName "1.0"//版本名称
+        flavorDimensions "company"   //风味维度（针对多渠道打包的，必须填写）
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"//表明要使用AndroidJUnitRunner进行单元测试
+        multiDexEnabled true   //支持多dex
+    }
+    //buildTypes闭包
+    buildTypes{
+        //生成安装文件的主要配置
+        buildTypes {// 生产/测试环境配置
+        release {// 生产环境
+            /**
+            生成的字段将保存到BuildConfig文件中
+            这个方法接收三个非空的参数，第一个：确定值的类型，第二个：指定key的名字，第三个：传值
+            带有方法的格式的值："\"" + getTime() + "\""
+            带有字符串的格式的值：'"tcp://36.155.71.242:8099"'或者"\"https://release.cn/\""
+            使用BuildConfig.LOG_DEBUG获取值。
+            **/
+            buildConfigField("boolean", "LOG_DEBUG", "false")//配置Log日志
+            buildConfigField("String", "URL_PERFIX", "\"https://release.cn/\"")// 配置URL前缀
+            minifyEnabled true//是否对代码进行混淆
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'//指定混淆的规则文件
+            signingConfig signingConfigs.release//设置签名信息，使用signingConfigs闭包下的release标签
+            pseudoLocalesEnabled true//是否在APK中生成伪语言环境，帮助国际化的东西，一般使用的不多
+            shrinkResources true //是否清理无用资源,依赖于minifyEnabled
+            zipAlignEnabled true//是否对APK包执行ZIP对齐优化，减小zip体积，增加运行效率
+            applicationIdSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
+            versionNameSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
+        }
+        debug {// 测试环境
+            buildConfigField("boolean", "LOG_DEBUG", "true")//配置Log日志
+            buildConfigField("String", "URL_PERFIX", "\"https://test.com/\"")// 配置URL前缀
+            minifyEnabled false//是否对代码进行混淆
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'//指定混淆的规则文件
+            signingConfig signingConfigs.debug//设置签名信息,使用signingConfigs闭包下的debug标签
+            debuggable false//是否支持断点调试
+            jniDebuggable false//是否可以调试NDK代码
+            renderscriptDebuggable false//是否开启渲染脚本就是一些c写的渲染方法
+            shrinkResources false //是否清理无用资源,依赖于minifyEnabled
+            zipAlignEnabled true//是否对APK包执行ZIP对齐优化，减小zip体积，增加运行效率
+            pseudoLocalesEnabled false//是否在APK中生成伪语言环境，帮助国际化的东西，一般使用的不多
+            applicationIdSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
+            versionNameSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
+        }
+      }
+    }
+    
+    /**
+    signingConfigs闭包，闭包下面的标签名字可以随意起
+    签名文件的配置，自动化打包
+    **/
+    signingConfigs {// 自动化打包配置
+        release {// 线上环境
+            keyAlias 'test'    //签名别名
+            keyPassword '123456' //签名密码
+            storeFile file('test.keystore')  //签名文件
+            storePassword '123456'   //签名文件的密码
+            storeType 'jks'  //签名类型。当我们不填时，默认为 jks 类型
+            v1SigningEnabled true //是否使用 v1 类型的签名方案。默认为true，即开启状态。如果我们将其置为false，则会导致在 7.0 以下版本，无法正常安装。
+            v2SigningEnabled true //是否使用 v2 类型的签名方案。默认为true，即开启状态。v2在 7.0 版本之后才支持
+        }
+        debug {// 开发环境
+            keyAlias 'test'
+            keyPassword '123456'
+            storeFile file('test.keystore')
+            storePassword '123456'
+        }
+    }
+    
+    /**
+    productFlavors{}闭包
+    多渠道配置
+    下面有三个产品test1、test2、test3
+    也可以为每个产品单独配置applicationId、versionName等
+    **/
+    productFlavors {
+        test1 {
+            /**
+            使用BuildConfig
+            使用方法：BuildConfig.displayFamilyName
+            **/
+            buildConfigField 'boolean', 'displayFamilyName', 'true'  
+            /**
+            配合AndroidManifest.xml使用
+            
+            xml配置
+            <meta-data
+            android:name="APP_KEY"
+            android:value="${APP_KEY}"/>
+            
+            java代码：
+            ApplicationInfo appInfo = getPackageManager()
+                    .getApplicationInfo(getPackageName(),
+                            PackageManager.GET_META_DATA);
+
+            String app_key = appInfo.metaData.getString("APP_KEY");
+           
+            **/
+            manifestPlaceholders = ["APP_KEY": "test1"]    //可以使用逗号隔开在[]中添加多个
+            /**
+            在资源文件中使用
+            string.xml:
+            <resources>
+               <string name="app_name">@string/appName</string>
+            </resources>
+            **/
+            resValue "string", "appName", '"111"'  
+            
+            
+        }
+        test2 {
+            buildConfigField 'boolean', 'displayFamilyName', 'false'  //列表Item前面是显示姓还是名
+            manifestPlaceholders = ["APP_KEY": '"test12"']
+            resValue "string", "appName", '"222"'
+        }
+        test3 {
+            buildConfigField 'boolean', 'displayFamilyName', 'true'  //列表Item前面是显示姓还是名
+            manifestPlaceholders = ["APP_KEY": "123456789333"]
+            resValue "string", "appName", '"333"'
+        }
+    }
+    
+    
+    /**
+    自定义包的名字和文件输出路径
+    **/
+    applicationVariants.all { variant ->
+        if (variant.buildType.name.equals('release')) { 
+            variant.outputs.all { output ->
+                outputFileName = 'company' + "_" + "${variant.productFlavors[0].name}" + "_" + variant.versionName + "_" + variant.versionCode + '.apk'
+                //outputFileName2  = "app-release.apk"
+                //打包路径
+                variant.packageApplication.outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+            }
+        }
+    }
+    
+    /**
+    packagingOptions{}闭包：打包时的相关配置
+    **/
+    packagingOptions{
+        //pickFirsts做用是 当有重复文件时 打包会报错 这样配置会使用第一个匹配的文件打包进入apk
+        // 表示当apk中有重复的META-INF目录下有重复的LICENSE文件时  只用第一个 这样打包就不会报错
+        pickFirsts = ['META-INF/LICENSE']
+
+        //merges何必 当出现重复文件时 合并重复的文件 然后打包入apk
+        //这个是有默认值得 merges = [] 这样会把默默认值去掉  所以我们用下面这种方式 在默认值后添加
+        merge 'META-INF/LICENSE'
+
+        //这个是在同时使用butterknife、dagger2做的一个处理。同理，遇到类似的问题，只要根据gradle的提示，做类似处理即可。
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+    
+    /**
+    lintOptions{}闭包：代码扫描分析
+    程序在编译的时候会检查lint，有任何错误提示会停止build，我们可以关闭这个开关
+    **/
+    lintOptions {
+        abortOnError false //即使报错也不会停止打包
+        checkReleaseBuilds false  //打包release版本的时候进行检测
+    }
+    
+    
+}
+```
+
+
 
 ### [ndk配置](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
