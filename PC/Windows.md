@@ -1,6 +1,6 @@
 # Windows
 
-目前开发的Windows的有QT、Flutter、Winform、WPF
+目前开发的Windows的有Electron、QT、Flutter、Winform、WPF
 
 ## 开发
 
@@ -39,4 +39,40 @@
 
   - 64位调试：x64dbg或者IDA Pro
   - 32调试：OllyDbg
+
+### Electron软件破解
+
+突破点app.asar资源文件
+
+#### 调试
+
++ [调试工具](https://github.com/bytedance/debugtron)
+
++ [插入代码调试
+
+  ```js
+  //打开软件会自动调试,类似chrome的devTools
+   this.view.webContents.openDevTools();   //在main.js里面加
+  ```
+
+#### 破解
+
++ app.asar
+
+  大部分的页面资源文件都在这里面。
+
+  ```
+  //安装asar包
+  npm install -g asar
+  
+  //拆包
+  asar extract app.asar <目录名>
+  
+  //组包
+  asar pack <目录名> app.asar
+  ```
+
+#### 参考
+
++ [Electron软件简单破解](https://blue-bird1.github.io/posts/electroncrack/)
 
