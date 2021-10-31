@@ -31,6 +31,22 @@ pip install <包名> 或 pip install -r requirements.txt  //在线安装依赖
 pip uninstall <包名> 或 pip uninstall -r requirements.txt //卸载依赖
 pip install --upgrade package_name  升级依赖
 pip install -U pip  //升级pip
+
+国内镜像：
+清华：https://pypi.tuna.tsinghua.edu.cn/simple
+阿里云：https://mirrors.aliyun.com/pypi/simple/
+豆瓣：https://pypi.doubanio.com/simple/
+
+例如：
+pip3 install -i https://pypi.doubanio.com/simple/ 包名    //使用镜像安装单个包
+pip3 install  -r requirements.txt -i https://pypi.doubanio.com/simple/   //使用镜像安装requirements.txt包含的镜像
+
+//关于安装Python会在Python\Scripts目录下发现有三个pip开头的exe（pip、pip3和pip3.7）
+如果同时装有 python2 和 python3
+pip 默认给 python2 用。
+pip3 指定给 python3 用。
+如果同时安装多个3的版本的话，比如3.5 3.6 3.7。则用pip3明显不合适，这个时候就可以用pip+版本后缀来明确指出具体版本的pip了。
+如果只装有 python3
 ```
 
 ## 1.3、pipenv介绍
