@@ -101,7 +101,7 @@ onPause -> onSaveInstanceState -> onStop -> onDestroy -> onCreate -> onStart -> 
 
 ## 启动模式和Flags
 
-#### 启动模式
+### 启动模式
 
 ```java
 //1.standard模式（标准模式）
@@ -125,7 +125,7 @@ onPause -> onSaveInstanceState -> onStop -> onDestroy -> onCreate -> onStart -> 
 呼叫来电界面
 ```
 
-#### Flags
+### Flags
 
 + [Intent.addFlags() 启动Activity的20种flags全解析](https://www.jianshu.com/p/2bdc16cba04f)
 
@@ -202,11 +202,89 @@ onPause -> onSaveInstanceState -> onStop -> onDestroy -> onCreate -> onStart -> 
 </activity> 
 ```
 
-## Fragment
+## 隐式启动
 
-### 生命周期
+### 隐式启动代码
 
-![](C:/Users/jacky/Desktop/ProgramNotes/Mobile/images/fragment.webp)
+```java
+/**
+使用setComponent方法
+**/
+Intent intent=new Intent();
+intent.setComponent(new ComponentName(“com.android.calendar”, “com.android.calendar.LaunchActivity”));
+intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+startActivity(intent);
+
+/**
+使用setClassName方法
+**/
+Intent intent=new Intent();
+intent.setClassName("com.example.fm", "com.example.fm.MainFragmentActivity");
+intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+intent.putExtra("test", "intent1");    //传递值
+startActivity(intent);
+```
+
+### action标签
+
+Action:Action属性的值是一个字符串，它代表了系统中定义的一系列常用动作。通过setAction()方法或在清单文件AndroidMainfest.xml中设置。默认为：DEFAULT。 
+
+```java
+//系统自带的
+ACTION_MAIN	默认启动的Activity中使用
+ACTION_VIEW	将数据显示给用户，经常用于浏览器中
+ACTION_EDIT	可编辑的数据
+ACTION_DEAL	启动系统拨号界面时使用
+ACTION_CALL	直接打电话时使用
+ACTION_SEND	给某人发信息，但未指定收件人
+ACTION_SENDTO	给指定的收件人发信息
+    
+//打开系统浏览器
+Intent intent = new Intent();
+intent.setAction("android.intent.action.VIEW");
+intent.setData(Uri.parse("http://www.baidu.com"));
+startActivity(intent);
+```
+
+### category标签
+
+Category：Category属性用于指定当前动作(Action)被执行的环境。通过addCategory()方法或在清单文件 AndroidMainfest.xml中设置.默认为:CATEGORY_DEFAULT。 
+
+```java
+//系统自带的
+CATEGORY_DEFAULT：Android系统中默认的执行方式，按照普通Activity的执行方式执行。　
+CATEGORY_HOME：设置该组件为Home Activity。
+CATEGORY_PREFERENCE：设置该组件为Preference。　
+CATEGORY_LAUNCHER：设置该组件为在当前应用程序启动器中优先级最高的Activity，通常为入口ACTION_MAIN配合使用。　
+CATEGORY_BROWSABLE：设置该组件可以使用浏览器启动。　
+CATEGORY_GADGET：设置该组件可以内嵌到另外的Activity中。
+```
+
+### data标签
+
+Data:Data通常是URL格式定义的操作数据。列如:tel//。通过setData()方法设置。 
+
+```java
+/**
+data属性解析：android:scheme、android:host、android:port、android:path、android:mimeType
+**/
+
+
+//系统自带的
+tel://：号码数据格式，后跟电话号码。　
+mailto://：邮件数据格式，后跟邮件收件人地址。
+smsto://：短息数据格式，后跟短信接收号码。
+content://：内容数据格式，后跟需要读取的内容。　
+file://：文件数据格式，后跟文件路径。
+market://search?q=pname:pkgname：市场数据格式，在Google Market里搜索包名为pkgname的应用。
+geo://latitude,longitude:经纬数据格式，在地图上显示经纬度指定的位置。
+```
+
+# Fragment
+
+## 生命周期
+
+![](../images/fragment.webp)
 
 ```
 onAttach(Contextcontext)：在Fragment和Activity关联上的时候调用，且仅调用一次。在该回调中我们可以将context转化为Activity保存下来，从而避免后期频繁调用getAtivity()获取Activity的局面，避免了在某些情况下getAtivity()为空的异常（Activity和Fragment分离的情况下）。同时也可以在该回调中将传入的Arguments提取并解析，在这里强烈推荐通过setArguments给Fragment传参数，因为在应用被系统回收时Fragment不会保存相关属性。
@@ -232,7 +310,7 @@ onDetach()：Fragment和Activity解除关联时调用。
 
 ```
 
-### 和Activity如何数据交互
+## 和Activity如何数据交互
 
 ```java
 Activity->Fragment
@@ -246,7 +324,7 @@ Fragment->Fragment
 EventBus
 ```
 
-## 原理
+# Activity原理
 
 + [3分钟看懂Activity启动流程](https://www.jianshu.com/p/9ecea420eb52)
 + [Android8.0中Activity的启动流程](https://www.jianshu.com/p/459d38ade254)
