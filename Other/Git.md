@@ -265,8 +265,8 @@ git remote set-url origin [新地址]
 ### 撤销
 
 ```
-# 恢复暂存区的指定文件到工作区
-git checkout [file]
+# 撤销当前文件本地的修改,（还没有进行commit操作的）
+git checkout -- [file]
 
 # 恢复某个commit的指定文件到暂存区和工作区
 git checkout [commit] [file]
