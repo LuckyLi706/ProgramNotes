@@ -645,10 +645,34 @@ android{
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"//表明要使用AndroidJUnitRunner进行单元测试
         multiDexEnabled true   //支持多dex
     }
+    
+    /**
+    signingConfigs闭包，闭包下面的标签名字可以随意起
+    签名文件的配置，自动化打包
+    需要放在buildTypes上面,不然找不到签名
+    **/
+    signingConfigs {// 自动化打包配置
+        release {// 线上环境
+            keyAlias 'test'    //签名别名
+            keyPassword '123456' //签名密码
+            storeFile file('test.keystore')  //签名文件
+            storePassword '123456'   //签名文件的密码
+            storeType 'jks'  //签名类型。当我们不填时，默认为 jks 类型
+            v1SigningEnabled true //是否使用 v1 类型的签名方案。默认为true，即开启状态。如果我们将其置为false，则会导致在 7.0 以下版本，无法正常安装。
+            v2SigningEnabled true //是否使用 v2 类型的签名方案。默认为true，即开启状态。v2在 7.0 版本之后才支持
+        }
+        debug {// 开发环境
+            keyAlias 'test'
+            keyPassword '123456'
+            storeFile file('test.keystore')
+            storePassword '123456'
+        }
+    }
+    
+    
     //buildTypes闭包
-    buildTypes{
+    buildTypes{ // 生产/测试环境配置
         //生成安装文件的主要配置
-        buildTypes {// 生产/测试环境配置
         release {// 生产环境
             /**
             生成的字段将保存到BuildConfig文件中
@@ -682,29 +706,6 @@ android{
             pseudoLocalesEnabled false//是否在APK中生成伪语言环境，帮助国际化的东西，一般使用的不多
             applicationIdSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
             versionNameSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
-        }
-      }
-    }
-    
-    /**
-    signingConfigs闭包，闭包下面的标签名字可以随意起
-    签名文件的配置，自动化打包
-    **/
-    signingConfigs {// 自动化打包配置
-        release {// 线上环境
-            keyAlias 'test'    //签名别名
-            keyPassword '123456' //签名密码
-            storeFile file('test.keystore')  //签名文件
-            storePassword '123456'   //签名文件的密码
-            storeType 'jks'  //签名类型。当我们不填时，默认为 jks 类型
-            v1SigningEnabled true //是否使用 v1 类型的签名方案。默认为true，即开启状态。如果我们将其置为false，则会导致在 7.0 以下版本，无法正常安装。
-            v2SigningEnabled true //是否使用 v2 类型的签名方案。默认为true，即开启状态。v2在 7.0 版本之后才支持
-        }
-        debug {// 开发环境
-            keyAlias 'test'
-            keyPassword '123456'
-            storeFile file('test.keystore')
-            storePassword '123456'
         }
     }
     
