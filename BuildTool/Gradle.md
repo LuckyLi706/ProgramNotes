@@ -1,3 +1,36 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Gradle](#gradle)
+  - [Groovy语法](#groovy%E8%AF%AD%E6%B3%95)
+    - [初探](#%E5%88%9D%E6%8E%A2)
+    - [入门](#%E5%85%A5%E9%97%A8)
+    - [变量类型](#%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B)
+    - [逻辑控制](#%E9%80%BB%E8%BE%91%E6%8E%A7%E5%88%B6)
+    - [闭包](#%E9%97%AD%E5%8C%85)
+      - [基础](#%E5%9F%BA%E7%A1%80)
+      - [使用](#%E4%BD%BF%E7%94%A8)
+      - [详解](#%E8%AF%A6%E8%A7%A3)
+    - [复杂类型](#%E5%A4%8D%E6%9D%82%E7%B1%BB%E5%9E%8B)
+      - [列表](#%E5%88%97%E8%A1%A8)
+      - [映射](#%E6%98%A0%E5%B0%84)
+      - [范围](#%E8%8C%83%E5%9B%B4)
+    - [面向对象](#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1)
+      - [定义](#%E5%AE%9A%E4%B9%89)
+      - [方法](#%E6%96%B9%E6%B3%95)
+  - [Android](#android)
+    - [源码相关](#%E6%BA%90%E7%A0%81%E7%9B%B8%E5%85%B3)
+      - [AndroidStudio关联Gradle源码](#androidstudio%E5%85%B3%E8%81%94gradle%E6%BA%90%E7%A0%81)
+    - [setting.gradle](#settinggradle)
+    - [build.gradle（外）](#buildgradle%E5%A4%96)
+    - [build.gradle（内）](#buildgradle%E5%86%85)
+    - [ndk配置](#ndk%E9%85%8D%E7%BD%AE)
+    - [jar脚本](#jar%E8%84%9A%E6%9C%AC)
+    - [aar脚本](#aar%E8%84%9A%E6%9C%AC)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Gradle
 
 + [gradle中文文档](https://doc.yonyoucloud.com/doc/wiki/project/GradleUserGuide-Wiki/about_this_user_guide.html)
@@ -806,8 +839,6 @@ android{
 }
 ```
 
-
-
 ### [ndk配置](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
 ```groovy
@@ -963,115 +994,5 @@ android.libraryVariants.all { variant ->
             }
         }
     }
-```
-
-
-
-```groovy
-android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.2'
-    defaultConfig {
-        applicationId "com.lucky.app"
-        minSdkVersion 17
-        targetSdkVersion 29
-        versionCode 5
-        versionName "1.5.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        flavorDimensions "versionCode"
-        renderscriptTargetApi 19
-        renderscriptSupportModeEnabled true
-        multiDexEnabled true
-
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"
-        }
-    }
-    signingConfigs {
-        release {
-            keyAlias ''
-            keyPassword ''
-            storeFile file('')
-            storePassword ''
-        }
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            //混淆
-            //minifyEnabled true
-            // Zipalign优化
-            //zipAlignEnabled true
-            // 移除无用的resource文件
-            //shrinkResources true
-            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
-            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            /**
-            配置BuildConfig变量
-            **/
-            buildConfigField("String", "PACK_TIME", "\"" + getTime() + "\"")
-            buildConfigField("String", "BASE_URL", '"https://yzp.ssl.ysten.com/ysp-tv-api/"')
-            buildConfigField("String", "MQTT_URL", '"tcp://36.155.71.242:8099"')
-            buildConfigField("boolean", "IS_TEST", "false")
-        }
-        debug {
-
-            //测试环境
-            signingConfig signingConfigs.release
-            buildConfigField("String", "PACK_TIME", "\"" + getTime() + "\"")
-            buildConfigField("String", "BASE_URL", '"https://yzpdev.ssl.ysten.com/ysp-tv-api/"')
-            buildConfigField("String", "MQTT_URL", '"tcp://39.99.189.185:1883"')
-            buildConfigField("boolean", "IS_TEST", "true")
-        }
-    }
-
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-    sourceSets.main {
-        jniLibs.srcDirs = ['src/main/libs'];
-    }
-
-    /**
-     针对不同的渠道来生成不同参数
-     xml配置：
-     <meta-data
-            android:name="LAUNCHER"
-            android:value="${IS_LAUNCHER}" />
-     java配置：       
-     */
-    productFlavors {
-        cmcc {
-            manifestPlaceholders = [CATEGORY_VALUE: "android.intent.category.DEFAULT", IS_LAUNCHER: false, CHANNEL_VALUE: "cmcc", IS_NEED_UPDATE: false]
-        }
-        launcher {
-            manifestPlaceholders = [CATEGORY_VALUE: "android.intent.category.HOME", IS_LAUNCHER: true, CHANNEL_VALUE: "launcher", IS_NEED_UPDATE: true]
-        }
-        normal {
-            manifestPlaceholders = [CATEGORY_VALUE: "android.intent.category.DEFAULT", IS_LAUNCHER: false, CHANNEL_VALUE: "normal", IS_NEED_UPDATE: true]
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    //输出release包
-    applicationVariants.all { variant ->
-        if (variant.buildType.name.equals('release')) {//防止AS无法安装debug包(apk)
-            if (!isPack()) {
-                return;
-            }
-            variant.outputs.all { output ->
-                outputFileName = 'yst.cs' + "_" + "${variant.productFlavors[0].name}" + "_" + variant.versionName + "_" + variant.versionCode + '.apk'
-                //outputFileName2  = "app-release.apk"
-                //打包路径
-                variant.packageApplication.outputDirectory = new File(project.rootDir.absolutePath + "/apk")
-            }
-        }
-    }
-}
 ```
 

@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Make](#make)
+  - [推荐学习](#%E6%8E%A8%E8%8D%90%E5%AD%A6%E4%B9%A0)
+  - [什么是make](#%E4%BB%80%E4%B9%88%E6%98%AFmake)
+  - [Makefile语法](#makefile%E8%AF%AD%E6%B3%95)
+    - [基本格式](#%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F)
+    - [变量](#%E5%8F%98%E9%87%8F)
+    - [显示规则](#%E6%98%BE%E7%A4%BA%E8%A7%84%E5%88%99)
+    - [条件判断](#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD)
+    - [函数](#%E5%87%BD%E6%95%B0)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Make
 
 ## 推荐学习
