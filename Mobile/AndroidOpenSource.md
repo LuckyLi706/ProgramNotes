@@ -29,20 +29,25 @@
     - [源码](#%E6%BA%90%E7%A0%81)
   - [OkHttp](#okhttp)
     - [使用](#%E4%BD%BF%E7%94%A8-1)
+    - [日志拦截器](#%E6%97%A5%E5%BF%97%E6%8B%A6%E6%88%AA%E5%99%A8)
     - [WebSocket](#websocket)
+      - [Java](#java-4)
+      - [Kotlin](#kotlin-3)
   - [Retrofit](#retrofit)
     - [使用](#%E4%BD%BF%E7%94%A8-2)
     - [Retrofit单例](#retrofit%E5%8D%95%E4%BE%8B)
-      - [Java](#java-4)
-      - [Kotlin](#kotlin-3)
+      - [Java](#java-5)
+      - [Kotlin](#kotlin-4)
     - [请求注解](#%E8%AF%B7%E6%B1%82%E6%B3%A8%E8%A7%A3)
     - [配合LiveData](#%E9%85%8D%E5%90%88livedata)
-    - [日志拦截器](#%E6%97%A5%E5%BF%97%E6%8B%A6%E6%88%AA%E5%99%A8)
+    - [断点下载大文件](#%E6%96%AD%E7%82%B9%E4%B8%8B%E8%BD%BD%E5%A4%A7%E6%96%87%E4%BB%B6)
 - [图片加载](#%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD)
   - [Glide](#glide)
     - [使用](#%E4%BD%BF%E7%94%A8-3)
     - [任意布局加载图片](#%E4%BB%BB%E6%84%8F%E5%B8%83%E5%B1%80%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87)
     - [修改存储位置和大小](#%E4%BF%AE%E6%94%B9%E5%AD%98%E5%82%A8%E4%BD%8D%E7%BD%AE%E5%92%8C%E5%A4%A7%E5%B0%8F)
+- [日志](#%E6%97%A5%E5%BF%97)
+    - [Xlog](#xlog)
 - [地图](#%E5%9C%B0%E5%9B%BE)
     - [百度](#%E7%99%BE%E5%BA%A6)
       - [获取经纬度](#%E8%8E%B7%E5%8F%96%E7%BB%8F%E7%BA%AC%E5%BA%A6)
@@ -1200,7 +1205,90 @@ try {
 }
 ```
 
+### 日志拦截器
+
+```kotlin
+package com.imi.gamestore.manager.net.interceptor
+
+import com.imi.gamestore.utils.JsonUtil
+import com.imi.gamestore.utils.LogUtil
+import okhttp3.*
+import okio.Buffer
+
+
+/**
+ * 自定义的http拦截器
+ *
+ * 拦截请求信息和回复信息
+ */
+class HttpLogInterceptor : Interceptor {
+    //private val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+
+    private val post = "POST"
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        LogUtil.d(
+            JsonUtil.objectToJson(
+                RequestLog(
+                    "请求数据",
+                    request.url().toString(),
+                    request.method()
+                )
+            )
+        )
+        if (post == request.method()) {
+            val copy = request.newBuilder().build()
+            val buffer = Buffer()
+            copy.body()?.writeTo(buffer)
+            LogUtil.json(buffer.readUtf8())
+        }
+
+        val response = chain.proceed(chain.request())
+
+        return if (response.body() != null && response.body()!!.contentType() != null) {
+            val mediaType: MediaType? = response.body()!!.contentType()
+            val string = response.body()!!.string()
+            //LogUtil.d("mediaType =  :  " + mediaType.toString())
+            LogUtil.d(
+                JsonUtil.objectToJson(
+                    ResponseLog(
+                        "响应数据",
+                        request.url().toString(),
+                        response.code(),
+                        response.protocol(),
+                        mediaType.toString()
+                    )
+                )
+            )
+            LogUtil.json(string)
+            val responseBody = ResponseBody.create(mediaType, string)
+            response.newBuilder().body(responseBody).build()
+        } else {
+            response
+        }
+    }
+}
+
+data class ResponseLog(
+    val state: String,
+    val url: String,
+    val code: Int,
+    //val message: String,
+    val protocol: Protocol,
+    val mediaType: String,
+)
+
+data class RequestLog(
+    val state: String,
+    val url: String,
+    val method: String,
+)
+```
+
 ### WebSocket
+
+#### Java
 
 ```java
 package com.shoukong.umpsky.manager.net.websocket;
@@ -1373,6 +1461,150 @@ public class WebSocketManager {
             }
         };
     }
+}
+```
+
+#### Kotlin
+
+```kotlin
+package com.imi.gamestore.manager.net
+
+import com.imi.gamestore.Constants
+import com.imi.gamestore.utils.LogUtil
+import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
+import okio.ByteString
+import java.util.concurrent.TimeUnit
+
+
+/**
+ * Websocket
+ * 还可以使用ping帧来保活
+ * 还可以进行鉴权
+ */
+class WebSocketManager private constructor() {
+
+    private lateinit var webSocket: WebSocket
+    private lateinit var request: Request
+    private lateinit var client: OkHttpClient
+    private var isConnect: Boolean = false
+    private lateinit var webSocketState: WebSocketState
+
+    private val loggingInterceptor =
+        HttpLoggingInterceptor { message: String -> LogUtil.d("WebSocket请求日志:$message") }.setLevel(
+            HttpLoggingInterceptor.Level.BODY
+        )
+
+    //懒汉
+    companion object {
+        val instance: WebSocketManager by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+            WebSocketManager()
+        }
+    }
+
+    fun initWebSocket(webSocketState: WebSocketState) {
+        client = OkHttpClient.Builder()
+            .readTimeout(3, TimeUnit.SECONDS) //设置读取超时时间
+            .writeTimeout(3, TimeUnit.SECONDS) //设置写的超时时间
+            .connectTimeout(3, TimeUnit.SECONDS) //设置连接超时时间
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        this.webSocketState = webSocketState
+        //构建一个连接请求对象
+        request = Request.Builder().get().url(Constants.WEBSOCKET_URL).build()
+        //进行连接
+        connect()
+    }
+
+    //连接
+    private fun connect() {
+        if (isConnect) {
+            return
+        }
+        webSocket = client.newWebSocket(request, createListener())
+    }
+
+    //重新连接
+    private fun reconnect() {
+        Thread.sleep(3000)   //暂停3秒
+        connect()
+    }
+
+    //关闭连接
+    private fun close() {
+        if (isConnect) {
+            webSocket.cancel()
+            webSocket.close(1001, "客户端主动关闭连接")
+        }
+    }
+
+    fun sendMessage(message: String) {
+        if (isConnect) {
+            webSocket.send(message)
+        }
+    }
+
+    private fun createListener(): WebSocketListener {
+        return object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                super.onOpen(webSocket, response)
+                isConnect = response.code() == 101
+                if (!isConnect) {
+                    reconnect()
+                } else {
+                    webSocketState.connectSuccess()
+                    startScheduleThread()
+                    LogUtil.d("连接成功")
+                }
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                super.onMessage(webSocket, text)
+                webSocketState.message(text)
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                super.onMessage(webSocket, bytes)
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosing(webSocket, code, reason)
+                LogUtil.d("onClosing")
+                isConnect = false
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosed(webSocket, code, reason)
+                LogUtil.d("onClosed")
+                isConnect = false
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                super.onFailure(webSocket, t, response)
+                LogUtil.d("onFailure")
+                isConnect = false
+                reconnect()
+            }
+        }
+    }
+
+    //心跳（每40秒执行一次）
+    fun startScheduleThread() {
+        Thread(Runnable {
+            while (isConnect) {
+                sendMessage("HEART_BEAT")
+                Thread.sleep(40000)
+            }
+        }).start()
+
+    }
+}
+
+interface WebSocketState {
+    fun connectSuccess()
+    fun connectFail()
+    fun message(message: String)
 }
 ```
 
@@ -1789,35 +2021,119 @@ data class ApiResponse<T>(
 .addCallAdapterFactory(LiveDataCallAdapterFactory())
 ```
 
-### 日志拦截器
+### 断点下载大文件
 
 ```kotlin
-package com.imi.gamestore.manager.net.interceptor
+   /**   定义请求
+     *   Range的使用形式
+     *   bytes=0-499	表示头500个字节
+     *   bytes=500-999	表示第二个500字节
+     *   bytes=-500	表示最后500个字节
+     *   bytes=500-	表示500字节以后的范围
+     *   bytes=0-0,-1	第一个和最后一个字节
+     */
+    @Streaming
+    @GET
+    fun downloadApk(@Header("Range") range: String, @Url apkUrl: String): Call<ResponseBody>
 
-import com.imi.gamestore.utils.LogUtil
-import okhttp3.Interceptor
-import okhttp3.Response
+//下载帮助类
+class DownloadHelper {
 
-/**
- * 自定义的http拦截器
- *
- * 拦截请求信息和回复信息
- */
-class HttpLogInterceptor : Interceptor {
-    //private val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+    companion object {
+        var allCall: HashMap<String, Call<ResponseBody>> = HashMap()   //保存所有请求的call
 
-    override fun intercept(chain: Interceptor.Chain): Response {
+        var mCall: Call<ResponseBody>? = null
 
-        val request = chain.request()
-        LogUtil.json(request.toString())
-        val response = chain.proceed(request)
-        //response.peekBody不会关闭流
-        LogUtil.json(response.toString())
+        /**
+         * @startPoint 开始的字节
+         * @handler 推送到主线程
+         * @apkUrl apk地址
+         */
+        fun startDownload(
+            startPoint: Long,
+            handler: Handler?,
+            apkUrl: String,
+            apkCachePath: String
+        ) {
+            LogUtil.d("startPoint:$startPoint")
+            mCall = RetrofitManager.getInstance().createApiService()
+                .downloadApk(
+                    "bytes=$startPoint-",
+                    apkUrl
+                )
+            mCall!!.enqueue(DownloadCallback(startPoint, handler, apkCachePath))
+            allCall[apkUrl] = mCall!!
+        }
 
-        return response
+        //取消了移除call
+        fun cancelDownload(apkUrl: String) {
+            allCall[apkUrl]?.cancel()
+            allCall.remove(apkUrl)
+        }
+    }
+}
+
+//真正的下载
+class DownloadCallback(
+    private var startPoint: Long,
+    private var mHandler: Handler?,
+    private var apkCachePath: String
+) :
+    Callback<ResponseBody> {
+
+    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        if (response.code() != HttpURLConnection.HTTP_PARTIAL && response.code() != HttpURLConnection.HTTP_OK) {
+            //返回code非206 ，不支持断点续传
+            mHandler?.sendEmptyMessage(400);
+            return;
+        }
+        downloadApk(response.body()!!)
+    }
+
+    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        mHandler?.sendEmptyMessage(100);
+    }
+
+    private fun downloadApk(body: ResponseBody) {
+        val startPoint = this.startPoint
+        val apkCachePath = this.apkCachePath
+
+        var inputStream: InputStream? = null
+        var outputStream: OutputStream? = null
+        try {
+            val fileReader = ByteArray(8 * 1024 * 1024)
+            val fileSize: Long = body.contentLength()
+            LogUtil.d("总大小:$fileSize")
+            var fileSizeDownloaded: Long = startPoint
+            inputStream = body.byteStream()
+            outputStream =
+                FileOutputStream(apkCachePath, true)
+            while (true) {
+                val read: Int = inputStream.read(fileReader)
+                if (read == -1) {
+                    break
+                }
+                outputStream.write(fileReader, 0, read)
+                fileSizeDownloaded += read
+                val msg: Message = Message.obtain()
+                msg.arg1 =
+                    ((fileSizeDownloaded.toFloat() / (fileSize + startPoint)) * 100).toInt()
+                msg.what = 300;
+                mHandler?.sendMessage(msg)
+                SystemClock.sleep(50);
+            }
+            outputStream.flush();
+        } catch (e: Exception) {
+            LogUtil.d(e.toString())
+        } finally {
+            inputStream?.close()
+            outputStream?.close()
+        }
     }
 }
 ```
+
+
 
 # 图片加载
 
@@ -1968,6 +2284,54 @@ class CacheGlideModule : AppGlideModule() {
 
 }
 ```
+
+# 日志
+
+### Xlog
+
++ [github地址](https://github.com/elvishew/XLog)
+
+```kotlin
+private fun initLog() {
+        val config: LogConfiguration = LogConfiguration.Builder()
+            .logLevel(LogLevel.DEBUG)           // 指定日志级别，低于该级别的日志将不会被打印，默认为 LogLevel.ALL
+            .tag("FFF")                                         // 指定 TAG，默认为 "X-LOG"
+            .enableThreadInfo()                                    // 允许打印线程信息，默认禁止
+            .enableStackTrace(2)                                   // 允许打印深度为 2 的调用栈信息，默认禁止
+            .enableBorder()                                        // 允许打印日志边框，默认禁止
+            //.jsonFormatter( MyJsonFormatter())                  // 指定 JSON 格式化器，默认为 DefaultJsonFormatter
+            //.xmlFormatter( MyXmlFormatter())                    // 指定 XML 格式化器，默认为 DefaultXmlFormatter
+            //.throwableFormatter( MyThrowableFormatter())        // 指定可抛出异常格式化器，默认为 DefaultThrowableFormatter
+            //.threadFormatter( MyThreadFormatter())              // 指定线程信息格式化器，默认为 DefaultThreadFormatter
+            //.stackTraceFormatter( MyStackTraceFormatter())      // 指定调用栈信息格式化器，默认为 DefaultStackTraceFormatter
+            //.borderFormatter( MyBoardFormatter())               // 指定边框格式化器，默认为 DefaultBorderFormatter
+            //.addObjectFormatter(AnyClass.class,                    // 为指定类型添加对象格式化器
+            //       new AnyClassObjectFormatter())                     // 默认使用 Object.toString()
+            //.addInterceptor(new BlacklistTagsFilterInterceptor(    // 添加黑名单 TAG 过滤器
+            //       "blacklist1", "blacklist2", "blacklist3"))
+            //.addInterceptor(new MyInterceptor())                   // 添加一个日志拦截器
+            .build()
+
+        val androidPrinter = AndroidPrinter(true);         // 通过 android.util.Log 打印日志的打印器
+        val consolePrinter = ConsolePrinter()             // 通过 System.out 打印日志到控制台的打印器
+        val filePrinter = FilePrinter                   // 打印日志到文件的打印器
+            .Builder(filesDir.absolutePath)                             // 指定保存日志文件的路径
+            // .fileNameGenerator(new DateFileNameGenerator ())        // 指定日志文件名生成器，默认为 ChangelessFileNameGenerator("log")
+            // .backupStrategy(new NeverBackupStrategy ())             // 指定日志文件备份策略，默认为 FileSizeBackupStrategy(1024 * 1024)
+            // .cleanStrategy(new FileLastModifiedCleanStrategy (MAX_TIME))     // 指定日志文件清除策略，默认为 NeverCleanStrategy()
+            // .flattener(new MyFlattener ())                          // 指定日志平铺器，默认为 DefaultFlattener
+            .build();
+
+        XLog.init(                                                 // 初始化 XLog
+            config,                                                // 指定日志配置，如果不指定，会默认使用 new LogConfiguration.Builder().build()
+            androidPrinter,                                        // 添加任意多的打印器。如果没有添加任何打印器，会默认使用 AndroidPrinter(Android)/ConsolePrinter(java)
+            //consolePrinter,
+            filePrinter
+        )
+    }
+```
+
+
 
 # 地图
 
