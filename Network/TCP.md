@@ -5,7 +5,7 @@
 + TCP（Transmission Control Protocol），传输控制协议
 + UDP（User Datagram Protocol），用户数据报协议
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport.png)
+![](images/network_transport.png)
 
 ## UDP
 
@@ -15,7 +15,7 @@
 
 ### 数据包格式
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_udp_format.png)
+![](images/network_transport_udp_format.png)
 
 + UDP长度（Length）占16位
 
@@ -25,7 +25,7 @@
 
   伪首部：仅在计算检验和时起作用，并不会传递给网络层
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_udp_checksum.png)
+  ![](images/network_transport_udp_checksum.png)
 
 + 端口（Port）
 
@@ -49,13 +49,13 @@
 
 ### 数据包格式
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_format.bmp)
+![](images/network_transport_tcp_format.bmp)
 
 + 校验和
 
   和UDP一样，检验和的计算内容：伪首部+ 首部+ 数据，伪首部：12个字节，仅在计算检验和时起作用，并不会传递给网络层
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_checksum.bmp)
+  ![](images/network_transport_tcp_checksum.bmp)
 
 ```
 数据偏移 4位
@@ -95,27 +95,27 @@
 
    如果有个包重传N次还是失败，不会一直重新传输，取决于系统的设置，有的系统比如传送5次还是失败就会发送reset报文断开TCP连接。
 
-   ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_reconnect.png)
+   ![](images/network_transport_tcp_reliable_transfer_reconnect.png)
 
 2. 停止等待ARQ协议（ARQ：自动重传请求）（四种情况）
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_arq_1.png)
+![](images/network_transport_tcp_reliable_transfer_arq_1.png)
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_arq_2.png)
+![](images/network_transport_tcp_reliable_transfer_arq_2.png)
 
 3. 连续ARQ协议+滑动窗口协议
 
-   ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_arq_3.png)
+   ![](images/network_transport_tcp_reliable_transfer_arq_3.png)
 
-   ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_arq_4.png)
+   ![](images/network_transport_tcp_reliable_transfer_arq_4.png)
 
-   ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_arq_5.png)
+   ![](images/network_transport_tcp_reliable_transfer_arq_5.png)
 
 4. SACK（选择确认）
 
-   ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_sack_1.png)
+   ![](images/network_transport_tcp_reliable_transfer_sack_1.png)
 
-   ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_reliable_transfer_sack_2.png)
+   ![](images/network_transport_tcp_reliable_transfer_sack_2.png)
 
 5. 思考
 
@@ -133,7 +133,7 @@
 
 rwnd=receive window（接收窗口）
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_flow_control.png)
+![](images/network_transport_tcp_flow_control.png)
 
 + 如果接收方的缓存存满了，发送方还在疯狂发数据
 
@@ -177,13 +177,13 @@ rwnd=receive window（接收窗口）
 
 + 慢开始（slow start，慢启动）
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_block_control_slow_start_1.png)
+  ![](images/network_transport_tcp_block_control_slow_start_1.png)
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_block_control_slow_start_2.png)
+  ![](images/network_transport_tcp_block_control_slow_start_2.png)
 
 + 拥塞避免（congestion avoidance）
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_block_control_block_avoid.png)
+  ![](images/network_transport_tcp_block_control_block_avoid.png)
 
 + 快速重传（fast retransimit）
 
@@ -198,7 +198,7 @@ rwnd=receive window（接收窗口）
   而不必等待继续重传计时器到期后再重传
   ```
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_block_control_fast_retransimit.png)
+  ![](images/network_transport_tcp_block_control_fast_retransimit.png)
 
 + 快速恢复（fast recovery）
 
@@ -211,7 +211,7 @@ rwnd=receive window（接收窗口）
   然后开始执行拥塞避免算法（”加分增大“），使拥塞窗口慢慢的线性增大。
   ```
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_block_control_fast_retransimit_recovery.png)
+  ![](images/network_transport_tcp_block_control_fast_retransimit_recovery.png)
 
 + 发送窗口的最大值
 
@@ -232,7 +232,7 @@ rwnd=receive window（接收窗口）
 ### 建立连接
 
 + 三次握手
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_connect_three_hand.png)
+  ![](images/network_transport_tcp_connect_three_hand.png)
 
 + 状态解读
 
@@ -260,7 +260,7 @@ rwnd=receive window（接收窗口）
 
 + 为什么需要3次握手，2次不行吗？
 
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_connect_three_hand_2.png)
+  ![](images/network_transport_tcp_connect_three_hand_2.png)
 
 + 第三次握手失败了，怎么处理？
 
@@ -273,19 +273,19 @@ rwnd=receive window（接收窗口）
 ### 释放连接
 
 + 四次挥手
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_disconnect_four_hand.png)
+  ![](images/network_transport_tcp_disconnect_four_hand.png)
 + 状态解读
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_disconnect_state_1.png)
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_disconnect_state_2.png)
+  ![](images/network_transport_tcp_disconnect_state_1.png)
+  ![](images/network_transport_tcp_disconnect_state_2.png)
 + 细节
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_disconnect_detail.png)
+  ![](images/network_transport_tcp_disconnect_detail.png)
 + 相关疑问
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_disconnect_questions.png)
+  ![](images/network_transport_tcp_disconnect_questions.png)
 + 抓包信息
-  ![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_disconnect_wireshark.png)
+  ![](images/network_transport_tcp_disconnect_wireshark.png)
 
 ### 默认端口号
 
-![](C:/Users/test/Desktop/ProgramNotes/Network/images/network_transport_tcp_udp_port.png)
+![](images/network_transport_tcp_udp_port.png)
 
 ## 
