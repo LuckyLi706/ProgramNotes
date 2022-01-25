@@ -49,6 +49,7 @@
 + [SpringBoot](Server/SpringBoot.md)
 + [Flask](Server/Flask.md)
 + [后端云(无需自己搭建后台)](Server/Server_Sky.md)
++ [Apipost](https://www.apipost.cn/)（服务端接口测试，比postman好）
 
 ## Game
 
@@ -60,6 +61,7 @@
 + [MySQL](SQL/MySQL.md)
 + [MongoDB](SQL/MongoDB.md)
 + [SQLite](SQL/SQLite.md)
++ [DBeaver](https://github.com/dbeaver/dbeaver)（可视化数据库工具，开源，免费，支持所有数据库文件）
 
 ## Script
 

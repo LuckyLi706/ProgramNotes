@@ -179,6 +179,8 @@ Clang编译C家族语言到LLVM bitcode , 然后再用LLVM转为obj文件。
 
 非常酷的一点，支持任何平台！！！
 
+![](images/Clang_LLVM.jpg)
+
 ## C和C++对比
 
 1. C++有三种编程方式：过程性，面向对象，泛型编程。
