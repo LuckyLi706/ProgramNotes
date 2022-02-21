@@ -44,6 +44,9 @@ printf("%d/n",a); //printf输出函数
 %d 十进制显示数字
 %o 八进制显示数字
 %x 十六进制显示数字，要显示各进制数的前缀0、0x和0X， 必须分别使用%#o、%#x、%#X
+%u 无符号整型数字,打印unsigned int类型的数据
+%ld 打印long类型的数据
+    
 ```
 
 ## 常量
@@ -72,6 +75,8 @@ value of area : 50
 ```
 
 ### const关键字
+
+const用于限定一个变量为只读
 
 ```c
 #include <stdio.h>
@@ -162,7 +167,7 @@ void func1(void)
  thingy 为 15 ， count 为 0
 ```
 
-### 1.3.4 extern关键字
+### extern关键字
 
 ```c
 /**
@@ -197,17 +202,71 @@ void write_extern(void)
 5
 ```
 
+# 运算符
+
+## sizeof运算符和size_t类型
+
+sizeof运算符以一个字节为对象返回运算对象的大小。
+
+size_t是unsigned int或unsigned long的别名
+
+# 循环
+
+for、while和do.....while.....
+
+# 分支和跳转
+
+if...else...、switch、continue、break、case  
+
+## getchar()和putchar()
+
+```c
+ch=getchar();  //读取下一个字符输入,并把该字符的值赋给ch
+
+putchar(ch);  //把ch的值打印出来
+```
+
+
+
 # 数据类型
 
-## 2.1 整数类型
+## typedef关键字
 
-## 2.2 浮点类型
+为现有类型创建别名。
 
-## 2.3 复数类型
+```c
+typedef double real;   //为double类型创建一个别名
 
-## 2.4 布尔类型
+real deal;  //定义deal变量
+```
 
-## 2.5 字符串类型
+## 整数类型
+
+```c
+//int 为整型的基本类型
+//long、short、unsigned(无符号的)、signed(C90新增，有符号的)都是用于基本整型的变式。
+//如unsigned short int ，long long int。
+```
+
+## 浮点类型
+
+```c
+//float、double、long double表示带小数点的数
+```
+
+##  复数和虚数类型
+
+```c
+//_Complex和_Imaginary分别表示复数和虚数，C99新增
+```
+
+## 布尔类型
+
+```c
+//_Bool 表示布尔类型（true或false）C99新增
+```
+
+## 字符串类型
 
 在 C 语言中，字符串实际上是使用 **null** 字符 '\0' 终止的一维字符数组
 
@@ -243,7 +302,7 @@ int main ()
 }
 ```
 
-## 2.6 结构体
+## 结构体
 
 ### 定义结构体
 
@@ -491,7 +550,7 @@ void printBook( struct Books *book )
 }
 ```
 
-## 2.7 共用体
+## 共用体
 
 ### 与结构体区别
 
@@ -584,11 +643,30 @@ data.f : 220.500000
 data.str : C Programming
 ```
 
-# 三、指针（核心）
+# 指针（核心）
 
-# 四、文件读写
+```c
+//指针存储的是地址
+int a=10
+    
+int *p = &a   //通过&符号来获取变量的地址    
+int c=*p  //通过*关键字来获取地址的值    
+    
+//指针可以做加减法，单位当前的数据类型个位
+char *str = "1222";
+printf("%c\n", *(str));    //数组的首地址位置
+printf("%c\n", *(str + 1));   //移动到下个数组的位置
+```
 
-## 4.1 文件打开
+
+
+# 文件读写
+
+## EOF
+
+读取文件时，检测到文件结尾时将返回一个特殊的值，就是EOF（end of file）。EOF定义在stdio.h文件中： # define EOF (-1)
+
+## 文件打开
 
 ```c
 /**
@@ -606,13 +684,13 @@ mode：r 打开一个已有的文本文件，允许读取文件。
 FILE *fopen( const char * filename, const char * mode );
 ```
 
-## 4.2 文件关闭
+## 文件关闭
 
 ```c
 int fclose( FILE *fp );  //如果成功关闭文件，fclose( ) 函数返回零，如果关闭文件时发生错误，函数返回 EOF
 ```
 
-## 4.3 文件写入
+## 文件写入
 
 ```c
 //写入字符，函数 fputc() 。如果写入成功，它会返回写入的字符，如果发生错误，则会返回 EOF
@@ -632,7 +710,7 @@ int main()
 }  
 ```
 
-## 4.4 文件读取
+## 文件读取
 
 ```c
 //读取字符
@@ -666,7 +744,7 @@ int main()
 3: This is testing for fputs...
 ```
 
-## 4.5 二进制的读写
+## 二进制的读写
 
 ```c
 size_t fread(void *ptr, size_t size_of_elements, 
@@ -676,3 +754,47 @@ size_t fwrite(const void *ptr, size_t size_of_elements,
              size_t number_of_elements, FILE *a_file);
 ```
 
+# 内存申请
+
+## 内存申请相关的函数
+
+```c
+/**
+1. alloca是向栈申请内存,因此无需释放.
+2. malloc分配的内存是位于堆中的,并且没有初始化内存的内容,因此基本上malloc之后,调用函数memset来初始化这部分的内存空间.
+3. calloc则将初始化这部分的内存,设置为0.
+4. realloc则对malloc申请的内存进行大小的调整.
+5. 申请的内存最终需要通过函数free来释放.
+当程序运行过程中malloc了,但是没有free的话,会造成内存泄漏.一部分的内存没有被使用,但是由于没有free,因此系统认为这部分内存还在使用,造成不断的向系统申请内存,使得系统可用内存不断减少.但是内存泄漏仅仅指程序在运行时,程序退出时,OS将回收所有的资源.因此,适当的重起一下程序,有时候还是有点作用.
+
+三个申请内存的函数：（都在stdlib.h函数库内，它们的返回值都是请求系统分配的地址,如果请求失败就返回NULL.）
+//在内存的动态存储区中分配一块长度为size字节的连续区域，参数size为需要内存空间的长度，返回该区域的首地址.
+void* malloc(unsigned size);
+
+//与malloc相似,参数sizeOfElement为申请地址的单位元素长度,numElements为元素个数，即在内存中申请numElements*sizeOfElement字节大小的连续地址空间.
+void* realloc(void* ptr, unsigned newsize);  
+
+//给一个已经分配了地址的指针重新分配空间,参数ptr为原有的空间地址,newsize是重新申请的地址长度.
+void* calloc(size_t numElements, size_t sizeOfElement); 
+**/
+```
+
+
+
+# 头文件
+
+## limits.h和float.h
+
+分别提供了与整型类型和浮点类型大小相关的详细信息。每个头文件都定义了一系列供实现使用的明示常量。
+
+## ctype.h
+
+C 有一系列专门处理字符的函数，ctype.h头文件包含了这些函数的原型。这些函数接受一个字符作为参数，如果该字符属于某特殊的类别，就返回一个非零值（真）；否则，返回0（假）。例如，如果isalpha()函数的参数是一个字母，则返回一个非零值。
+
+![](images/C_ctype.jpg)
+
+## math.h
+
+数学库中包含许多有用的数学函数
+
+![](images/C_math.jpg)
