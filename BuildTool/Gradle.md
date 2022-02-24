@@ -839,6 +839,93 @@ android{
 }
 ```
 
+### 多渠道打包脚本
+
+```groovy
+static def buildTime() {
+    return new Date().format("yyyy_MM_dd_HH_mm")
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
+
+    defaultConfig {
+        applicationId "com.imi.gamestore"
+        minSdkVersion 19
+        targetSdkVersion 31
+        versionCode 5
+        versionName "2.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        flavorDimensions "imi"   //风味维度（针对多渠道打包的，必须填写）
+
+        multiDexEnabled true
+
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+    }
+
+    ....
+
+    /**
+     productFlavors{}闭包
+     多渠道配置
+     下面有三个产品test1、test2、test3
+     也可以为每个产品单独配置applicationId、versionName等
+     **/
+    productFlavors {
+        XiaoPai {}
+    }
+
+    //定义一个装apk文件路径的数组
+    def fileArray = []
+
+    /**
+     自定义包的名字和文件输出路径
+     **/
+    applicationVariants.all { variant ->    //批量修改Apk名字
+        variant.outputs.all { output ->
+            if (!variant.buildType.isDebuggable()) {
+                //获取签名的名字 variant.signingConfig.name
+                //要被替换的源字符串
+                def sourceFile = "app-${variant.flavorName}-${variant.buildType.name}"
+                //替换的字符串
+                def replaceFile = "ImiLand_${variant.flavorName}_${variant.versionName}_${buildTime()}"
+                outputFileName = output.outputFile.name.replace(sourceFile, replaceFile)
+                fileArray.add(outputFile.parentFile.absolutePath + File.separator + replaceFile + ".apk")
+            }
+        }
+    }
+
+    build {
+        doLast() {
+            println "任务1编译打包完成后需要复制apk的数量:" + fileArray.size()
+            forEachFile(fileArray)
+        }
+    }
+}
+
+
+def forEachFile(fileArray) {
+    fileArray.forEach { file ->
+        //遍历进行文件操作
+        println "任务3遍历apk文件"
+        move_apk(file)
+    }
+}
+
+def move_apk(originalFile) {
+    def intoFile = project.rootDir.absolutePath + File.separator + "apk"
+    copy {
+        from originalFile
+        into intoFile
+    }
+}
+```
+
 ### [ndk配置](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
 ```groovy
