@@ -406,16 +406,37 @@ int main()
 
 # 数据类型
 
-## 整型
+## const关键字
 
-short、int、long、long long
+```c++
+//1、修饰变量
+const int a=1;   //变量a是只读的,不可改变
 
-- short至少16位
-- int至少与short一样长
-- long至少32位，至少与int一样长
-- long long至少64位，至少与long一样长
+//2、修饰指针
+char* const pContent;  //指针本身是常量不可变,地址不可变
+const char *pContent;  //指针所指向的内容是常量不可变,值不可变
+const char* const pContent;  //地址和值两者都不可变
 
-### sizeof运算符
+//3、修饰函数
+//3.1、修饰函数入参
+
+void function(const int Var);  //传递过来的参数在函数内不可以改变(无意义，因为Var本身就是形参)
+void function(const char* Var);  //参数指针所指内容为常量不可变
+void function(char* const Var);   //参数指针本身为常量不可变(也无意义，因为char* Var也是形参)
+
+//参数为引用，为了增加效率同时防止修改。修饰引用参数时：
+void function(const Class& Var); //引用参数在函数内不可以改变
+void function(const TYPE& Var); //引用参数在函数内为常量不可变
+
+//3.2、修饰函数返回值（用的不多）
+
+//4、修饰类
+//const修饰类的成员函数，表示成员常量，不能被修改，同时它只能在初始化列表中赋值
+//const修饰类的成员函数，则该成员函数不能修改类中任何非const成员函数。一般写在函数的最后来修饰。
+
+```
+
+## sizeof运算符
 
 可对类型名或者变量名使用sizeof运算符，输出字节数。
 
@@ -424,6 +445,15 @@ int a = 0;
 cout << sizeof(a) << endl;  
 //输出4，表示变量a占四个字节
 ```
+
+## 整型
+
+short、int、long、long long
+
+- short至少16位
+- int至少与short一样长
+- long至少32位，至少与int一样长
+- long long至少64位，至少与long一样长
 
 ### limits头文件
 
@@ -477,7 +507,7 @@ auto a = 'a';   //不显示的指明类型，使用auto关键字系统会自动�
 
 ```c++
 #include <iostream>  //C++输入输出的库,没有.h后缀，与c的区别
-#include <string>  //c++风格的字符串头文件
+#include <string>  //c++风格的字符串头文件，iostream 中包含了string头文件，有iostream可以不需要添加string头文件
 
 using namespace std;  //使用输入输出的命名空间
 
@@ -496,6 +526,34 @@ int main() {
     len = str3.size();  //字符串的长度
     cout << "str3.size() :  " << len << endl;
 }
+```
+
+## 数据类型转换
+
+### 字符串到其他类型
+
+```c++
+//字符串到int类型  stoi(int a)
+//字符串到double类型 stod(double b)
+//其他类型都是sto开头的方法
+```
+
+### 其他类型到字符串
+
+```c++
+//to_string()方法
+```
+
+### 整型和浮点型转换
+
+```c++
+//double类型转为int类型
+double a = 3.0;
+int c(a);    //通过定义在变量后面加上要转换的变量
+
+//char转为int类型
+char e = 'a';
+int f(e);    
 ```
 
 ## 结构体
@@ -587,13 +645,93 @@ int main() {
     cout << "\n" << endl;
     for (int i = 0; i < obj.size(); i++) //size()容器中实际数据个数
     {
-        cout << obj[i] << ",";
+        cout << obj[i] << ",";    //使用下标访问vector的数据
     }
     return 0;
 }
 ```
 
+#### 构造函数
+
+```c++
+/**
+vector():创建一个空vector
+vector(int nSize):创建一个vector,元素个数为nSize
+vector(int nSize,const t& t):创建一个vector，元素个数为nSize,且值均为t
+vector(const vector&):复制构造函数
+vector(begin,end):复制[begin,end)区间内另一个数组的元素到vector中
+**/
+```
+
+#### 插入
+
+```c++
+/**
+void push_back(const T& x):向量尾部增加一个元素X
+iterator insert(iterator it,const T& x):向量中迭代器指向元素前增加一个元素x
+iterator insert(iterator it,int n,const T& x):向量中迭代器指向元素前增加n个相同的元素x
+iterator insert(iterator it,const_iterator first,const_iterator last):向量中迭代器指向元素前插入另一个相同类型向量的[first,last)间的数据
+**/
+
+int a = 3;
+int c = 5;
+vector<int> vect();
+vect.push_back(a);    //向尾部插入一个元素
+vect.push_back(c);
+vect.insert(vect.begin()+1, c);   //begin()拿到的就是头指针(第一个元素的位置),end拿到的是尾指针（最后一个元素的位置）
+```
+
+#### 删除
+
+```c++
+/**
+iterator erase(iterator it):删除向量中迭代器指向元素
+iterator erase(iterator first,iterator last):删除向量中[first,last)中元素
+void pop_back():删除向量中最后一个元素
+void clear():清空向量中所有元素
+**/
+
+vect.erase(vect.begin());   //删除第一个元素
+```
+
+#### 遍历
+
+```c++
+/**
+reference at(int pos):返回pos位置元素的引用
+reference front():返回首元素的引用
+reference back():返回尾元素的引用
+iterator begin():返回向量头指针，指向第一个元素
+iterator end():返回向量尾指针，指向向量最后一个元素的下一个位置
+reverse_iterator rbegin():反向迭代器，指向最后一个元素
+reverse_iterator rend():反向迭代器，指向第一个元素之前的位置
+**/
+
+//第一种方式
+for (int i = 0; i < vect.size(); i++) //size()容器中实际数据个数
+{
+        cout << vect[i] << ",";    //使用下标访问vector的数据
+}
+
+//第二种方式
+auto first=vect.begin();
+auto end = vect.end();
+while (first!=end)
+{
+   cout << *first << endl;
+    first++;
+}
+```
+
+#### 修改
+
+```c++
+vect[0]=10;    //通过下标进行修改
+```
+
 ### 模板类array固定数组（c++11）
+
+数组类是固定大小的序列容器，它们包含以严格线性序列排序的特定数量的元素。数组类具有固定大小，并且不通过分配器管理其元素的分配，它们是封装固定大小元素数组的聚合类型。
 
 ```c++
 #include <array>    //array类头文件
@@ -606,6 +744,151 @@ int main() {
     array<double, 4> ad2{1.2, 2.1, 3.43, 4.3};    // 使用列表的方式进行初始化
 }
 ```
+
+#### 容量
+
+```c++
+/**
+size()      //当前的容量
+max_size()  //最大的容量
+empty()     //是否为空
+**/
+```
+
+#### 遍历（迭代器）
+
+```c++
+/**
+同vector
+begin/end()、
+rbegin/rend()、
+cbegin/cend()、
+crbegin/crend()
+**/
+
+
+#include <iostream>
+#include <array>
+ 
+int main(void) {
+    std::array<int, 5> arr = {1, 2, 3, 4, 5};
+ 
+    std::cout << "array values: ";
+    for (auto it = arr.begin(); it != arr.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+ 
+    return 0;
+}
+```
+
+#### 访问元素
+
+```c++
+/**
+下标[ ]
+at()
+front()
+back()
+data()
+**/
+#include <iostream>
+#include <array>
+ 
+int main(void) {
+    std::array<int, 5> arr = {1, 2, 3, 4, 5};
+ 
+    std::cout << "array[0] = " << arr[0] << std::endl;
+    std::cout << "array.at(4) = " << arr.at(4) << std::endl;
+    std::cout << "array.front() = " << arr.front() << std::endl;
+    std::cout << "array.back() = " << arr.back() << std::endl;
+    std::cout << "&array: " << arr.data() << " = " << &arr << std::endl;
+ 
+    return 0;
+}
+
+/**
+运行结果：
+array[0] = 1
+array.at(4) = 5
+array.front() = 1
+array.back() = 5
+&array: 0x7ffd22df6e50 = 0x7ffd22df6e50
+**/
+```
+
+#### 填充和交换
+
+```c++
+/**
+fill	用相同的值填充数组
+swap	交换两个数组的值
+**/
+
+#include <iostream>
+#include <array>
+ 
+int main(void) {
+    std::array<int, 5> arr;
+ 
+    arr.fill(5);  // fill
+ 
+    std::cout << "array values: ";
+    for (auto i : arr) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+ 
+    std::array<int, 3> first = {1, 2, 3};
+    std::array<int, 3> second = {6, 5, 4};
+ 
+    std::cout << "first  array values: ";
+    for (auto it = first.begin(); it != first.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+ 
+    std::cout << "second array values: ";
+    for (auto it = second.begin(); it != second.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+ 
+    first.swap(second);  // swap
+ 
+    std::cout << "swap array success!" << std::endl;
+ 
+    std::cout << "first  array values: ";
+    for (auto it = first.begin(); it != first.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+ 
+    std::cout << "second array values: ";
+    for (auto it = second.begin(); it != second.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+ 
+    return 0;
+}
+
+/**
+运行结果：
+
+
+array values: 5 5 5 5 5 
+first  array values: 1 2 3 
+second array values: 6 5 4 
+swap array success!
+first  array values: 6 5 4 
+second array values: 1 2 3
+
+**/
+```
+
+
 
 ## map
 
@@ -1154,6 +1437,65 @@ C++ 不允许变量重名，但是允许多个函数取相同的名字，只要�
 3. 内联函数可以访问类的成员变量，而宏定义则不能
 4. 宏只是在预处理的地方把代码展开，不需要额外的空间和时间方面的开销，所以调用一个宏比调用一个函数更有效率  。
 
+## 函数指针
+
+```c++
+#include <iostream>
+
+
+using namespace std;
+
+double cal_m1(int lines)
+{
+	return 0.05 * lines;
+}
+
+double cal_m2(int lines)
+{
+	return 0.5 * lines;
+}
+
+void estimate(int line_num, double (*pf)(int lines))   //声明一个参数为函数指针
+{
+	cout << "The " << line_num << " need time is: " << (*pf)(line_num) << endl;
+}
+
+int main()
+{
+    
+   int line_num = 10;
+	// 函数名就是指针，直接传入函数名
+   estimate(line_num, cal_m1);
+   estimate(line_num, cal_m2); 
+}
+```
+
+## 引用和指针作为参数
+
+```c++
+void swap(int a,int b);      //值传递,相当于值得副本
+void swap(int &a,int &b);    //引用传递，相当于传递地址，a和b相当于入参的别名
+void swap(int *a,int *b);    //指针传递，相当于传递地址
+```
+
+## 默认参数
+
+```c++
+//函数声明时，必须按照从右向左的顺序，依次给与默认值。
+int f (int i1, int i2 = 2, int i3 = 3);     // 正确
+int g (int i1, int i2 = 2, int i3);         // 错误, i3未指定默认值
+int h (int i1 = 1, int i2, int i3 = 3);     // 错误, i2未指定默认值
+
+//函数调用传参时，必须按照从左向右的顺序，依次赋值。
+int f(int i1 = 1, int i2 =2, int i3 = 3);
+//调用函数 f()
+f();             //正确, i1=1, i2=2, i3=3
+f(3);            //正确, i1=3, i2=2, i3=3
+f(2, 3);         //正确, i1=2, i2=3, i3=3
+f(4, 5, 6);      //正确, i1=4, i2=5, i3=6
+f(, 2, 3);       //错误, i1默认,其右边的i2和i3没有默认
+```
+
 # 高级
 
 ## 文件处理
@@ -1419,3 +1761,10 @@ int main( int arg, char** argv ){
 }
 ```
 
+# 头文件
+
+## cctype（字符相关）
+
+字符函数库，如果代码中有了iostream头文件，则不需要添加cctype头文件
+
+![](images/C++_cctype.png)
