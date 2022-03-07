@@ -1098,7 +1098,7 @@ Person::Person(const Person &person) {
 
 }
 
-Person::~Person() {
+Person::~Person() {    
     cout << "~Person()" << endl;
 }
 
