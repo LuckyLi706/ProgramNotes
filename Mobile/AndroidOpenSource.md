@@ -59,62 +59,87 @@
 # UI
 
 + [悬浮窗](https://github.com/yhaolpz/FloatWindow)
++ [SuperTextView](https://github.com/chenBingX/SuperTextView)
+  ```xml
+  //设置圆角，可以单独设置圆角
+  <com.coorchice.library.SuperTextView
+        android:id="@+id/stv_app_name"
+        style="@style/StrokeStyle"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        app:stv_solid="#80000000"
+        app:stv_corner="6dp"         
+        app:stv_left_bottom_corner="true"
+        app:stv_right_bottom_corner="true"
+        android:gravity="left|center_vertical"
+        android:textSize="11sp"
+        android:paddingStart="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+  //设置描边
+  <style name="StrokeStyle">
+        <item name="stv_text_fill_color">@color/white</item>
+        <item name="stv_text_stroke">true</item>
+        <item name="stv_text_stroke_color">@color/dialog_text_view_stroke</item>
+        <item name="stv_text_stroke_width">1dp</item>
+        <item name="fontFamily">@font/medium</item>
+  </style>      
+  ```
 
 # 数据库
-
 ## Room
-
 + [官网](https://developer.android.google.cn/training/data-storage/room)
 
 + ```groovy
   //Java
   def room_version = "2.3.0"
-  
+
       implementation "androidx.room:room-runtime:$room_version"
       annotationProcessor "androidx.room:room-compiler:$room_version"
-  
+
       // optional - RxJava2 support for Room
       implementation "androidx.room:room-rxjava2:$room_version"
-  
+
       // optional - RxJava3 support for Room
       implementation "androidx.room:room-rxjava3:$room_version"
-  
+
       // optional - Guava support for Room, including Optional and ListenableFuture
       implementation "androidx.room:room-guava:$room_version"
-  
+
       // optional - Test helpers
       testImplementation "androidx.room:room-testing:$room_version"
-  
+
       // optional - Paging 3 Integration
       implementation "androidx.room:room-paging:2.4.0-rc01"
-  
+
   //Kotlin
   dependencies {
       val roomVersion = "2.3.0"
-  
+
       implementation("androidx.room:room-runtime:$roomVersion")
       annotationProcessor("androidx.room:room-compiler:$roomVersion")
-  
+
       // To use Kotlin annotation processing tool (kapt)
       kapt("androidx.room:room-compiler:$roomVersion")
       // To use Kotlin Symbolic Processing (KSP)
       ksp("androidx.room:room-compiler:$roomVersion")
-  
+
       // optional - Kotlin Extensions and Coroutines support for Room
       implementation("androidx.room:room-ktx:$roomVersion")
-  
+
       // optional - RxJava2 support for Room
       implementation("androidx.room:room-rxjava2:$roomVersion")
-  
+
       // optional - RxJava3 support for Room
       implementation("androidx.room:room-rxjava3:$roomVersion")
-  
+
       // optional - Guava support for Room, including Optional and ListenableFuture
       implementation("androidx.room:room-guava:$roomVersion")
-  
+
       // optional - Test helpers
       testImplementation("androidx.room:room-testing:$roomVersion")
-  
+
       // optional - Paging 3 Integration
       implementation("androidx.room:room-paging:2.4.0-rc01")
   }
@@ -235,7 +260,7 @@ public interface UserDao {
 
     @Query("SELECT * FROM User WHERE username = 'admin'")  //查询注解（从User表中查询username为admin的数据）
     List<User> getAdmin();
-    
+
     //以下是配合RxJava使用的
     @Query("SELECT * FROM User WHERE username = (:name)")
     Maybe<List<User>> getUser(String name);     //配合RxJava使用
@@ -251,7 +276,7 @@ public interface UserDao {
 
     @Query("SELECT * FROM User")
     Maybe<List<User>> getAllUser();
-    
+
     //原始SQL查询,比如数据分页就需要使用原始SQL才可以
     /**
      * 根据条件来查询数据
@@ -283,7 +308,7 @@ abstract class AppStateDao {
 
     @Query("SELECT * FROM appstate WHERE apkPackageName=(:apkPackageName)")
     abstract fun queryApkState(apkPackageName: String): LiveData<AppState>    //配合LiveData使用
-    
+
     //可以查询子集（新创建一个对象对应数据表的字段）
     data class NameTuple(   //创建一个对象，只包含数据里面的first_name和last_name字段
         @ColumnInfo(name = "first_name") val firstName: String?,
@@ -856,7 +881,7 @@ public <T> Request<T> add(Request<T> request) {
            Map var8 = this.mWaitingRequests;
            synchronized(this.mWaitingRequests) {
                String cacheKey = request.getCacheKey();
-       
+
       //之前是否有执行相同的请求且还没有返回结果的，如果有的话将此请求加入mWaitingRequests队列，不再重复请求
                if(this.mWaitingRequests.containsKey(cacheKey)) {
                    Object stagedRequests = (Queue)this.mWaitingRequests.get(cacheKey);
@@ -1195,7 +1220,7 @@ call.enqueue(new Callback() {
                 response.body().string();  //获取返回的结果
             }
         });
-        
+
 2、同步(运行在当前线程,需要开启子线程)
 try {
             Response response = call.execute();
@@ -1659,7 +1684,7 @@ baiduDu.enqueue(new Callback<ResponseBody>() {
 
             }
         });
-        
+
 // 2、同步
 Response<ResponseBody> execute = baiduDu.execute();
 execute.body().string()
@@ -1846,7 +1871,7 @@ class RetrofitManager private constructor() {
  * description :
  */
 public interface ApiService {
-    
+
     **
      *   断点下载（Kotlin方法）   
      *   Range的使用形式
@@ -1859,7 +1884,7 @@ public interface ApiService {
     @Streaming
     @GET
     fun downloadApk(@Header("Range") range: String, @Url apkUrl: String): Call<ResponseBody>
-    
+
     //Get方法传参（Kotlin）    
     @GET("api/wechat/getQRCode")
     fun getWeChatQrCode(@Query("sn") sn: String): LiveData<BaseResponse<String>>
@@ -1872,14 +1897,14 @@ public interface ApiService {
     @POST("ums/UMSIdentify")
     @Headers("Content-Type:application/json; charset=utf-8")
     Call<ResponseMsg> umsIdentify(@Body UMSIdentifyMsg UMSIdentifyMsg);
-    
+
     /**
     以下是RxJava+Retrofit
     **/
     //Get请求
     @GET("gds/GDSHeart")
     Observable<ResponseMsg> connectSaas();
-    
+
     /**
      *  多张图片上传
        RequestBody requestBody[] = new RequestBody[picPath.length];
@@ -1896,7 +1921,7 @@ public interface ApiService {
     @POST("gds/GDSTaskPic")
         //防止乱码
     Observable<ResponseMsg> uploadPic(@Part MultipartBody.Part[] file);
-    
+
     //在子线程网络请求主线程更新UI
     mainModel.connectSaas().subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -2925,5 +2950,4 @@ public class LocationUtil {
 }
 ```
 
-+ 
-
++
