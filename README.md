@@ -21,9 +21,8 @@
 ## Assembler
 
 + [ARM](Assembler/arm.md)
-+ [8086](Assembler/8086.md)
-+ [x86](Assembler/x86.md)
-+ [x64](Assembler/x64.md)
++ [Intel](Assembler/Intel.md)
++ [AMD]()
 
 ## PC
 
@@ -104,4 +103,3 @@
 
 + [Git](Other/Git.md)
 + [Markdown](Other/Markdown.md)
-

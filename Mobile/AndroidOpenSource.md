@@ -86,6 +86,8 @@
         <item name="fontFamily">@font/medium</item>
   </style>      
   ```
++ [权限申请](https://github.com/getActivity/XXPermissions)
+
 
 # 数据库
 ## Room
