@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [BroadcastReceiver](#broadcastreceiver)
+  - [广播类型](#%E5%B9%BF%E6%92%AD%E7%B1%BB%E5%9E%8B)
+    - [普通广播](#%E6%99%AE%E9%80%9A%E5%B9%BF%E6%92%AD)
+    - [系统广播](#%E7%B3%BB%E7%BB%9F%E5%B9%BF%E6%92%AD)
+      - [安装和卸载广播](#%E5%AE%89%E8%A3%85%E5%92%8C%E5%8D%B8%E8%BD%BD%E5%B9%BF%E6%92%AD)
+      - [网络改变广播](#%E7%BD%91%E7%BB%9C%E6%94%B9%E5%8F%98%E5%B9%BF%E6%92%AD)
+    - [有序广播](#%E6%9C%89%E5%BA%8F%E5%B9%BF%E6%92%AD)
+    - [本地广播](#%E6%9C%AC%E5%9C%B0%E5%B9%BF%E6%92%AD)
+      - [代码例子](#%E4%BB%A3%E7%A0%81%E4%BE%8B%E5%AD%90)
+  - [receiver标签](#receiver%E6%A0%87%E7%AD%BE)
+  - [源码](#%E6%BA%90%E7%A0%81)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # BroadcastReceiver
 
 + [官网学习](Server)
@@ -210,6 +228,78 @@ Intent.ACTION_WALLPAPER_CHANGED;
 //设备墙纸已改变时发出的广播
 ```
 
+#### 安装和卸载广播
+
+```kotlin
+/**
+相关action
+ACTION_PACKAGE_ADDED 一个新应用包已经安装在设备上，数据包括包名(最新安装的包程序不能接收到这个广播)
+ACTION_PACKAGE_REPLACED一个新版本的应用安装到设备，替换之前已经存在的版本
+ACTION_PACKAGE_CHANGED一个已存在的应用程序包已经改变，包括包名
+ACTION_PACKAGE_REMOVED一个已存在的应用程序包已经从设备上移除，包括包名(正在被安装的包程序不能接收到这个广播)
+ACTION_PACKAGE_RESTARTED用户重新开始一个包，包的所有进程将被杀死，所有与其联系的运行时间状态应该被移除，包括包名(重新开始包程序不能接收到这个广播)
+ACTION_PACKAGE_DATA_CLEARED用户已经清楚一个包的数据，包括包名(清除包程序不能接收到这个广播)
+**/
+
+//安装
+//1、注册广播
+val addPackageReceiver = AddPackageReceiver()
+val intentFilter = IntentFilter()
+intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED)
+intentFilter.addDataScheme("package");
+registerReceiver(addPackageReceiver, intentFilter)
+
+//2、监听广播
+//监听添加App的广播
+const val PACKAGE_ADD: String = "android.intent.action.PACKAGE_ADDED"       //添加
+    inner class AddPackageReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+            if (action == PACKAGE_ADD) {
+                val packageName = intent.dataString
+                LogUtil.d("安装${packageName?.replace("package:", "")}")
+        }
+    }
+        
+//3、注销广播
+unregisterReceiver(addPackageReceiver)
+        
+//卸载
+//1、注册广播
+val removePackageReceiver = RemovePackageReceiver()
+val filter = IntentFilter()
+filter.addAction(Intent.ACTION_PACKAGE_REMOVED)
+filter.addDataScheme(Constants.PACKAGE)
+registerReceiver(removePackageReceiver, filter)
+
+//2、监听广播
+//监听卸载App的广播
+const val PACKAGE_REMOVE: String = "android.intent.action.PACKAGE_REMOVED"       //卸载
+inner class RemovePackageReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+            if (action == PACKAGE_REMOVE) {
+                val packageName = intent.dataString
+                LogUtil.d("安装${packageName?.replace("package:", "")}")
+            }
+        }
+    }
+        
+//3、注销广播
+unregisterReceiver(removePackageReceiver)   
+```
+
+#### 网络改变广播
+
+```java
+//高版本必须使用动态广播
+IntentFilter filter = new IntentFilter();
+filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+registerReceiver(netWorkStateReceiver, filter);
+```
+
 ### 有序广播
 
 ```
@@ -249,6 +339,23 @@ Android中的广播可以跨App直接通信（exported对于有intent-filter情�
 4.2、使用封装好的LocalBroadcastManager类
 使用方式上与全局广播几乎相同，只是注册/取消注册广播接收器和发送广播时将参数的context变成了LocalBroadcastManager的单一实例
 注：对于LocalBroadcastManager方式发送的应用内广播，只能通过LocalBroadcastManager动态注册，不能静态注册
+```
+
+#### 代码例子
+
+```kotlin
+//注册广播
+val loginLocalReceiver = LoginLocalReceiver()
+val intentFilter2 = IntentFilter();
+intentFilter2.addAction(Constants.LOGIN_ACTION_GAME_DETAILS)
+LocalBroadcastManager.getInstance(this).registerReceiver(loginLocalReceiver!!, intentFilter2)
+
+//发送广播
+val intent = Intent(Constants.LOGIN_ACTION_GAME_DETAILS)
+LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+
+//注销广播
+LocalBroadcastManager.getInstance(this).unregisterReceiver(loginLocalReceiver!!)
 ```
 
 ## receiver标签
