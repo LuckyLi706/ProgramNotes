@@ -1,12 +1,14 @@
 # [Flutter](https://flutter.dev/ )
 
-## 入门
+## 开发
+
+### 入门
 
 + Dart语言学习
   - [Dart网站](https://www.dartcn.com/)
   - [Dart整理](../Dart.md)
 
-### 环境搭建
+#### 环境搭建
 
 + AndroidStudio搭建环境
 
@@ -28,7 +30,17 @@
   
   7. flutter create xxx 命令行创建工程
   
-  8. 使用Android Studio或者VSCode打开工程即可
+  7. 使用Android Studio或者VSCode打开工程即可
+
+### 进阶
+
++ [Widgets（UI）](FlutterWidgets)
++ [开源库](FlutterOpenSource.md)
+
+## 学习资料
+
++ [Flutter中文网](https://flutterchina.club/)
++ [非常全的组件集合](https://github.com/toly1994328/FlutterUnit)
 
 ## 问题
 
@@ -58,7 +70,3 @@
     终端开代理，然后执行命令
     ```
 
-### 学习
-
-+ [Flutter中文网](https://flutterchina.club/)
-+ [非常全的组件集合](https://github.com/toly1994328/FlutterUnit)
