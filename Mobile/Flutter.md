@@ -4,9 +4,8 @@
 
 ### 入门
 
-+ Dart语言学习
-  - [Dart网站](https://www.dartcn.com/)
-  - [Dart整理](../Dart.md)
++ [Dart网站](https://www.dartcn.com/)
++ [Dart入门](../Dart.md)
 
 #### 环境搭建
 
@@ -37,6 +36,7 @@
 + [Widgets（UI）](FlutterWidgets.md)
 + [开源库](FlutterOpenSource.md)
 + [与原生交互](FlutterNative.md)
++ [路由](FlutterRoute.md)
 
 ## 学习资料
 
