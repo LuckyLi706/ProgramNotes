@@ -62,6 +62,39 @@
 
 # Widgets
 
+## 状态管理
+
+### Stateful
+
+Flutter具有响应式编程
+
+```dart
+class _CheckBox extends StatefulWidget {   //借助StatefulWidget来管理状态
+  @override
+  _CheckBoxState createState() {
+    return _CheckBoxState();
+  }
+}
+
+class _CheckBoxState extends State<_CheckBox> {
+  bool _isCheck = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Checkbox(
+        value: _isCheck,
+        onChanged: (bool? value) {
+          setState(() {     //状态发生改变会调用,同时刷新当前UI
+            _isCheck = value!;
+          });
+        },
+      ),
+    );
+  }
+}
+```
+
 ## MaterialApp
 
 使用纸墨设计（Material Design）风格的应用。里面包含了纸墨设计风格应用所需要的基本控件
@@ -90,7 +123,7 @@ const MaterialApp({
     this.locale,
     this.localizationsDelegates,
     this.localeListResolutionCallback,
-    this.localeResolutionCallback,
+    this.localeResolutionCallback,   //获取当前使用的语言，或者切换语言时
     this.supportedLocales = const <Locale>[Locale('en', 'US')],
     this.debugShowMaterialGrid = false,   //是否显示 纸墨设计 基础布局网格，用来调试 UI 的工具
     this.showPerformanceOverlay = false,  //显示性能标签
@@ -103,7 +136,7 @@ const MaterialApp({
     this.restorationScopeId,
     this.scrollBehavior,
     this.useInheritedMediaQuery = false,
-  }
+}   
 ```
 
 ### 例子
@@ -122,18 +155,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '333',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: '解析视频'),
+      localeResolutionCallback: (deviceLocale, supportedLocales) {   //App启动或者语言切换时都会回调，可以获取当前语言环境
+              print(deviceLocale?.languageCode);
+              if (deviceLocale != null &&
+                  deviceLocale.languageCode == "zh") {
+                Constants.isChinese = true;
+              } else {
+                Constants.isChinese = false;
+              }
+            },
     );
   }
 }
@@ -1433,7 +1466,7 @@ const Scrollbar({
 
 ### SingleChildScrollView
 
-类似于Android中的ScrollView
+类似于Android中的`ScrollView`，超出屏幕不太多的时候使用，所以如果预计视口可能包含超出屏幕尺寸太多的内容时，性能差劲。此时应该使用一些支持Sliver延迟加载的可滚动组件，如`ListView`
 
 ```dart
 SingleChildScrollView({
@@ -1558,6 +1591,10 @@ class ListView3 extends StatelessWidget {
 }
 ```
 
-## GridView
+### AnimatedList
+
+AnimatedList 和 ListView 的功能大体相似，不同的是， AnimatedList 可以在列表中插入或删除节点时执行一个动画，在需要添加或删除列表项的场景中会提高用户体验。
+
+### GridView
 
 网格布局是一种常见的布局类型，GridView 组件正是实现了网格布局的组件
