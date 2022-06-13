@@ -1598,3 +1598,122 @@ AnimatedList 和 ListView 的功能大体相似，不同的是， AnimatedList �
 ### GridView
 
 网格布局是一种常见的布局类型，GridView 组件正是实现了网格布局的组件
+
+### PageView
+
+比如大多数 App 都包含 Tab 换页效果、图片轮动以及抖音上下滑页切换视频功能等等
+
+### TabBarView
+
+TabBarView 是 Material 组件库中提供了 Tab 布局组件，通常和 TabBar 配合使用。可以实现顶部导航。
+
+### CustomScrollView 和 Slivers
+
+#### CustomScrollView 
+
+CustomScrollView是可以使用Sliver来自定义滚动模型（效果）的组件，把这些Sliver对应的组件彼此独立的可滚动组件"粘"起来，让整个页面的滑动效果是统一的，即它们看起来是一个整体，而CustomScrollView的功能就相当于“胶水“。**子组件必须都是Sliver**
+
+#### Slivers
+
++ 列表相关：
+
+  | Sliver名称                | 功能                               | 对应的可滚动组件                 |
+  | ------------------------- | ---------------------------------- | -------------------------------- |
+  | SliverList                | 列表                               | ListView                         |
+  | SliverFixedExtentList     | 高度固定的列表                     | ListView，指定`itemExtent`时     |
+  | SliverAnimatedList        | 添加/删除列表项可以执行动画        | AnimatedList                     |
+  | SliverGrid                | 网格                               | GridView                         |
+  | SliverPrototypeExtentList | 根据原型生成高度固定的列表         | ListView，指定`prototypeItem` 时 |
+  | SliverFillViewport        | 包含多个子组件，每个都可以填满屏幕 | PageView                         |
+
++ Sliver 进行布局、装饰的组件
+
+  | Sliver名称                      | 对应 RenderBox      |
+  | ------------------------------- | ------------------- |
+  | SliverPadding                   | Padding             |
+  | SliverVisibility、SliverOpacity | Visibility、Opacity |
+  | SliverFadeTransition            | FadeTransition      |
+  | SliverLayoutBuilder             | LayoutBuilder       |
+
++ 其它常用的 Sliver
+
+  | Sliver名称             | 说明                                                   |
+  | ---------------------- | ------------------------------------------------------ |
+  | SliverAppBar           | 对应 AppBar，主要是为了在 CustomScrollView 中使用。    |
+  | SliverToBoxAdapter     | 一个适配器，可以将 RenderBox 适配为 Sliver，后面介绍。 |
+  | SliverPersistentHeader | 滑动到顶部时可以固定住，后面介绍。                     |
+
+### NestedScrollView
+
+NestedScrollView 在逻辑上将可滚动组件分为了 header 和 body 两部分，header 部分我们可以认为是**外部**可滚动组件（outer scroll view），可以认为这个可滚动组件就是 CustomScrollView ，所以它只能接收 Sliver，我们通过`headerSliverBuilder` 来构建一个 Sliver 列表给外部的可滚动组件；而 body 部分可以接收任意的可滚动组件，该可滚动组件称为**内部**可滚动组件 （inner scroll view）。
+
+## 功能型组件
+
+### WillPopScope（返回键拦截）
+
+```dart
+//导航返回拦截，避免用户误触返回按钮而导致APP退出，常用的双击退出功能
+const WillPopScope({
+    Key key,
+    @required this.child,
+    @required this.onWillPop,//当用户点击返回按钮时调用（包括导航返回按钮及Android物理返回按钮）,返回 Future.value(false); 表示不退出;返回 Future.value(true); 表示退出.
+})
+    
+//例子
+@override
+  Widget build(BuildContext context) {
+    DateTime lastTime;
+
+    return WillPopScope(     //必须放在状态可变的组件下面
+      onWillPop: () async {
+        if (lastTime == null || DateTime.now().difference(lastTime) > Duration(seconds: 1)) {
+          lastTime = DateTime.now();
+          Toast.toast(context, "双击退出");
+          return false;
+        }
+        return true;
+      },
+      child: MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text("双击退出"),
+          ),
+        ),
+      ),
+    );
+  }
+```
+
+### InheritedWidget（数据共享）
+
+待理解，暂时没太明白
+
+`InheritedWidget`是 Flutter 中非常重要的一个功能型组件，它提供了一种在 widget 树中从上到下共享数据的方式，比如我们在应用的根 widget 中通过`InheritedWidget`共享了一个数据，那么我们便可以在任意子widget 中来获取该共享的数据！这个特性在一些需要在整个 widget 树中共享数据的场景中非常方便！如Flutter SDK中正是通过 InheritedWidget 来共享应用主题（`Theme`）和 Locale (当前语言环境)信息的。
+
+### 跨组件状态共享
+
+#### EventBus
+
+#### Provider
+
+#### 其他
+
+| 包名                                                         | 介绍                                          |
+| ------------------------------------------------------------ | --------------------------------------------- |
+| [Provider](https://pub.flutter-io.cn/packages/provider)& [Scoped Model](https://pub.flutter-io.cn/packages/scoped_model) | 这两个包都是基于`InheritedWidget`的，原理相似 |
+| [Redux](https://pub.flutter-io.cn/packages/flutter_redux)    | 是Web开发中React生态链中Redux包的Flutter实现  |
+| [MobX](https://pub.dev/packages/flutter_mobx)                | 是Web开发中React生态链中MobX包的Flutter实现   |
+| [BLoC](https://pub.dev/packages/flutter_bloc)                | 是BLoC模式的Flutter实现                       |
+
+### ValueListenableBuilder（按需rebuild）
+
+InheritedWidget 提供一种在 widget 树中**从上到下**共享数据的方式，但是也有很多场景数据流向并非从上到下，比如从下到上或者横向等。为了解决这个问题，Flutter 提供了一个 ValueListenableBuilder 组件，它的功能是监听一个数据源，如果数据源发生变化，则会重新执行其 builder。
+
+### 异步更新UI
+
+#### FutureBuilder
+
+#### StreamBuilder
+
+## 事件处理和通知
+
