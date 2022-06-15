@@ -1717,3 +1717,550 @@ InheritedWidget 提供一种在 widget 树中**从上到下**共享数据的方�
 
 ## 事件处理和通知
 
+### Listener（原始指针事件）
+
+```dart
+Listener({
+  Key key,
+  this.onPointerDown, //手指按下回调
+  this.onPointerMove, //手指移动回调
+  this.onPointerUp,//手指抬起回调
+  this.onPointerCancel,//触摸事件取消回调
+  this.behavior = HitTestBehavior.deferToChild, //先忽略此参数，后面小节会专门介绍
+  Widget child
+})
+```
+
+#### 忽略指针事件
+
+```dart
+/**
+我们可以使用IgnorePointer和AbsorbPointer，这两个组件都能阻止子树接收指针事件，不同之处在于AbsorbPointer本身会参与命中测试，而IgnorePointer本身不会参与，这就意味着AbsorbPointer本身是可以接收指针事件的(但其子树不行)，而IgnorePointer不可以
+**/
+Listener(
+  child: AbsorbPointer(
+    child: Listener(
+      child: Container(
+        color: Colors.red,
+        width: 200.0,
+        height: 100.0,
+      ),
+      onPointerDown: (event)=>print("in"),   //这个事件不会被响应
+    ),
+  ),
+  onPointerDown: (event)=>print("up"),  //这个事件会被响应，如果使用IgnorePointer这个事件也不会被响应
+)
+```
+
+### 手势识别
+
+#### GestureDetector
+
+```dart
+GestureDetector({
+    Key? key,
+    this.child,
+    
+    //单击事件
+    this.onTapDown,    //手指按下时的回调函数
+    this.onTapUp,      //手指松开时的回调函数
+    this.onTap,        //手指点击时的回调函数
+    this.onTapCancel,  //手指取消点击时的回调函数
+    
+    
+    //双击事件
+    this.onDoubleTapDown,   //手指按下时的回调函数
+    this.onDoubleTap,       //手指双击时的回调函数
+    this.onDoubleTapCancel, //手指取消时的回调函数
+    
+    
+    //长按手势
+    this.onLongPressDown,   //手指按下去时的回调函数
+    this.onLongPressCancel, //手指长按取消时的回调函数
+    this.onLongPress,       //手指长按时的回调函数
+    this.onLongPressStart,  //手指长按并开始拖动时的回调函数
+    this.onLongPressMoveUpdate,  //手指长按并移动时的回调函数
+    this.onLongPressUp,   //手指长按并松开时的回调函数
+    this.onLongPressEnd,  //手指长按结束拖动时的回调函数
+    
+    
+    //辅助按钮触发手势
+    this.onSecondaryTap,        //辅助按钮单击时的回调函数
+    this.onSecondaryTapDown,    //辅助按钮按下时的回调函数
+    this.onSecondaryTapUp,      //辅助按钮松开时的回调函数
+    this.onSecondaryTapCancel,  //辅助按钮取消点击时的回调函数
+    this.onSecondaryLongPressDown,  //辅助按钮按下去时的回调函数
+    this.onSecondaryLongPressCancel, //辅助按钮长按取消时的回调函数
+    this.onSecondaryLongPress,   //辅助按钮长按时的回调函数
+    this.onSecondaryLongPressStart,  //辅助按钮长按并开始拖动时的回调函数
+    this.onSecondaryLongPressMoveUpdate,   //辅助按钮长按并移动时的回调函数
+    this.onSecondaryLongPressUp,   //辅助按钮长按并松开时的回调函数
+    this.onSecondaryLongPressEnd,  //辅助按钮长按结束拖动时的回调函数
+    
+    
+    //三指触发手势
+    this.onTertiaryTapDown,      //三指按下时的回调函数
+    this.onTertiaryTapUp,        //三指点击时的回调函数
+    this.onTertiaryTapCancel,    //三指取消时的回调函数
+    this.onTertiaryLongPressDown,      //三指按下去时的回调函数
+    this.onTertiaryLongPressCancel,    //三指长按取消时的回调函数
+    this.onTertiaryLongPress,          //三指长按时的回调函数
+    this.onTertiaryLongPressStart,     //三指长按并开始拖动时的回调函数
+    this.onTertiaryLongPressMoveUpdate,  //三指长按并移动时的回调函数
+    this.onTertiaryLongPressUp,    //三指长按并松开时的回调函数
+    this.onTertiaryLongPressEnd,   //三指长按结束拖动时的回调函数
+    
+    
+    //垂直滑动手势
+    this.onVerticalDragDown,  //手指按下时的回调函数
+    this.onVerticalDragStart, //手指开始垂直滑动时的回调函数
+    this.onVerticalDragUpdate, //手指垂直滑动时的回调函数
+    this.onVerticalDragEnd,   //手指垂直滑动结束时的回调函数
+    this.onVerticalDragCancel, //手指垂直滑动取消时的回调函数
+    
+    
+    //水平滑动手势
+    this.onHorizontalDragDown,  //手指按下时的回调函数
+    this.onHorizontalDragStart, //手指开始水平滑动时的回调函数
+    this.onHorizontalDragUpdate, //手指水平滑动时的回调函数
+    this.onHorizontalDragEnd,  //手指水平滑动结束时的回调函数
+    this.onHorizontalDragCancel,  //手指水平滑动取消时的回调函数
+    
+    
+    //带有3D Touch功能压力设备触发手势
+    this.onForcePressStart,    //手指强制按下时的回调函数
+    this.onForcePressPeak,     //手指按压力度最大时的回调函数
+    this.onForcePressUpdate,   //手指按下后移动时的回调函数
+    this.onForcePressEnd,      //手指离开时的回调函数
+    
+    
+    //拖动手势
+    this.onPanDown,   //手指按下时的回调函数
+    this.onPanStart,  //手指开始拖动时的回调函数
+    this.onPanUpdate, //手指移动时的回调函数
+    this.onPanEnd,    //手指抬起时的回调函数
+    this.onPanCancel, //手指取消拖动时的回调函数
+
+    
+    //缩放手势
+    this.onScaleStart,   //开始缩放时的回调函数
+    this.onScaleUpdate,  //缩放移动时的回调函数
+    this.onScaleEnd,    //缩放结束时的回调函数
+
+    
+    this.behavior,    //在命中测试期间如何表现
+    this.excludeFromSemantics = false,    //是否从语义树中排除这些手势，默认false
+    this.dragStartBehavior = DragStartBehavior.start,   //拖拽行为的处理方式
+  })
+    
+ //例子
+ //1、点击，双击，长按
+ class _GestureTestState extends State<GestureTest> {
+  String _operation = "No Gesture detected!"; //保存事件名
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        child: Container(
+          alignment: Alignment.center,
+          color: Colors.blue,
+          width: 200.0,
+          height: 100.0,
+          child: Text(
+            _operation,
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        onTap: () => updateText("Tap"), //点击
+        onDoubleTap: () => updateText("DoubleTap"), //双击
+        onLongPress: () => updateText("LongPress"), //长按
+      ),
+    );
+  }
+
+  void updateText(String text) {
+    //更新显示的事件名
+    setState(() {
+      _operation = text;
+    });
+  }
+}
+
+//2、拖动，滑动
+class _Drag extends StatefulWidget {
+  @override
+  _DragState createState() => _DragState();
+}
+
+class _DragState extends State<_Drag> with SingleTickerProviderStateMixin {
+  double _top = 0.0; //距顶部的偏移
+  double _left = 0.0;//距左边的偏移
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: _top,
+          left: _left,
+          child: GestureDetector(
+            child: CircleAvatar(child: Text("A")),
+            //手指按下时会触发此回调
+            onPanDown: (DragDownDetails e) {
+              //打印手指按下的位置(相对于屏幕)
+              print("用户手指按下：${e.globalPosition}");
+            },
+            //手指滑动时会触发此回调
+            onPanUpdate: (DragUpdateDetails e) {
+              //用户手指滑动时，更新偏移，重新构建
+              setState(() {
+                _left += e.delta.dx;
+                _top += e.delta.dy;
+              });
+            },
+            onPanEnd: (DragEndDetails e){
+              //打印滑动结束时在x、y轴上的速度
+              print(e.velocity);
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+```
+
+#### GestureRecognizer
+
+`GestureDetector`内部是使用一个或多个`GestureRecognizer`来识别各种手势的，而`GestureRecognizer`的作用就是通过`Listener`来将原始指针事件转换为语义手势，`GestureDetector`直接可以接收一个子widget。`GestureRecognizer`是一个抽象类，一种手势的识别器对应一个`GestureRecognizer`的子类，Flutter实现了丰富的手势识别器，我们可以直接使用。
+
+```dart
+/**
+假设我们要给一段富文本（RichText）的不同部分分别添加点击事件处理器，但是TextSpan并不是一个widget，这时我们不能用GestureDetector，但TextSpan有一个recognizer属性，它可以接收一个GestureRecognizer。
+**/
+
+import 'package:flutter/gestures.dart';
+
+class _GestureRecognizer extends StatefulWidget {
+  const _GestureRecognizer({Key? key}) : super(key: key);
+
+  @override
+  _GestureRecognizerState createState() => _GestureRecognizerState();
+}
+
+class _GestureRecognizerState extends State<_GestureRecognizer> {
+  TapGestureRecognizer _tapGestureRecognizer = TapGestureRecognizer();
+  bool _toggle = false; //变色开关
+
+  @override
+  void dispose() {
+    //用到GestureRecognizer的话一定要调用其dispose方法释放资源
+    _tapGestureRecognizer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: "你好世界"),
+            TextSpan(
+              text: "点我变色",
+              style: TextStyle(
+                fontSize: 30.0,
+                color: _toggle ? Colors.blue : Colors.red,
+              ),
+              recognizer: _tapGestureRecognizer
+                ..onTap = () {
+                  setState(() {
+                    _toggle = !_toggle;
+                  });
+                },
+            ),
+            TextSpan(text: "你好世界"),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## 动画
+
+### 基础
+
+#### Animation
+
+```dart
+/**
+Animation是一个抽象类，它本身和UI渲染没有任何关系，而它主要的功能是保存动画的插值和状态；其中一个比较常用的Animation类是Animation<double>。Animation对象是一个在一段时间内依次生成一个区间(Tween)之间值的类。Animation对象在整个动画执行过程中输出的值可以是线性的、曲线的、一个步进函数或者任何其他曲线函数等等，这由Curve来决定。 根据Animation对象的控制方式，动画可以正向运行（从起始状态开始，到终止状态结束），也可以反向运行，甚至可以在中间切换方向。Animation还可以生成除double之外的其他类型值，如：Animation<Color> 或Animation<Size>。在动画的每一帧中，我们可以通过Animation对象的value属性获取动画的当前状态值。
+**/
+
+//两个方法
+addListener()  //它可以用于给Animation添加帧监听器，在每一帧都会被调用。帧监听器中最常见的行为是改变状态后调用setState()来触发UI重建。
+addStatusListener()  //它可以给Animation添加“动画状态改变”监听器；动画开始、结束、正向或反向（见AnimationStatus定义）时会调用状态改变的监听器。
+```
+
+#### Curve
+
+```dart
+/**
+动画过程可以是匀速的、匀加速的或者先加速后减速等。Flutter中通过Curve（曲线）来描述动画过程，我们把匀速动画称为线性的(Curves.linear)，而非匀速动画称为非线性的。
+**/
+
+//可以使用CurvedAnimation指定动画的曲线
+final CurvedAnimation curve =
+    CurvedAnimation(parent: controller, curve: Curves.easeIn);
+
+/**
+Curves曲线	动画过程
+linear	匀速的
+decelerate	匀减速
+ease	开始加速，后面减速
+easeIn	开始慢，后面快
+easeOut	开始快，后面慢
+easeInOut	开始慢，然后加速，最后再减速
+**/
+```
+
+#### AnimationController
+
+```dart
+/**
+AnimationController用于控制动画，它包含动画的启动forward()、停止stop() 、反向播放 reverse()等方法。AnimationController会在动画的每一帧，就会生成一个新的值。默认情况下，AnimationController在给定的时间段内线性的生成从 0.0 到1.0（默认区间）的数字。 例如，下面代码创建一个Animation对象（但不会启动动画）：
+**/
+
+final AnimationController controller = AnimationController( 
+ duration: const Duration(milliseconds: 2000),   //持续时间
+ lowerBound: 10.0,
+ upperBound: 20.0,
+ vsync: this   //Ticker对象
+);
+
+/**
+Ticker
+当创建一个AnimationController时，需要传递一个vsync参数，它接收一个TickerProvider类型的对象，它的主要职责是创建Ticker，
+通常我们会将SingleTickerProviderStateMixin添加到State的定义中，然后将State对象作为vsync的值
+定义如下：
+**/
+abstract class TickerProvider {
+  //通过一个回调创建一个Ticker
+  Ticker createTicker(TickerCallback onTick);
+}
+```
+
+#### Tween
+
+```dart
+/**
+默认情况下，AnimationController对象值的范围是[0.0，1.0]。如果我们需要构建UI的动画值在不同的范围或不同的数据类型，则可以使用Tween来添加映射以生成不同的范围或数据类型的值。例如，像下面示例，Tween生成[-200.0，0.0]的值：
+**/
+final Tween doubleTween = Tween<double>(begin: -200.0, end: 0.0);
+
+
+//Tween.animate
+final AnimationController controller = AnimationController(
+  duration: const Duration(milliseconds: 500), 
+  vsync: this,
+);
+Animation<int> alpha = IntTween(begin: 0, end: 255).animate(controller);
+
+
+//以下示例构建了一个控制器、一条曲线和一个 Tween
+final AnimationController controller = AnimationController(
+  duration: const Duration(milliseconds: 500), 
+  vsync: this,
+);
+final Animation curve = CurvedAnimation(parent: controller, curve: Curves.easeOut);
+Animation<int> alpha = IntTween(begin: 0, end: 255).animate(curve);
+```
+
+### 例子
+
+#### 基础版本
+
+```dart
+class ScaleAnimationRoute extends StatefulWidget {
+  const ScaleAnimationRoute({Key? key}) : super(key: key);
+  
+  @override
+  _ScaleAnimationRouteState createState() => _ScaleAnimationRouteState();
+}
+
+//需要继承TickerProvider，如果有多个AnimationController，则应该使用TickerProviderStateMixin。
+class _ScaleAnimationRouteState extends State<ScaleAnimationRoute>
+    with SingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController controller;
+  
+  @override
+  initState() {
+    super.initState();
+    controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    //匀速
+    //图片宽高从0变到300
+    animation = Tween(begin: 0.0, end: 300.0).animate(controller)
+      ..addListener(() {
+        setState(() => {});
+      });
+
+    //启动动画(正向执行)
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Image.asset(
+        "imgs/avatar.png",
+        width: animation.value,
+        height: animation.value,
+      ),
+    );
+  }
+  
+  @override
+  dispose() {
+    //路由销毁时需要释放动画资源
+    controller.dispose();
+    super.dispose();
+  }
+}
+```
+
+#### AnimatedWidget简化
+
+```dart
+/**
+上面示例中通过addListener()和setState() 来更新UI这一步其实是通用的，如果每个动画中都加这么一句是比较繁琐的。AnimatedWidget类封装了调用setState()的细节，并允许我们将 widget 分离出来，
+**/
+import 'package:flutter/material.dart';
+
+class AnimatedImage extends AnimatedWidget {
+  const AnimatedImage({
+    Key? key,
+    required Animation<double> animation,
+  }) : super(key: key, listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
+    return  Center(
+      child: Image.asset(
+        "imgs/avatar.png",
+        width: animation.value,
+        height: animation.value,
+      ),
+    );
+  }
+}
+
+class ScaleAnimationRoute1 extends StatefulWidget {
+  const ScaleAnimationRoute1({Key? key}) : super(key: key);
+
+  @override
+  _ScaleAnimationRouteState createState() =>  _ScaleAnimationRouteState();
+}
+
+class _ScaleAnimationRouteState extends State<ScaleAnimationRoute1>
+    with SingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController controller;
+
+  @override
+  initState() {
+    super.initState();
+    controller =  AnimationController(
+        duration: const Duration(seconds: 2), vsync: this);
+    //图片宽高从0变到300
+    animation =  Tween(begin: 0.0, end: 300.0).animate(controller);
+    //启动动画
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedImage(
+      animation: animation,
+    );
+  }
+
+  @override
+  dispose() {
+    //路由销毁时需要释放动画资源
+    controller.dispose();
+    super.dispose();
+  }
+}
+```
+
+#### AnimatedBuilder重构
+
+```dart
+/**
+用AnimatedWidget 可以从动画中分离出 widget，而动画的渲染过程（即设置宽高）仍然在AnimatedWidget 中，假设如果我们再添加一个 widget 透明度变化的动画，那么我们需要再实现一个AnimatedWidget，这样不是很优雅，如果我们能把渲染过程也抽象出来，那就会好很多，而AnimatedBuilder正是将渲染逻辑分离出来
+**/
+
+//封装一个GrowTransition
+class GrowTransition extends StatelessWidget {
+  const GrowTransition({Key? key,
+    required this.animation,
+    this.child,
+  }) : super(key: key);
+
+  final Widget? child;
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (BuildContext context, child) {
+          return SizedBox(
+            height: animation.value,
+            width: animation.value,
+            child: child,
+          );
+        },
+        child: child,
+      ),
+    );
+  }
+}
+
+//给组件使用
+Widget build(BuildContext context) {
+  return GrowTransition(
+    child: Image.asset("images/avatar.png"), 
+    animation: animation,
+  );
+}
+```
+
+### AnimatedSwitcher（动画切换组件）
+
+`AnimatedSwitcher` 可以同时对其新、旧子元素添加显示、隐藏动画。也就是说在`AnimatedSwitcher`的子元素发生变化时，会对其旧元素和新元素做动画
+
+```dart
+const AnimatedSwitcher({
+  Key? key,
+  this.child,
+  required this.duration, // 新child显示动画时长
+  this.reverseDuration,// 旧child隐藏的动画时长
+  this.switchInCurve = Curves.linear, // 新child显示的动画曲线
+  this.switchOutCurve = Curves.linear,// 旧child隐藏的动画曲线
+  this.transitionBuilder = AnimatedSwitcher.defaultTransitionBuilder, // 动画构建器
+  this.layoutBuilder = AnimatedSwitcher.defaultLayoutBuilder, //布局构建器
+})
+```
+
+### 动画过渡组件
+
