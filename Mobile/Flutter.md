@@ -5,6 +5,7 @@
 ### 入门
 
 + [Dart网站](https://www.dartcn.com/)
++ [官方文档](https://dart.cn/guides/language/language-tour)
 + [Dart入门](../Dart.md)
 
 #### 环境搭建

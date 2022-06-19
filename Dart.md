@@ -2,6 +2,8 @@
 
 ## 入门
 
++ [官方文档](https://dart.cn/guides/language/language-tour)
+
 ```dart
 //入口函数
 void main() {
@@ -21,6 +23,43 @@ String name = 'Bob';  //显示指定类型
 //Dart中的const 和 final 都可以用来定义一个不可变的常量，但又有一些不一样的区别。使用const 定义的常量是需要在编译阶段即可确定的值，而这个值一旦确定就不能再变化，否则会报错。
 const a=10; 等同于 const int a=10;  //必须在编译期确定值
 final timeStamp = new DateTime.now(); //只有运行时可以获取到值，可以使用final
+```
+
+### 空安全
+
+#### ?可空表示符
+
+我们可以通过将`?`跟在类型的后面来表示它后面的变量或参数可接受Null
+
+```dart
+class CommonModel {
+  String? firstName; //可空的成员变量
+  int getNameLen(String? lastName /*可空的参数*/) {
+    int firstLen = firstName?.length ?? 0;    //如果firstName为null就取0
+    int lastLen = lastName?.length ?? 0;
+    return firstLen + lastLen;
+  }
+}
+
+//当程序启用空安全后，类的成员变量默认是不可空的，所以对于一个非空的成员变量需要指定其初始化方式
+class CommonModel {
+  List names=[];//定义时初始化
+  final List colors;//在构造方法中初始化
+  late List urls;//延时初始化
+  CommonModel(this.colors);
+  ...
+```
+
+#### late（延迟初始化）
+
+```dart
+late List urls;//延时初始化
+  setUrls(List urls){
+    this.urls=urls;
+  }
+  int getUrlLen(){
+    return urls.length;
+  }
 ```
 
 ### 内建类型
@@ -176,7 +215,232 @@ void enableFlags({bool bold = false, bool hidden = false}) {...}
 enableFlags(bold: true);
 ```
 
-## 异步
+## 类和对象
+
+### final和const关键字
+
+```dart
+//final
+final 用来修饰变量，只能被赋值一次，运行时赋值。也就是当程序运行到这里才会被赋值。
+
+//const
+const 只可以修饰变量，常量构造函数。修饰的变量只可以被赋值一次。const修饰的变量在整个App的生命周期内都是不可变的常量，在内存中也只会创建一次，之后的每次调用都会复用第一次创建的对象。
+
+//const 和final的区别
+取值的时机不同，const在编译时候就已经确定下来，而final修饰的变量在运行时才会确定下来。
+应用范畴不同，final用来修饰变量，const不仅修饰变量，还可以修饰常量构造函数。
+相同内容对象创建不同，const的list1，list2内容一样，会指向同一个对象。final修饰的list1和list2内容一样，但是会指向不同的变量。
+const修饰的list不能修改内容，而final修饰的list可以修改内容。
+final 不能修饰类和方法，和java的不同。
+```
+
+### identical和is关键字
+
+```dart
+//identical 用来比较两个对象是否一样
+
+//is用来表示A对象是否是A的实例
+```
+
+### runtimeType方法
+
+```dart
+//用来获取某个对象的类型
+class Test{
+    
+}
+
+Test test=Test();
+print(test.runtimeType())
+//输出Test    
+```
+
+### 构造函数
+
+#### 默认构造函数
+
+```dart
+// 默认构造函数与 Java 类似，可以是无参构造函数和有参构造函数；但与 Java 不同的是，Dart 构造函数不允许重载，即不允许有相同名称的构造函数；
+//如果不声明构造函数，则会提供默认无参构造函数；
+class People {
+  People() {
+    print('Dart --> People()');
+  }
+}
+
+//有参构造函数（可以使用语法糖）
+class People {
+  String name;
+  int age, sex;
+
+  /// 不可与无参构造函数同时出现
+  People(name, age, {sex}) {
+    this.name = name;
+    this.age = age;
+    this.sex = sex;
+    print('Dart --> People($name, $age, {$sex})');
+  }
+  
+  /// 简易语法糖
+  People(this.name, this.age, {this.sex});
+}
+
+//当子类继承父类时，初始化子类构造函数会优先初始化父类构造函数；继承时需要使用 super() 父类构造函数，若父类为无参构造函数时可以省略
+class Student extends People {
+  Student(name, age, {sex}) : super() {
+    this.name = name;
+    this.age = age;
+    this.sex = sex;
+    print('Dart --> Student($name, $age, {$sex}) extends People()');
+  }
+}
+People people = People();
+print('<---------------->');
+Student student = Student('阿策小和尚', 100, sex: 0);
+```
+
+#### 命名构造函数
+
+```dart
+//使用命名构造函数可以为实现多个构造函数或提供更清晰的构造函数；同时子类需要实现 super() 构造函数类型完全取决于父类构造函数类型；其中命名构造函数是不允许被继承的，若子类需要实现与父类同名的命名构造函数，则需要调用父类的同名的命名构造函数；
+People.fromMap(map) {
+  this.name = map['name'];
+  this.age = map['age'];
+  this.sex = map['sex'];
+  print('Dart --> People.fromMap($map) --> $name, $age, $sex');
+}
+
+Student.fromMap(map) : super.fromMap(map) {
+  this.name = map['name'];
+  this.age = map['age'];
+  this.sex = map['sex'];
+  print('Dart --> Student.fromMap($map) extends People() --> $name,$age,$sex');
+}
+
+Map map = {'name': '阿策小和尚', 'age': 100, 'sex': 0};
+People people = People.fromMap(map);
+print('<---------------->');
+Student student = Student.fromMap(map);
+```
+
+#### 常量构造函数
+
+```dart
+/**
+1.其中所有实例变量都是 final 类型的，类中不允许有普通变量类型，因此其变量在构造函数完成之后不允许变更；
+2.变量中不允许有初始值；
+3.常量构造函数必须用 const 关键词修饰；
+4.常量构造函数不允许有函数体；
+5.实例化时需要加 const 否则实例化的对象仍然可以修改变量值；
+**/
+class People {
+  final String name ;
+  final int age ;
+  final int sex;
+  const People(this.name, this.age, {this.sex});
+}
+
+class Student extends People {
+  Student(name, age, {sex}) : super(name, age, sex: sex){
+    print('Dart --> Student($name, $age, {$sex}) extends People() --> $name, $age, $sex');
+  }
+}
+
+const People people = People('阿策小和尚', 100, sex: 0);
+print('People.name=${people.name}, age=${people.age}, sex=${people.sex}');
+print('<---------------->');
+Student student = Student('阿策小和尚', 100, sex: 0);
+print('Student.name=${student.name}, age=${student.age}, sex=${student.sex}');
+```
+
+#### 工厂构造函数
+
+```dart
+/**
+工厂构造函数不需要每次构建新的实例，且不会自动生成实例,而是通过代码来决定返回的实例对象；工厂构造函数类似于 static 静态成员，无法访问 this 指针；一般需要依赖其他类型构造函数；工厂构造函数还可以实现单例；
+**/
+
+class People {
+  String name;
+  int age, sex;
+  static People _cache;
+
+  People() {
+    print('Dart --> People()');
+  }
+
+  People.fromMap(map) {
+    this.name = map['name'];
+    this.age = map['age'];
+    this.sex = map['sex'];
+    print('Dart --> People.fromMap($map) --> $name, $age, $sex');
+  }
+
+  factory People.map(map) {
+    if (People._cache == null) {
+      People._cache = new People.fromMap(map);
+      print('Dart --> People.map($map) --> ${map['name']}, ${map['age']}, ${map['sex']} --> People._cache == null');
+    }
+    print('Dart --> People.map($map) --> ${map['name']}, ${map['age']}, ${map['sex']}');
+    return People._cache;
+  }
+
+  factory People.fromJson(json) => People();
+}
+
+Map map = {'name': '阿策小和尚', 'age': 100, 'sex': 0};
+People people = People.map(map);
+print('People.name=${people.name}, age=${people.age}, sex=${people.sex}, hashCode=${people.hashCode}');
+print('<---------------->');
+People people2 = People.map(map);
+print('People2.name=${people2.name}, age=${people2.age}, sex=${people2.sex}, hashCode=${people2.hashCode}');
+print('<---------------->');
+People people3 = People.fromMap(map);
+print('People3.name=${people3.name}, age=${people3.age}, sex=${people3.sex}, hashCode=${people3.hashCode}');
+print('<---------------->');
+People people4 = People.fromJson(map);
+print('People4.name=${people4.name}, age=${people4.age}, sex=${people4.sex}, hashCode=${people4.hashCode}');
+```
+
+#### 传递性和单例
+
+```dart
+//若在声明构造函数时，多个函数之间有类似的逻辑关联，为了减少代码冗余，可以通过函数传递来精简代码；小菜创建了一个 People.fromAdd() 构造函数，对于相同地方的 People 可以通过 People.fromBJ() 来传递到 People.fromAdd() 来实现；
+People.fromAdd(this.name, this.address);
+People.fromBJ(name) : this.fromAdd(name, '北京');
+
+People people6 = People.fromAdd('阿策小和尚', '北京');
+print('People6.name=${people6.name}, address=${people6.address}, hashCode=${people6.hashCode}');
+People people7 = People.fromBJ('阿策小和尚');
+print('People7.name=${people7.name}, address=${people7.address}, hashCode=${people7.hashCode}');
+
+//使用工厂模式实现单例
+class Singleton {
+  static final Singleton _singleton = Singleton._internal();
+
+  factory Singleton() => _singleton;
+
+  Singleton._internal();    //创建私有构造函数，外部不可访问。
+}
+
+//不使用工厂模式实现单例
+class Singleton {
+  static final Singleton _singleton = Singleton._();
+
+  //factory Singleton() => _singleton;
+  static Singleton getInstance(){
+    return _singleton;
+  }
+
+  Singleton._();
+}
+```
+
+## 泛型
+
+
+
+## 异步 
 
 ### Future
 
