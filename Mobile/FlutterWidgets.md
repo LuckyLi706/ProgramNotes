@@ -97,6 +97,168 @@ class _CheckBoxState extends State<_CheckBox> {
 
 ## 生命周期
 
+### StatefulWidget生命周期
+
+![](images/stateful_lifecycle.jpg)
+
+```dart
+/**
+1、createState
+createState是StatefulWidget来创建State的方法，只调用一次，
+**/
+class PdfIntroduce extends StatefulWidget {
+  @override
+  _PdfIntroduce createState() => _PdfIntroduce();
+}
+
+/**
+2、initState
+initState是StatefulWidget创建后调用的第一个方法，而且只执行一次。在执行initState时，View没有渲染，但是StatefulWidget 已经被加载到渲染树里了，这事的StatefulWidget的mount的值会变为true，知道dispose才会变为false.一般我们把初始化的一些操作都放在initState中
+**/
+@override
+void initState() {
+  super.initState();
+  ...
+}
+
+/**
+3、didChangeDependencies
+didChangeDependencies会在initState后立即调用，之后只有当StatefulWidget依赖的InheritedWidget发生变化之后，didChangeDependencies才会调用，所以didChangeDependencies可以调用多次。
+**/
+
+/**
+4、build
+build方法会在didChangeDeoendencies之后立即调用，在之后setState()刷新时，会重新调用build绘制页面，所以build方法可以调用多次。但一般不再build中创建除创建Widget的方法，否则会影响渲染效率。
+**/
+class PdfIntroduce extends StatefulWidget {
+  @override
+  _PdfIntroduce createState() => _PdfIntroduce();
+}
+
+/**
+5、addPostFrameCallback
+addPostFrameCallback是StatefulWidget渲染结束之后的回调，只会调用一次，一般是在initState里添加回调：
+**/
+import 'package:flutter/scheduler.dart';
+@override
+void initState() {
+  super.initState();
+  SchedulerBinding.instance.addPostFrameCallback((_) => {});
+}
+
+/**
+5、didUpdateWidget
+也可以说这个回调不是一个生命周期，如它名字所展示的，它会在父节点有了改变并且需要重新渲染UI的时候会回调这个方法。你可以在这个方法里拿到oldWidget 的参数，可以做一个对比然后做一些业务上的处理。
+**/
+
+
+/**
+6、deactivate(组件移除时)
+和didUpdateWidget一样，这个生命周期用的时候也很少。当这个方法被调用，就知道这节点正在“死亡“(dying)。
+flutter会在该节点的State object从节点树(widget tree)移除时调用这个方法。在某些时候，flutter会把移除的节点的State object重新插入到节点树的其他部分
+**/
+
+/**
+7、dispose(组件移除时)
+一般在dispose中做一些取消监听、动画的操作，和initState相对使用
+**/
+@override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+```
+
+### App生命周期
+
+```dart
+//使用WidgetsBindingObserver来监听前后台切换 
+class FlutterLifeCycleState extends State<FlutterLifeCycle>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); //添加观察者
+  }
+
+  //生命周期变化时回调
+  //resumed:应用可见并可响应用户操作，同安卓的onResume
+  //inactive:用户可见，但不可响应用户操作，，即失去了焦点但仍可以执行drawframe回调，同安卓的onPause
+  //paused:已经暂停了，用户不可见、不可操作，失去了焦点且不会收到 drawframe 回调；同安卓的onStop
+  //suspending：应用被挂起，此状态IOS永远不会回调。安卓里就是挂起，不会再执行 drawframe 回调
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print("@@@@@@@@@  didChangeAppLifecycleState: $state");
+  }
+
+  ///当前系统改变了一些访问性活动的回调
+  @override
+  void didChangeAccessibilityFeatures() {
+    super.didChangeAccessibilityFeatures();
+    print("@@@@@@@@@ didChangeAccessibilityFeatures");
+  }
+
+  /// Called when the system is running low on memory.
+  ///低内存回调
+  @override
+  void didHaveMemoryPressure() {
+    super.didHaveMemoryPressure();
+    print("@@@@@@@@@ didHaveMemoryPressure");
+  }
+
+  /// Called when the system tells the app that the user's locale has
+  /// changed. For example, if the user changes the system language
+  /// settings.
+  ///用户本地设置变化时调用，如系统语言改变
+  @override
+  void didChangeLocales(List<Locale> locale) {
+    super.didChangeLocales(locale);
+    print("@@@@@@@@@ didChangeLocales");
+  }
+
+  /// Called when the application's dimensions change. For example,
+  /// when a phone is rotated.
+  ///应用尺寸改变时回调，例如旋转
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    Size size = WidgetsBinding.instance.window.physicalSize;
+    print("@@@@@@@@@ didChangeMetrics  ：宽：${size.width} 高：${size.height}");
+  }
+
+  /// {@macro on_platform_brightness_change}
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    print("@@@@@@@@@ didChangePlatformBrightness");
+  }
+
+  ///文字系数变化
+  @override
+  void didChangeTextScaleFactor() {
+    super.didChangeTextScaleFactor();
+    print(
+        "@@@@@@@@@ didChangeTextScaleFactor  ：${WidgetsBinding.instance.window.textScaleFactor}");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Text("flutter"),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this); //销毁观察者
+  }
+}
+```
+
 
 
 ## MaterialApp
