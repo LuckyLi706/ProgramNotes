@@ -95,6 +95,10 @@ class _CheckBoxState extends State<_CheckBox> {
 }
 ```
 
+## 生命周期
+
+
+
 ## MaterialApp
 
 使用纸墨设计（Material Design）风格的应用。里面包含了纸墨设计风格应用所需要的基本控件

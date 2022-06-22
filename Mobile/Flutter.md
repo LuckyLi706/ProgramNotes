@@ -32,6 +32,94 @@
   
   7. 使用Android Studio或者VSCode打开工程即可
 
+#### pubspec.yaml（配置文件）
+
+##### Application（应用）
+
+```yaml
+name: test_app    # 表示包名,引入自己创建的类,都会带入这个路径
+description: A new Flutter project.  # 对当前项目的介绍，作为应用用处不大
+
+publish_to: 'none' # 插件有效，作为应用可以不需要
+
+# 在 Android 中 对应 versionName + versionCode
+version: 1.0.0+1
+
+environment:
+  # 约束dart sdk 版本，当前dart版本必须大于等于2.16.2并且小于3.0.0版本
+  sdk: ">=2.16.2 <3.0.0"
+  # 约束flutter sdk 版本，当前flutter版本必须大于3.0.1版本
+  flutter: ">=3.0.1"
+
+# 依赖版本约束说明
+# name：包名 version：版本号
+# ^符号  ^version：版本号要与指定的版本兼容  ^1.2.3相当于 '>=1.2.3 <2.0.0'  ^0.1.2相当于'>=0.1.2 <0.2.0'
+# 其他符号 any 1.2.3 >=1.2.3 >1.2.3 <=1.2.3<1.2.3
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 依赖方式
+  # 1、依赖 pub.dev 上的第三方库是最常用的一种方式
+  #  path_provider: ^1.6.22
+  # 2、依赖本地库
+  # flutter_package:
+  #   path: ../flutter_package
+  # 3、依赖Git仓库的库
+  # bloc:
+  #   git:
+  #     url: https://github.com/felangel/bloc.git    仓库地址
+  #     ref: bloc_fixes_issue_110    表示git引用，可以是 commit hash, tag 或者 branch
+  #     path: packages/bloc  如果 git 仓库中有多个软件包，则可以使用此属性指定软件包
+  # 4、依赖我们自己的 pub 仓库
+  # bloc: 
+  #   hosted:
+  #     name: bloc
+  #     url: http://your-package-server.com
+  #   version: ^6.0.0
+  cupertino_icons: ^1.0.2
+
+# 开发使用的依赖，例如test、代码生成，仅仅是运行期间的包，比如自动生成代码的库
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # 确保您的应用程序中包含Material Icons字体，以便您可以使用material Icons类中的图标
+  uses-material-design: true
+
+  # 添加资源
+  assets:
+    - images/a_dot_burr.jpeg  #images目录下的本地图片
+    - images/a_dot_ham.jpeg
+
+  # 添加字体资源
+  fonts:
+    - family: Schyler
+      fonts:
+        - asset: fonts/Schyler-Regular.ttf
+        - asset: fonts/Schyler-Italic.ttf
+          style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
+
+```
+
+##### Plugin（插件）
+
 ### 进阶
 
 + [Widgets（UI）](FlutterWidgets.md)
@@ -71,4 +159,3 @@
     ```
     终端开代理，然后执行命令
     ```
-
