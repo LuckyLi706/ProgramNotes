@@ -1852,9 +1852,122 @@ const WillPopScope({
 
 ### InheritedWidget（数据共享）
 
-待理解，暂时没太明白
-
 `InheritedWidget`是 Flutter 中非常重要的一个功能型组件，它提供了一种在 widget 树中从上到下共享数据的方式，比如我们在应用的根 widget 中通过`InheritedWidget`共享了一个数据，那么我们便可以在任意子widget 中来获取该共享的数据！这个特性在一些需要在整个 widget 树中共享数据的场景中非常方便！如Flutter SDK中正是通过 InheritedWidget 来共享应用主题（`Theme`）和 Locale (当前语言环境)信息的。
+
+```dart
+//简单理解：就是将数据存储在父控件中，当数据发生变化时，自上而下去更新子控件的值
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class ShareDataWidget extends InheritedWidget {
+  const ShareDataWidget({
+    Key? key,
+    required this.data,
+    required Widget child,
+  }) : super(key: key, child: child);
+
+  final int data; //需要在子树中共享的数据，保存点击次数
+
+  //定义一个便捷方法，方便子树中的widget获取共享数据
+  static ShareDataWidget? of(BuildContext context) {
+    /**
+    可以使用return context.dependOnInheritedWidgetOfExactType<CountInheritedWidget>()来阻止didChangeDependencies调用
+    **/
+    return context.dependOnInheritedWidgetOfExactType<ShareDataWidget>();
+  }
+
+  //该回调决定当data发生变化时，是否通知子树中依赖data的Widget重新build
+  @override
+  bool updateShouldNotify(ShareDataWidget old) {
+    return old.data != data;
+  }
+}
+
+class _TestWidget extends StatefulWidget {
+  @override
+  __TestWidgetState createState() => __TestWidgetState();
+}
+
+class __TestWidgetState extends State<_TestWidget> {
+  @override
+  Widget build(BuildContext context) {
+    print("build -----__TestWidgetState");
+    //使用InheritedWidget中的共享数据
+    return Text(ShareDataWidget.of(context)!.data.toString());
+  }
+
+  @override //下文会详细介绍。
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    //父或祖先widget中的InheritedWidget改变(updateShouldNotify返回true)时会被调用。
+    //如果build中没有依赖InheritedWidget，则此回调不会被调用。
+    print("Dependencies change");
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      count++;
+    });
+  }
+
+  int count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    print("build");
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: ShareDataWidget(
+          //使用ShareDataWidget
+          data: count,   //只要该值发生变化,就可以通过ShareDataWidget.of(context)!.data.toString()获取到值
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: _TestWidget(), //子widget中依赖ShareDataWidget
+              ),
+              ElevatedButton(
+                child: const Text("Increment"),
+                //每点击一次，将count自增，然后重新build,ShareDataWidget的data将被更新
+                onPressed: () => setState(() => ++count),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: IconButton(onPressed: (){
+          _incrementCounter();
+        }, icon: Icon(Icons.add)),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+```
 
 ### 跨组件状态共享
 
@@ -1863,6 +1976,8 @@ const WillPopScope({
 #### Provider
 
 #### 其他
+
++ [Provider学习文章1](https://zhuanlan.zhihu.com/p/150090283)
 
 | 包名                                                         | 介绍                                          |
 | ------------------------------------------------------------ | --------------------------------------------- |
@@ -1874,6 +1989,51 @@ const WillPopScope({
 ### ValueListenableBuilder（按需rebuild）
 
 InheritedWidget 提供一种在 widget 树中**从上到下**共享数据的方式，但是也有很多场景数据流向并非从上到下，比如从下到上或者横向等。为了解决这个问题，Flutter 提供了一个 ValueListenableBuilder 组件，它的功能是监听一个数据源，如果数据源发生变化，则会重新执行其 builder。
+
+```dart
+//局部刷新可以通过 provider 、flutter_bloc 等状态管理库实现。但相对较重，Flutter 框架内部提供了一个非常小巧精致的组件，专门用于局部组件的刷新
+class _MyHomePageState extends State<MyHomePage>  {
+  final ValueNotifier<int> counter = ValueNotifier<int>(0);   //定义初始数值
+  static const double textScaleFactor = 4;
+
+  @override
+  Widget build(BuildContext context) {
+    print("build");   //当前方法只会被调用一次
+    return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: ValueListenableBuilder<int>(
+          builder: (BuildContext context, int value, Widget? child) {
+            // builder 方法只会在 counter 变化时被调用
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                child!,
+                Text('$value 次'),
+              ],
+            );
+          },
+          valueListenable: counter,  //绑定监听对象
+          // 当子组件不依赖变化的数据，且子组件收件开销比较大时，指定 child 属性来缓存子组件非常有用
+          child: const Text('点击了', textScaleFactor: textScaleFactor),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          counter.value += 1;
+        },
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+```
 
 ### 异步更新UI
 
