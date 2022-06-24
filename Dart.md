@@ -1,3 +1,52 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Dart](#dart)
+  - [入门](#%E5%85%A5%E9%97%A8)
+  - [变量](#%E5%8F%98%E9%87%8F)
+    - [空安全](#%E7%A9%BA%E5%AE%89%E5%85%A8)
+      - [?可空表示符](#%E5%8F%AF%E7%A9%BA%E8%A1%A8%E7%A4%BA%E7%AC%A6)
+      - [late（延迟初始化）](#late%E5%BB%B6%E8%BF%9F%E5%88%9D%E5%A7%8B%E5%8C%96)
+    - [内建类型](#%E5%86%85%E5%BB%BA%E7%B1%BB%E5%9E%8B)
+      - [Number](#number)
+      - [String](#string)
+      - [Boolean](#boolean)
+      - [List](#list)
+      - [Set](#set)
+      - [Map](#map)
+  - [函数](#%E5%87%BD%E6%95%B0)
+    - [函数声明](#%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E)
+    - [可选参数](#%E5%8F%AF%E9%80%89%E5%8F%82%E6%95%B0)
+  - [类和对象](#%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1)
+    - [final和const关键字](#final%E5%92%8Cconst%E5%85%B3%E9%94%AE%E5%AD%97)
+    - [identical、is和as关键字](#identicalis%E5%92%8Cas%E5%85%B3%E9%94%AE%E5%AD%97)
+    - [runtimeType方法](#runtimetype%E6%96%B9%E6%B3%95)
+    - [构造函数](#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+      - [默认构造函数](#%E9%BB%98%E8%AE%A4%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+      - [命名构造函数](#%E5%91%BD%E5%90%8D%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+      - [常量构造函数](#%E5%B8%B8%E9%87%8F%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+      - [工厂构造函数](#%E5%B7%A5%E5%8E%82%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+      - [传递性和单例](#%E4%BC%A0%E9%80%92%E6%80%A7%E5%92%8C%E5%8D%95%E4%BE%8B)
+    - [抽象类（extends）](#%E6%8A%BD%E8%B1%A1%E7%B1%BBextends)
+    - [接口（implements）](#%E6%8E%A5%E5%8F%A3implements)
+    - [扩展方法（extension）](#%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95extension)
+    - [混入类（mixin ）](#%E6%B7%B7%E5%85%A5%E7%B1%BBmixin-)
+  - [泛型](#%E6%B3%9B%E5%9E%8B)
+  - [异步](#%E5%BC%82%E6%AD%A5)
+    - [Future](#future)
+    - [await和async](#await%E5%92%8Casync)
+  - [网络](#%E7%BD%91%E7%BB%9C)
+    - [Http](#http)
+      - [HttpClient配置](#httpclient%E9%85%8D%E7%BD%AE)
+      - [HTTP请求认证](#http%E8%AF%B7%E6%B1%82%E8%AE%A4%E8%AF%81)
+      - [代理](#%E4%BB%A3%E7%90%86)
+      - [证书认证](#%E8%AF%81%E4%B9%A6%E8%AE%A4%E8%AF%81)
+    - [WebSocket](#websocket)
+    - [Socket](#socket)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Dart
 
 ## 入门
@@ -9,6 +58,14 @@
 void main() {
   print(12);
 }
+```
+
+### import关键字
+
+```dart
+import 'extention2.dart'   //导入dart文件
+import 'extention2.dart' hide StringToNumber2;   //导入dart文件隐藏StringToNumber2方法
+import 'extention2.dart' as ext2;   //起一个别名
 ```
 
 ## 变量
@@ -447,11 +504,41 @@ class Singleton {
 
 ### 扩展方法（extension）
 
+对一些类添加自己多余的方法
+
+```dart
+/**
+语法：
+extension <extension name> on <type> {
+  (<member definition>)*
+}
+**/
+
+//1、对String类扩展两个方法
+extension NumberParsing on String {
+  int parseInt() {
+    return int.parse(this);
+  }
+
+  double parseDouble() {
+    return double.parse(this);
+  }
+}
+
+//使用（导入dart文件）
+"22".parseInt()
+    
+//2、对泛型类进行扩展
+extension MyFancyList<T> on List<T> {
+  int get doubleLength => length * 2;
+  List<T> operator -() => reversed.toList();
+  List<List<T>> split(int at) => [sublist(0, at), sublist(at)];
+}
+```
+
 ### 混入类（mixin ）
 
 ## 泛型
-
-
 
 ## 异步 
 
