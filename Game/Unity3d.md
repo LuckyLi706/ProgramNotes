@@ -137,11 +137,14 @@ public class NewBehaviourScript : MonoBehaviour
 
     void Start()
     {
-        //获取context
-        unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");    //获取unityplayer对象
-        currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");  //获取当前Activity
-        androidCall = new AndroidJavaClass("com.lucky.u3dlearn.CallMethod");  //获取Java层的CallMethod对象
-        androidCall.CallStatic("init", currentActivity);  //调用Java层的CallMethod对象的init方法。第一个方法名，第二个为入参
+        //获取unityplayer类
+        unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");   
+        //获取当前Activity，GetStatic相当于获取静态变量
+        currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");  
+        //获取Java层的CallMethod类
+        androidCall = new AndroidJavaClass("com.lucky.u3dlearn.CallMethod");  
+        //调用Java层的CallMethod对象的init方法。第一个方法名，第二个为入参,CallStatic相当于获取静态方法
+        androidCall.CallStatic("init", currentActivity);  
     }
 
     // Update is called once per frame
@@ -182,6 +185,45 @@ public class NewBehaviourScript : MonoBehaviour
         Debug.Log(message);  
     }
 }
+```
+
+#### 回调接口（AndroidJavaProxy）
+
+```c#
+//Android端，定义接口
+package com.example.android;
+public interface PluginCallback {
+    public void onSuccess(String videoPath);
+    public void onError(String errorMessage);
+}
+
+//Android端，入参方法
+package com.example.android.MyPlugin;
+public void myPluginMethod(PluginCallback callback) {
+    // Do something
+    callback.onSuccess("onSuccess");
+    // Do something horrible
+    callback.onError("onError");
+}
+
+//在unity中c#脚本中实现android接口
+class AndroidPluginCallback : AndroidJavaProxy
+    {
+//android接口包名不能出错：com.example.android.PluginCallback
+        public AndroidPluginCallback() : base("com.example.android.PluginCallback") { }
+
+        public void onSuccess(string videoPath) {
+            Debug.Log("ENTER callback onSuccess: " + videoPath);
+        }
+        public void onError(string errorMessage)
+        {
+            Debug.Log("ENTER callback onError: " + errorMessage);
+        }
+    }
+
+//在unity中调用android接口 untiy与android互相交互
+AndroidJavaObject pluginClass = new AndroidJavaObject("com.example.android.MyPlugin");
+pluginClass.Call("myPluginMethod", new AndroidPluginCallback());//c#中调用android接口
 ```
 
 ### 安卓Native层交互
