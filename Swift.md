@@ -1,3 +1,46 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Swift](#swift)
+  - [基础](#%E5%9F%BA%E7%A1%80)
+    - [typealias（类型别名）](#typealias%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D)
+    - [?、！、nil](#nil)
+    - [异常](#%E5%BC%82%E5%B8%B8)
+  - [数据类型](#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
+    - [整型](#%E6%95%B4%E5%9E%8B)
+    - [浮点型](#%E6%B5%AE%E7%82%B9%E5%9E%8B)
+    - [字符型（字符串）](#%E5%AD%97%E7%AC%A6%E5%9E%8B%E5%AD%97%E7%AC%A6%E4%B8%B2)
+    - [类型转换](#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2)
+    - [布尔类型](#%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B)
+    - [元祖](#%E5%85%83%E7%A5%96)
+    - [断言](#%E6%96%AD%E8%A8%80)
+  - [运算符](#%E8%BF%90%E7%AE%97%E7%AC%A6)
+    - [三元运算符](#%E4%B8%89%E5%85%83%E8%BF%90%E7%AE%97%E7%AC%A6)
+    - [空运算符（??）](#%E7%A9%BA%E8%BF%90%E7%AE%97%E7%AC%A6)
+    - [区间运算符](#%E5%8C%BA%E9%97%B4%E8%BF%90%E7%AE%97%E7%AC%A6)
+  - [集合](#%E9%9B%86%E5%90%88)
+    - [Array（数组）](#array%E6%95%B0%E7%BB%84)
+    - [Set（集合）](#set%E9%9B%86%E5%90%88)
+    - [Dictionary（字典）](#dictionary%E5%AD%97%E5%85%B8)
+  - [控制流](#%E6%8E%A7%E5%88%B6%E6%B5%81)
+    - [For..in..循环](#forin%E5%BE%AA%E7%8E%AF)
+    - [While循环](#while%E5%BE%AA%E7%8E%AF)
+    - [If](#if)
+    - [Switch](#switch)
+    - [Countinue和Break](#countinue%E5%92%8Cbreak)
+    - [带标签的跳转](#%E5%B8%A6%E6%A0%87%E7%AD%BE%E7%9A%84%E8%B7%B3%E8%BD%AC)
+    - [guard（提前退出）](#guard%E6%8F%90%E5%89%8D%E9%80%80%E5%87%BA)
+  - [函数](#%E5%87%BD%E6%95%B0)
+    - [定义和使用](#%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BD%BF%E7%94%A8)
+    - [参数和返回值](#%E5%8F%82%E6%95%B0%E5%92%8C%E8%BF%94%E5%9B%9E%E5%80%BC)
+    - [参数标签和参数名称](#%E5%8F%82%E6%95%B0%E6%A0%87%E7%AD%BE%E5%92%8C%E5%8F%82%E6%95%B0%E5%90%8D%E7%A7%B0)
+    - [函数类型](#%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B)
+  - [闭包](#%E9%97%AD%E5%8C%85)
+  - [枚举](#%E6%9E%9A%E4%B8%BE)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Swift
 
 感觉语法和Kotlin和相似
@@ -322,6 +365,19 @@ for name in names[..<2] {
 }
 // Anna
 // Alex
+```
+
+### 恒等运算符（===）
+
+```swift
+/**
+请注意，“相同”（用三个等号表示，===）与“等于”（用两个等号表示，==）的不同。“相同”表示两个类类型（class type）的常量或者变量引用同一个类实例。“等于”表示两个实例的值“相等”或“等价”，判定时要遵照设计者定义的评判标准
+**/
+
+// 打印 "tenEighty and alsoTenEighty refer to the same VideoMode instance."
+if tenEighty === alsoTenEighty {
+    print("tenEighty and alsoTenEighty refer to the same VideoMode instance.")
+}
 ```
 
 ## 集合
@@ -1068,5 +1124,345 @@ serve(customer: person.remove(at: 0))  //打印: Now serving zhangsan!
 
 和结构体的唯一区别就是枚举不能定义存储属性
 **/
+
+//定义（Swift 的枚举成员在被创建时不会被赋予一个默认的整型值。在下面的 CompassPoint 例子中，north，south，east 和 west 不会被隐式地赋值为 0，1，2 和 3）
+enum CompassPoint {
+    case north
+    case south
+    case east
+    case west
+}
+
+//调用
+var directionToHead = CompassPoint.west 
+
+//使用switch..case..
+directionToHead = .south
+switch directionToHead {
+case .north:
+    print("Lots of planets have a north")
+case .south:
+    print("Watch out for penguins")
+case .east:
+    print("Where the sun rises")
+case .west:
+    print("Where the skies are blue")
+}
+```
+
+## 类
+
+### 类和结构体
+
+```swift
+/**
+类和结构体的相同点：
+1. Swift 中结构体和类有很多共同点。两者都可以：
+2. 定义属性用于存储值
+3. 定义方法用于提供功能
+4. 定义下标操作用于通过下标语法访问它们的值
+5. 定义构造器用于设置初始值
+6. 通过扩展以增加默认实现之外的功能
+7. 遵循协议以提供某种标准功能
+
+类的多余功能：
+1. 继承允许一个类继承另一个类的特征
+2. 类型转换允许在运行时检查和解释一个类实例的类型
+4. 析构器允许一个类实例释放任何其所被分配的资源
+5. 引用计数允许对一个类的多次引用
+**/
+
+//定义
+struct Resolution {   //结构体使用struct关键字
+    var width = 0
+    var height = 0
+}
+
+class VideoMode {    //类使用class关键字
+    var resolution = Resolution()
+    var interlaced = false
+    var frameRate = 0.0
+    var name: String?
+}
+
+//获取实例
+let someResolution = Resolution()
+let someVideoMode = VideoMode()
+
+//属性访问
+// 打印 "The width of someResolution is 0"
+print("The width of someResolution is \(someResolution.width)")
+
+//你也可以访问子属性，如 VideoMode 中 resolution 属性的 width 属性：
+// 打印 "The width of someVideoMode is 0"
+print("The width of someVideoMode is \(someVideoMode.resolution.width)")
+
+//你也可以使用点语法为可变属性赋值：
+someVideoMode.resolution.width = 1280
+// 打印 "The width of someVideoMode is now 1280"
+print("The width of someVideoMode is now \(someVideoMode.resolution.width)")
+
+//结构体的构造器（所有结构体都有一个自动生成的成员逐一构造器，用于初始化新结构体实例中成员的属性。新实例中各个属性的初始值可以通过属性的名称传递到成员逐一构造器之中）
+let vga = Resolution(width: 640, height: 480)
+//类没有
+```
+
+### 属性
+
+#### 存储属性
+
+```swift
+/**
+存储属性:属性放在该对象内部,占用该对象内存,所以只有struct和class才有存储属性,枚举就不可以有存储属性,因为关联值和原始值都放在枚举类里面,而不是枚举实例化对象
+**/
+
+//例子（下面的例子定义了一个名为 FixedLengthRange 的结构体，该结构体用于描述整数的区间，且这个范围值在被创建后不能被修改）
+struct FixedLengthRange {
+    var firstValue: Int
+    let length: Int
+}
+// 该区间表示整数 0，1，2
+var rangeOfThreeItems = FixedLengthRange(firstValue: 0, length: 3)
+// 该区间现在表示整数 6，7，8
+rangeOfThreeItems.firstValue = 6
+
+//1、常量结构体实例的存储属性
+let rangeOfFourItems = FixedLengthRange(firstValue: 0, length: 4)  // 该区间表示整数 0，1，2，3
+// 尽管 firstValue 是个可变属性，但这里还是会报错
+rangeOfFourItems.firstValue = 6
+
+/**
+2、延时加载存储属性
+延时加载存储属性是指当第一次被调用的时候才会计算其初始值的属性。在属性声明前使用 lazy 来标示一个延时加载存储属性。
+必须将延时加载属性声明成变量（使用 var 关键字），因为属性的初始值可能在实例构造完成之后才会得到。而常量属性在构造过程完成之前必须要有初始值，因此无法声明成延时加载。
+**/
+class DataImporter {
+    /*
+    DataImporter 是一个负责将外部文件中的数据导入的类。
+    这个类的初始化会消耗不少时间。
+    */
+    var fileName = "data.txt"
+    // 这里会提供数据导入功能
+}
+
+class DataManager {
+    lazy var importer = DataImporter()
+    var data: [String] = []
+    // 这里会提供数据管理功能
+}
+
+let manager = DataManager()
+manager.data.append("Some data")
+manager.data.append("Some more data")
+// DataImporter 实例的 importer 属性还没有被创建  
+print(manager.importer.fileName) // DataImporter 实例的 importer 属性现在被创建了
+// 输出“data.txt”
+```
+
+#### 计算属性
+
+```swift
+/**
+计算属性： 只用作计算,没有真正存储到实例化对象的内存中
+**/
+//计算属性：就是set和get方法的组合
+ /*语法格式
+ [修饰符] var 计算属性名：属性类型{
+     get{
+     }
+     set(形参名){
+     }
+ }
+ */
+ 
+ class User  {
+     var first:String = ""
+     var last:String = ""
+     //定义计算属性
+     var fullName:String{
+         //定义计算属性的getter方法，该方法的返回值由first、last两个存储属性决定
+         get{
+             return first + "_" + last
+         }
+         //定义计算属性的setter方法
+         set(newValue){
+             var names = newValue.componentsSeparatedByString("_")
+             self.first = names[0]
+             self.last = names[1]
+         }
+     }
+     init(first:String,last:String){
+         self.first = first
+         self.last = last
+     }
+ }
+ //创建一个实例
+ let s = User(first: "heyang", last: "hello")
+ println(s.fullName)
+ s.fullName = "何杨_你好"
+ println(s.fullName)
+ //只读属性，则无需set部分，可以省略get和花括号
+```
+
+#### 属性观察器
+
+```swift
+/**
+属性观察器：属性观察器监控和响应属性值的变化，每次属性被设置值的时候都会调用属性观察器，即使新值和当前值相同的时候也不例外。
+willSet 在新的值被设置之前调用
+didSet 在新的值被设置之后调用
+**/
+
+/**
+1. StepCounter 类定义了一个叫 totalSteps 的 Int 类型的属性。它是一个存储属性，包含 willSet 和 didSet 观察器。
+2. 当 totalSteps 被设置新值的时候，它的 willSet 和 didSet 观察器都会被调用，即使新值和当前值完全相同时也会被调用。
+3. 例子中的 willSet 观察器将表示新值的参数自定义为 newTotalSteps，这个观察器只是简单的将新的值输出。didSet 观察器在 totalSteps 的值改变后被调用，它把新值和旧值进行对比，如果总步数增加了，就输出一个消息表示增加了多少步。didSet 没有为旧值提供自定义名称，所以默认值 oldValue 表示旧值的参数名。
+**/
+class StepCounter {
+    var totalSteps: Int = 0 {
+        willSet(newTotalSteps) {
+            print("将 totalSteps 的值设置为 \(newTotalSteps)")
+        }
+        didSet {
+            if totalSteps > oldValue  {
+                print("增加了 \(totalSteps - oldValue) 步")
+            }
+        }
+    }
+}
+let stepCounter = StepCounter()
+stepCounter.totalSteps = 200
+// 将 totalSteps 的值设置为 200
+// 增加了 200 步
+stepCounter.totalSteps = 360
+// 将 totalSteps 的值设置为 360
+// 增加了 160 步
+stepCounter.totalSteps = 896
+// 将 totalSteps 的值设置为 896
+// 增加了 536 步
+```
+
+#### 属性包装器
+
+```swift
+/**
+属性包装器在管理属性如何存储和定义属性的代码之间添加了一个分隔层。举例来说，如果你的属性需要线程安全性检查或者需要在数据库中存储它们的基本数据，那么必须给每个属性添加同样的逻辑代码。当使用属性包装器时，你只需在定义属性包装器时编写一次管理代码，然后应用到多个属性上来进行复用
+**/
+
+/**
+定义一个属性包装器，你需要创建一个定义 wrappedValue 属性的结构体、枚举或者类。
+在下面的代码中，TwelveOrLess 结构体确保它包装的值始终是小于等于 12 的数字。如果要求它存储一个更大的数字，它则会存储 12 这个数字。
+**/
+@propertyWrapper
+struct TwelveOrLess {
+    private var number = 0
+    var wrappedValue: Int {
+        get { return number }
+        set { number = min(newValue, 12) }
+    }
+}
+
+struct SmallRectangle {
+    @TwelveOrLess var height: Int
+    @TwelveOrLess var width: Int
+}
+
+var rectangle = SmallRectangle()
+print(rectangle.height)
+// 打印 "0"
+
+rectangle.height = 10
+print(rectangle.height)
+// 打印 "10"
+
+rectangle.height = 24
+print(rectangle.height)
+// 打印 "12"
+```
+
+### 方法
+
+```swift
+//1. 实例方法
+class Counter {
+    var count = 0
+    func increment() {
+        count += 1
+    }
+    func increment(by amount: Int) {
+        count += amount
+    }
+    func reset() {
+        count = 0
+    }
+}
+
+let counter = Counter()
+// 初始计数值是0
+counter.increment()
+// 计数值现在是1
+counter.increment(by: 5)
+// 计数值现在是6
+counter.reset()
+// 计数值现在是0
+
+//2. self属性（self相当于自身，相当于Java的this）
+func increment() {
+    self.count += 1
+}
+
+//3. 实例方法中修改值类型。结构体和枚举是值类型。默认情况下，值类型的属性不能在它的实例方法中被修改。可以添加mutating关键字
+struct Point {
+    var x = 0.0, y = 0.0
+    mutating func moveBy(x deltaX: Double, y deltaY: Double) {
+        x += deltaX
+        y += deltaY
+    }
+}
+var somePoint = Point(x: 1.0, y: 1.0)
+somePoint.moveBy(x: 2.0, y: 3.0)
+print("The point is now at (\(somePoint.x), \(somePoint.y))")
+// 打印“The point is now at (3.0, 4.0)”
+
+//4. 在可变方法中给 self 赋值
+struct Point {
+    var x = 0.0, y = 0.0
+    mutating func moveBy(x deltaX: Double, y deltaY: Double) {
+        self = Point(x: x + deltaX, y: y + deltaY)
+    }
+}
+
+//5. 类型方法（在方法的 func 关键字之前加上关键字 static，来指定类型方法。类还可以用关键字 class 来指定，从而允许子类重写父类该方法的实现）
+class MathFormula {
+//声明类型方法
+    class func abs(number:Int) -> Int {
+        if number < 0
+        {
+            return (-number)
+            
+        }else {
+            return number
+        }
+    }
+}
+
+struct absTurn
+{
+//用static关键字声明结构体的类型方法
+    static func abs(number: Int) -> Int
+    {
+        if number < 0
+        {
+            return (-number)
+        } else{
+            return number
+        }
+    }
+}
+
+let no = MathFormula.abs(number: -35)
+let num = absTurn.abs(number: -5)
+print("获取绝对值结果no：\(no)")           //获取绝对值结果no：86
+print("获取反绝对值结果num：\(num)")       //获取反绝对值结果num：3
 ```
 
