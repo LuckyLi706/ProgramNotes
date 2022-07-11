@@ -1,11 +1,14 @@
 # Kotlin
 
-## 基础语法
++ [官方中文文档](https://www.kotlincn.net/docs/reference/basic-syntax.html)
 
-### main函数
+## 基础
+
+### 入门
 
 ```kotlin
-//Kotlin的main函数有两种写法
+//main方法的写法（Kotlin的main函数有两种写法）
+//方法1（java的改造版）
 class First {
     //java的改造版
     companion object {   //相当于java的static关键字
@@ -15,10 +18,20 @@ class First {
         }
     }
 }
-
-//kotlin的写法，脱离类的包裹
+//方法2（kotlin的写法，脱离类的包裹）
 fun main() {
     print("Hello,World")
+}
+
+//基础语法
+fun main(){
+    //定义变量使用var和val（可以进行上下文推断出该变量类型）
+    var a = 1  // 使用var来定义可变的变量
+    val b = 2  // 使用val定义一个常量
+    
+    var c:Int = 3 //显示申明该变量类型
+    
+    print(c)   //打印输出
 }
 ```
 
@@ -139,6 +152,55 @@ loop@ for (i in 1..100) {
         if (j==5) break@loop   //当j==5时跳出整个循环
     }
 }
+```
+
+## 数据类型
+
+### 整型
+
+```kotlin
+/**
+四种类型：
+类型  大小（比特）  最小    最大
+Byte	8	-128	127
+Short	16	-32768	32767
+Int	   32	-2,147,483,648 (-231)	2,147,483,647 (231 - 1)
+Long	64	-9,223,372,036,854,775,808 (-263)	9,223,372,036,854,775,807 (263 - 1)
+**/
+
+//所有以未超出 Int 最大值的整型值初始化的变量都会推断为 Int 类型。如果初始值超过了其最大值，那么推断为 Long 类型。 如需显式指定 Long 型值，请在该值后追加 L 后缀
+val one = 1 // Int
+val threeBillion = 3000000000 // Long
+val oneLong = 1L // Long
+val oneByte: Byte = 1
+
+//Kotlin不支持八进制
+val decimalInteger = 17    //十进制，Long 类型用大写 L 标记: 17L
+//前缀0b表示二进制
+val binaryInteger = 0b10001       // 二进制的17
+//前缀0x表示十六进制
+val hexadecimalInteger = 0x11     // 十六进制的17
+
+//字面值（增加可读性）
+val oneMillion = 1_000_000
+val creditCardNumber = 1234_5678_9012_3456L
+val socialSecurityNumber = 999_99_9999L
+val hexBytes = 0xFF_EC_DE_5E
+val bytes = 0b11010010_01101001_10010100_10010010
+```
+
+### 浮点型
+
+```kotlin
+/**
+类型	大小（比特数）	有效数字比特数	指数比特数	十进制位数
+Float	32	24	8	6-7
+Double	64	53	11	15-16
+**/
+
+val pi = 3.14 // Double
+val e = 2.7182818284 // Double
+val eFloat = 2.7182818284f // Float，实际值为 2.7182817，指定Float类型要加f
 ```
 
 ## 类与对象
