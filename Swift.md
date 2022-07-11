@@ -116,6 +116,17 @@ guard let anyObject = try? JSONSerialization.jsonObject(with: <data数据>, opti
 let anyObject = try! JSONSerialization.jsonObject(with: <data数据>, options: .mutableContainers)
 ```
 
+### 访问控制
+
+```swift
+/**
+1. open 和 public 级别可以让实体被同一模块源文件中的所有实体访问，在模块外也可以通过导入该模块来访问源文件里的所有实体。通常情况下，你会使用 open 或 public 级别来指定框架的外部接口。open 和 public 的区别在后面会提到。
+2. internal 级别让实体被同一模块源文件中的任何实体访问，但是不能被模块外的实体访问。通常情况下，如果某个接口只在应用程序或框架内部使用，就可以将其设置为 internal 级别。
+3. fileprivate 限制实体只能在其定义的文件内部访问。如果功能的部分实现细节只需要在文件内使用时，可以使用 fileprivate 来将其隐藏。
+4. private 限制实体只能在其定义的作用域，以及同一文件内的 extension 访问。如果功能的部分细节只需要在当前作用域内使用时，可以使用 private 来将其隐藏
+**/
+```
+
 ## 数据类型
 
 ### 整型
@@ -264,6 +275,24 @@ var c = 100.10
 var d = Double(c) + Double(a)!   //加个!表示强制转换,如果String不是数字,跑出异常
 ```
 
+#### is和as
+
+```swift
+//用类型检查操作符（is）来检查一个实例是否属于特定子类型。若实例属于那个子类型，类型检查操作符返回 true，否则返回 false。
+
+
+//某类型的一个常量或变量可能在幕后实际上属于一个子类。当确定是这种情况时，你可以尝试用类型转换操作符（as? 或 as!）向下转到它的子类型
+```
+
+#### Any和AnyObject
+
+```swift
+/**
+Any 可以表示任何类型，包括函数类型。
+AnyObject 可以表示任何类类型的实例。
+**/
+```
+
 ### 布尔类型
 
 ```swift
@@ -378,6 +407,37 @@ for name in names[..<2] {
 if tenEighty === alsoTenEighty {
     print("tenEighty and alsoTenEighty refer to the same VideoMode instance.")
 }
+```
+
+### 位运算符
+
+```swift
+//1. 取反运算符（~）
+let initialBits: UInt8 = 0b00001111
+let invertedBits = ~initialBits // 等于 0b11110000
+
+//2. 按位与运算符（&）
+let firstSixBits: UInt8 = 0b11111100
+let lastSixBits: UInt8  = 0b00111111
+let middleFourBits = firstSixBits & lastSixBits // 等于 00111100
+
+//3. 按位或运算符（|）
+let someBits: UInt8 = 0b10110010
+let moreBits: UInt8 = 0b01011110
+let combinedbits = someBits | moreBits // 等于 11111110
+
+//4. 按位异或运算符（^）
+let firstBits: UInt8 = 0b00010100
+let otherBits: UInt8 = 0b00000101
+let outputBits = firstBits ^ otherBits // 等于 00010001
+
+//5. 左移运算符（<<）和右移运算符（>>）
+let shiftBits: UInt8 = 4 // 即二进制的 00000100
+shiftBits << 1           // 00001000
+shiftBits << 2           // 00010000
+shiftBits << 5           // 10000000
+shiftBits << 6           // 00000000
+shiftBits >> 2           // 00000001
 ```
 
 ## 集合
@@ -1207,6 +1267,78 @@ let vga = Resolution(width: 640, height: 480)
 //类没有
 ```
 
+#### 构造函数
+
+```swift
+//语法。没有显示自定义构造函数时，都会有个默认的构造函数。
+init() {
+    // 在此处执行构造过程
+}
+
+//例子
+struct Fahrenheit {
+    var temperature: Double
+    init() {   //构造函数
+        temperature = 32.0
+    }
+}
+var f = Fahrenheit()
+// 打印“The default temperature is 32.0° Fahrenheit”
+print("The default temperature is \(f.temperature)° Fahrenheit")
+
+//构造方法的定义和普通函数的入参形式差不多，也要定义参数标签，以及可以使用下划线来不命名参数标签
+struct Celsius {
+    var temperatureInCelsius: Double
+    init(fromFahrenheit fahrenheit: Double) {
+        temperatureInCelsius = (fahrenheit - 32.0) / 1.8
+    }
+    init(fromKelvin kelvin: Double) {
+        temperatureInCelsius = kelvin - 273.15
+    }
+}
+// boilingPointOfWater.temperatureInCelsius 是 100.0
+let boilingPointOfWater = Celsius(fromFahrenheit: 212.0)
+// freezingPointOfWater.temperatureInCelsius 是 0.0
+let freezingPointOfWater = Celsius(fromKelvin: 273.15)
+
+
+//结构体的逐一构造器
+struct Size {
+    var width = 0.0, height = 0.0
+}
+//以下三种构造函数都可以使用
+let twoByTwo = Size(width: 2.0, height: 2.0)  //可以直接使用
+let zeroByTwo = Size(height: 2.0)
+print(zeroByTwo.width, zeroByTwo.height)  // 打印 "0.0 2.0"
+let zeroByZero = Size()
+print(zeroByZero.width, zeroByZero.height)   // 打印 "0.0 0.0"
+```
+
+#### 析构函数
+
+```swift
+//语法
+deinit {
+    // 执行析构过程
+}
+
+class Player {
+    var coinsInPurse: Int
+    init(coins: Int) {   //构造函数
+        coinsInPurse = Bank.distribute(coins: coins)
+    }
+    func win(coins: Int) {
+        coinsInPurse += Bank.distribute(coins: coins)
+    }
+    deinit {    //析构函数
+        Bank.receive(coins: coinsInPurse)
+    }
+}
+
+var playerOne=Player()
+playerOne = nil   //析构函数调用
+```
+
 ### 属性
 
 #### 存储属性
@@ -1432,6 +1564,23 @@ struct Point {
     }
 }
 
+/**
+static和class的区别
+相同点
+1. 可以修饰方法，static 修饰的方法叫做静态方法，class 修饰的叫做类方法。
+2. 都可以修饰计算属性。
+不同点
+1. class 不能修饰存储属性。
+2. class 修饰的计算属性可以被重写，static 修饰的不能被重写。
+3. static 可以修饰存储属性，static 修饰的存储属性称为静态变量(常量)。
+4. static 修饰的静态方法不能被重写，class 修饰的类方法可以被重写。
+5. class 修饰的类方法被重写时，可以使用static 让方法变为静态方法。
+6. class 修饰的计算属性被重写时，可以使用static 让其变为静态属性，但它的子类就不能被重写了。
+7.class 只能在类中使用，但是static 可以在类，结构体，或者枚举中使用。
+有一个比较特殊的是protocol。在Swift中class、struct和enum都是可以实现protocol的。那么如果我们想在protocol里定义一个类型域上的方法或者计算属性的话，应该用哪个关键字呢？答案是使用class进行定义，但是在实现时还是按照规则：在class里使用class关键字，而在struct或enum中仍然使用static，虽然在protocol中定义时使用的是class。
+
+**/
+
 //5. 类型方法（在方法的 func 关键字之前加上关键字 static，来指定类型方法。类还可以用关键字 class 来指定，从而允许子类重写父类该方法的实现）
 class MathFormula {
 //声明类型方法
@@ -1466,3 +1615,279 @@ print("获取绝对值结果no：\(no)")           //获取绝对值结果no：8
 print("获取反绝对值结果num：\(num)")       //获取反绝对值结果num：3
 ```
 
+### 下标
+
+```swift
+/定义下标使用关键字subscript,可以使用[]语法
+struct TimesTable {
+    let multiplier: Int
+    subscript(index: Int) -> Int {
+        return multiplier * index
+    }
+}
+let threeTimesTable = TimesTable(multiplier: 3)
+print("six times three is \(threeTimesTable[6])")
+// 打印“six times three is 18”
+```
+
+### 继承
+
+```swift
+//定义父类
+class Vehicle {
+    var currentSpeed = 0.0
+    var description: String {
+        return "traveling at \(currentSpeed) miles per hour"
+    }
+    func makeNoise() {
+        // 什么也不做——因为车辆不一定会有噪音
+    }
+}
+
+//定义子类，使用冒号
+class Bicycle: Vehicle {
+    var hasBasket = false
+    
+    /**
+    重写：
+    在方法 makeNoise() 的重写实现中，可以通过 super.someMethod() 来调用超类版本的 makeNoise() 方法。使用override关键字。
+    在属性 currentSpeed 的 getter 或 setter 的重写实现中，可以通过 super.currentSpeed 来访问超类版本的 currentSpeed 属性。
+    在下标的重写实现中，可以通过 super[someIndex] 来访问超类版本中的相同下标
+    **/
+    override func makeNoise() {
+        print("Choo Choo")
+    }
+}
+
+/**
+防止被重写：
+1. 你可以通过把方法，属性或下标标记为 final 来防止它们被重写，只需要在声明关键字前加上 final 修饰符即可（例如：final var、final func、final class func 以及 final subscript）。
+2. 任何试图对带有 final 标记的方法、属性或下标进行重写的代码，都会在编译时会报错。在类扩展中的方法，属性或下标也可以在扩展的定义里标记为 final。
+3. 可以通过在关键字 class 前添加 final 修饰符（final class）来将整个类标记为 final 。这样的类是不可被继承的，试图继承这样的类会导致编译报错
+**/
+```
+
+### 扩展
+
+```swift
+/**
+扩展可以给一个现有的类，结构体，枚举，还有协议添加新的功能。它还拥有不需要访问被扩展类型源代码就能完成扩展的能力（即逆向建模）。
+扩展和 Objective-C 的分类很相似。（与 Objective-C 分类不同的是，Swift 扩展是没有名字的。）
+Swift 中的扩展可以：
+1. 添加计算型实例属性和计算型类属性
+2. 定义实例方法和类方法
+3. 提供新的构造器
+4. 定义下标
+5. 定义和使用新的嵌套类型
+6. 使已经存在的类型遵循（conform）一个协议
+**/
+
+//语法
+extension SomeType {
+  // 在这里给 SomeType 添加新的功能
+}
+
+//1. 属性扩展
+//例子（对Swift 内建的 Double 类型扩展属性）
+extension Double {
+    var km: Double { return self * 1_000.0 }
+    var m: Double { return self }
+    var cm: Double { return self / 100.0 }
+    var mm: Double { return self / 1_000.0 }
+    var ft: Double { return self / 3.28084 }
+}
+let oneInch = 25.4.mm
+// 打印“One inch is 0.0254 meters”
+print("One inch is \(oneInch) meters")
+// 打印“Three feet is 0.914399970739201 meters”
+let threeFeet = 3.ft
+print("Three feet is \(threeFeet) meters")
+
+
+//2. 构造器扩展
+struct Size {
+    var width = 0.0, height = 0.0
+}
+struct Point {
+    var x = 0.0, y = 0.0
+}
+struct Rect {
+    var origin = Point()
+    var size = Size()
+}
+let defaultRect = Rect()
+let memberwiseRect = Rect(origin: Point(x: 2.0, y: 2.0),
+   size: Size(width: 5.0, height: 5.0))
+extension Rect {    //扩展Rect
+    init(center: Point, size: Size) {   //添加构造器
+        let originX = center.x - (size.width / 2)
+        let originY = center.y - (size.height / 2)
+        self.init(origin: Point(x: originX, y: originY), size: size)
+    }
+}
+
+//3. 扩展方法
+//给 Int 类型添加了一个新的实例方法叫做 repetitions
+extension Int {
+    func repetitions(task: () -> Void) {
+        for _ in 0..<self {
+            task()
+        }
+    }
+}
+3.repetitions {
+    //输出Hello!Hello!Hello!
+    print("Hello!")
+}
+//扩展可变实例方法
+extension Int {
+    mutating func square() {
+        self = self * self
+    }
+}
+var someInt = 3
+someInt.square()  // someInt 现在是 9
+
+//扩展下标
+//对 Swift 的 Int 类型添加了一个整数类型的下标
+extension Int {
+    subscript(digitIndex: Int) -> Int {
+        var decimalBase = 1
+        for _ in 0..<digitIndex {
+            decimalBase *= 10
+        }
+        return (self / decimalBase) % 10
+    }
+}
+746381295[0]
+// 返回 5
+746381295[1]
+// 返回 9
+746381295[2]
+// 返回 2
+746381295[8]
+// 返回 7
+```
+
+### 协议
+
+```swift
+//语法
+protocol SomeProtocol {
+	// 这里是协议的定义部分
+}
+//结构体实现多个协议
+struct SomeStructure: FirstProtocol, AnotherProtocol {
+	// 这里是结构体的定义部分
+}
+//子类继承父类并实现多个协议
+class SomeClass: SomeSuperClass, FirstProtocol, AnotherProtocol {
+	// 这里是类的定义部分
+}
+
+//1. 属性要求
+protocol SomeProtocol {
+	var mustBeSettable: Int { get set }  //表示可读可写
+	var doesNotNeedToBeSettable: Int { get }  //表示只可读
+}
+//在协议中定义类型属性时，总是使用 static 关键字作为前缀。当类类型遵循协议时，除了 static 关键字，还可以使用 class 关键字来声明类型属性
+protocol AnotherProtocol {
+	static var someTypeProperty: Int { get set }
+}
+
+//2. 方法要求
+protocol SomeProtocol {
+    //在协议中定义类方法的时候，总是使用 static 关键字作为前缀。即使在类实现时，类方法要求使用 class 或 static 作为关键字前缀
+	static func someTypeMethod()
+}
+//只有一个方法的协议
+protocol RandomNumberGenerator {
+    func random() -> Double
+}
+
+//3. 构造器要求
+protocol SomeProtocol {
+    init(someParameter: Int)
+}
+class SomeClass: SomeProtocol {
+    required init(someParameter: Int) {   //必须要加required关键字
+        // 这里是构造器的实现部分
+    }
+}
+
+protocol SomeProtocol {
+    init()
+}
+class SomeSuperClass {
+    init() {
+        // 这里是构造器的实现部分
+    }
+}
+class SomeSubClass: SomeSuperClass, SomeProtocol {
+    // 因为遵循协议，需要加上 required
+    // 因为继承自父类，需要加上 override
+    required override init() {
+        // 这里是构造器的实现部分
+    }
+}
+```
+
+## 并发
+
+```swift
+//定义异步函数（使用async关键字，对于那些既是异步又是 throwing 的函数，需要把 async 写在throws 关键字前边。）
+func listPhotos(inGallery name: String) async -> [String] {
+    let result = // 省略一些异步网络请求代码
+    return result
+}
+
+/**
+代码中被 await 标记的悬点表明当前这段代码可能会暂停等待异步方法或函数的返回。这也被称为让出线程（yielding the thread），因为在幕后 Swift 会挂起你这段代码在当前线程的执行，转而让其他代码在当前线程执行。因为有 await 标记的代码可以被挂起，所以在程序中只有特定的地方才能调用异步方法或函数：
+1. 异步函数，方法或变量内部的代码
+2. 静态函数 main() 中被打上 @main 标记的结构体、类或者枚举中的代码
+3. 游离的子任务中的代码，之后会在非结构化并行中说明
+**/
+let photoNames = await listPhotos(inGallery: "Summer Vacation")
+let sortedNames = photoNames.sorted()
+let name = sortedNames[0]
+let photo = await downloadPhoto(named: name)
+show(photo)
+
+//Task.sleep()方法表示暂停
+func listPhotos(inGallery name: String) async -> [String] {
+    await Task.sleep(2 * 1_000_000_000)  // 两秒
+    return ["IMG001", "IMG99", "IMG0404"]
+}
+
+//异步序列（每次收到一个元素后对其进行处理）
+import Foundation
+
+let handle = FileHandle.standardInput
+for try await line in handle.bytes.lines {
+    print(line)
+}
+
+//并行
+async let firstPhoto = downloadPhoto(named: photoNames[0])
+async let secondPhoto = downloadPhoto(named: photoNames[1])
+async let thirdPhoto = downloadPhoto(named: photoNames[2])
+
+let photos = await [firstPhoto, secondPhoto, thirdPhoto]   //前面三个都是并行的，直到遇到当前的await才会等待
+show(photos)
+```
+
+### 任务和任务组
+
+### Actors
+
+## 泛型
+
+## 自动引用计数
+
+### 强引用
+
+### 弱引用
+
+### 无主引用
+
+### 无主可选引用
