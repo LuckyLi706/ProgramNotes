@@ -22,6 +22,10 @@
     - [for和while](#for%E5%92%8Cwhile)
   - [运算符](#%E8%BF%90%E7%AE%97%E7%AC%A6)
     - [位运算符](#%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6)
+  - [函数](#%E5%87%BD%E6%95%B0)
+    - [函数介绍和使用](#%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D%E5%92%8C%E4%BD%BF%E7%94%A8)
+    - [高阶函数与 lambda 表达式](#%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0%E4%B8%8E-lambda-%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    - [内联函数](#%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0)
   - [类与对象](#%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1)
     - [类](#%E7%B1%BB)
     - [继承](#%E7%BB%A7%E6%89%BF)
@@ -35,6 +39,7 @@
     - [List](#list)
     - [Set](#set)
     - [Map](#map)
+  - [协程](#%E5%8D%8F%E7%A8%8B)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -534,6 +539,26 @@ fun <T> singletonList(item: T): List<T> { /*……*/ }
 ### 高阶函数与 lambda 表达式
 
 ```kotlin
+//简单的例子
+fun test(t: (Int, Int) -> Int): Int {   //定义一个高阶函数
+    return t(4, 5)
+}
+//调用方式1（注意格式）
+print(test { a, b ->
+        a + b
+    })
+//调用方式2，使用lambda表达式
+print(test(t = { a: Int, b: Int -> a + b }))
+
+//另外一种实现
+fun test(t: (Int, Int) -> Int): Int {
+    return t(4, 5)
+}
+val test_high: (Int, Int) -> Int = ::add  //用这种方式来引用函数
+fun add(num1: Int, num2: Int): Int = num1 + num2
+//调用（只能使用这种方式）
+println(test(t = test_high))
+
 //高阶函数是将函数用作参数或返回值的函数。一个不错的示例是集合的函数式风格的 fold
 fun <T, R> Collection<T>.fold(
     initial: R, 
@@ -1133,4 +1158,61 @@ MutableSet<T> 可读可写
 ```
 
 ## 协程
+
+### 入门
+
+```kotlin
+fun main() {
+    GlobalScope.launch { // 在后台启动一个新的协程并继续
+        delay(1000L)   //延迟一秒
+        println("World!")
+    }
+    println("Hello,") // 主线程中的代码会立即执行
+    runBlocking {     // 但是这个表达式阻塞了主线程
+        delay(2000L)  // ……我们延迟 2 秒来保证 JVM 的存活
+        println("runBlocking end")
+    }
+}
+//输出：
+//Hello,
+//World!
+//runBlocking end
+
+
+//等待任务完成
+suspend fun main() {
+    val job = GlobalScope.launch { // 启动一个新协程并保持对这个作业的引用
+        delay(1000L)
+        println("World!")
+    }
+    println("Hello,")
+    job.join() // 等待直到子协程执行结束
+}
+
+
+//提取函数重构（suspend）
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    launch { doWorld() }
+    println("Hello,")
+}
+// 这是你的第一个挂起函数
+suspend fun doWorld() {
+    delay(1000L)
+    println("World!")
+}
+
+//重复任务（repeat）
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    repeat(100_000) { // 启动大量的协程
+        launch {
+            delay(5000L)
+            print(".")
+        }
+    }
+}
+```
 
