@@ -1168,7 +1168,7 @@ fun main() {
         println("World!")
     }
     println("Hello,") // 主线程中的代码会立即执行
-    runBlocking {     // 但是这个表达式阻塞了主线程
+    runBlocking {     // runBlocking表示阻塞了当前线程
         delay(2000L)  // ……我们延迟 2 秒来保证 JVM 的存活
         println("runBlocking end")
     }
@@ -1216,3 +1216,162 @@ fun main() = runBlocking {
 }
 ```
 
+### 创建协程的方式
+```kotlin
+
+/**
+创建一个协程的方式有很多种，可以通过 runBlocking，launch (CoroutineScope.lauch / GlobalScope.lauch)，withContext ，async 等这些方法来都能创建协程，这些都是我们可能会在协程里用到的常见方法
+**/
+
+//1、可在全局创建协程的： launch 与 runBlocking
+// launch 与 runBlocking都能在全局开启一个协程，但 lauch 是非阻塞的 而 runBlocking 是阻塞的
+
+/**
+launch:
+从下面运行结果可以看出，通过CoroutineScope.launch开启一个协程，协程体里的任务时就会先挂起（suspend），让CoroutineScope.launch后面的代码继续执行，直到协程体内的方法执行完成再自动切回来所在的上下文回调结果。
+
+CoroutineScope.launch 中我们可以看到接收了一个参数Dispatchers.Main，这是一个表示协程上下文的参数，用于指定该协程体里的代码运行在哪个线程。当指定为Dispatchers.Main时，协程体里的代码也是运行在主线程。 当指定为Dispatchers.IO，则当前协程运行在一个子线程里。
+
+还有刚提到了挂起 suspend ， 它是Kotlin 中的一个关键字，它一般标识在一个函数的开头，用于表示该函数是个耗时操作，如上面的delay(timeMillis: Long)就是被声明为 suspend 函数。这个关键字主要作用就是为了作一个提醒，并不会因为添加了这个关键字就会该函数立即跑到一个子线程上。suspend 函数是只能在协程体内生效，在Kotlin 协程中，当遇到 suspend 函数的时候 ，该协程会自动逃离当前所在的线程执行任务，此时原来协程所在的线程就继续干自己的事，等到协程的suspend 函数执行完成后又自动切回来原来线程继续往下走。一句话说，suspend就是让协程该走就走，该回来就回来。但如果协程所在的线程已经运行结束了，协程还没执行完成就不会继续执行了 。为了避免这样的情况就需要结合 runBlocking 来暂时阻塞当前线程，保证代码的执行顺序
+**/
+btn.setOnClickListener {
+    CoroutineScope(Dispatchers.Main).launch{
+        delay(500)     //延时500ms
+        Log.e("TAG","1.执行CoroutineScope.... [当前线程为：${Thread.currentThread().name}]")
+    }
+    Log.e("TAG","2.BtnClick.... [当前线程为：${Thread.currentThread().name}]")
+/**
+运行结果：
+2020-03-30 10:51:32.094 :  2.BtnClick.... [当前线程为：main]
+2020-03-30 10:51:32.600 :  1.执行CoroutineScope.... [当前线程为：main]
+**/
+
+/**
+运行结果刚好和上面launch启动的协程例子相反，这里的Log先输出1...再输出2...， 程序会等待执行完成runBlocking内的协程体代码，再执行它后面的代码。  runBlocking里的任务如果是非常耗时的操作时，会一直阻塞当前线程，在实际开发中很少会用到runBlocking。 由于runBlocking 接收的 lambda 代表着一个 CoroutineScope，所以 runBlocking 协程体内可继续通过launch来继续创建一个协程，避免了lauch所在的线程已经运行结束而切不回来的情况。
+**/
+btn.setOnClickListener {
+    runBlocking{
+        delay(500)    //延时500ms
+        Log.e("TAG","1.runBlocking.... [当前线程为：${Thread.currentThread().name}]")
+    }
+    Log.e("TAG","2.BtnClick.... [当前线程为：${Thread.currentThread().name}]")
+}
+/**
+运行结果：
+2020-03-30 11:23:41.516 :  1.runBlocking.... [当前线程为：main]
+2020-03-30 11:23:41.517 :  2.BtnClick.... [当前线程为：main]
+**/
+
+//2、可返回结果的协程：withContext 与 async
+//withContext 与 async 都可以返回耗时任务的执行结果。 一般来说，多个 withContext 任务是串行的， 且withContext 可直接返回耗时任务的结果。 多个 async 任务是并行的，async 返回的是一个Deferred<T>，需要调用其await()方法获取结果。
+
+
+/**
+withContext:
+下面例子使用 withContext 获取耗时任务结果：定义2个耗时任务，一个2000ms后返回结果，另一个1000ms后返回结果。
+从下面结果可以看出，多个withConext是串行执行，如上代码执行顺序为先执行task1再执行task2，共耗时两个任务的所需时间的总和。这是因为withConext是个 suspend 函数，当运行到 withConext 时所在的协程就会挂起，直到withConext执行完成后再执行下面的方法。所以withConext可以用在一个请求结果依赖另一个请求结果的这种情况。
+**/
+btn.setOnClickListener {
+    CoroutineScope(Dispatchers.Main).launch {
+        val time1 = System.currentTimeMillis()
+ 
+        val task1 = withContext(Dispatchers.IO) {
+            delay(2000)
+            Log.e("TAG", "1.执行task1.... [当前线程为：${Thread.currentThread().name}]")
+            "one"  //返回结果赋值给task1
+        }
+                
+        val task2 = withContext(Dispatchers.IO) {
+            delay(1000)
+            Log.e("TAG", "2.执行task2.... [当前线程为：${Thread.currentThread().name}]")
+            "two"  //返回结果赋值给task2
+        }
+ 
+        Log.e("TAG", "task1 = $task1  , task2 = $task2 , 耗时 ${System.currentTimeMillis()-time1} ms  [当前线程为：${Thread.currentThread().name}]")
+    }
+}
+/**
+运行结果：
+2020-03-30 15:31:46.279 : 1.执行task1.... [当前线程为：DefaultDispatcher-worker-1]
+2020-03-30 15:31:47.283 : 2.执行task2.... [当前线程为：DefaultDispatcher-worker-1]
+2020-03-30 15:31:47.284 : task1 = one  , task2 = two , 耗时 3009 ms  [当前线程为：main]
+**/
+
+/**
+async ... await():
+如果同时处理多个耗时任务，且这几个任务都无相互依赖时，可以使用 async ...  await() 来处理，将上面的例子改为 async 来实现如下
+
+改为用async后，运行结果耗时明显比使用withContext更短，且看到与withContext不同的是，task2比task1优先执行完成 。所以说 async 的任务都是并行执行的。但事实上有一种情况例外，我们把await()方法的调用提前到 async 的后面：
+**/
+btn.setOnClickListener {
+    CoroutineScope(Dispatchers.Main).launch {
+        val time1 = System.currentTimeMillis()
+ 
+        val task1 = async(Dispatchers.IO) {
+            delay(2000)
+            Log.e("TAG", "1.执行task1.... [当前线程为：${Thread.currentThread().name}]")
+            "one"  //返回结果赋值给task1
+        }
+ 
+        val task2 = async(Dispatchers.IO) {
+            delay(1000)
+            Log.e("TAG", "2.执行task2.... [当前线程为：${Thread.currentThread().name}]")
+            "two"  //返回结果赋值给task2
+        }
+ 
+        Log.e("TAG", "task1 = ${task1.await()}  , task2 = ${task2.await()} , 耗时 ${System.currentTimeMillis() - time1} ms  [当前线程为：${Thread.currentThread().name}]")
+}
+/**
+运行结果：
+2020-03-30 16:00:20.709 : 2.执行task2.... [当前线程为：DefaultDispatcher-worker-3]
+2020-03-30 16:00:21.709 : 1.执行task1.... [当前线程为：DefaultDispatcher-worker-3]
+2020-03-30 16:00:21.711 : task1 = one  , task2 = two , 耗时 2037 ms  [当前线程为：main]
+**/
+
+/**
+刚只是把await()的位置改了，就出现这样的结果，所以原因应该就是在await()方法身上，点进 await() 源码看一下，终于明白了是怎么一回事，原来await() 仅仅被定义为 suspend 函数，因此直接在async 后面使用 await() 就和 withContext 一样，程序运行到这里就会被挂起直到该函数执行完成才会继续执行下一个 async 。但事实上await()也不一定导致协程会被挂起，await() 只有在 async 未执行完成返回结果时，才会挂起协程。若 async 已经有结果了，await() 则直接获取其结果并赋值给变量，此时不会挂起协程。
+**/
+btn.setOnClickListener {
+    CoroutineScope(Dispatchers.Main).launch {
+        val time1 = System.currentTimeMillis()
+ 
+        val task1 = async(Dispatchers.IO) {
+            delay(2000)
+            Log.e("TAG", "1.执行task1.... [当前线程为：${Thread.currentThread().name}]")
+            "one"  //返回结果赋值给task1
+        }.await()
+ 
+        val task2 = async(Dispatchers.IO) {
+            delay(1000)
+            Log.e("TAG", "2.执行task2.... [当前线程为：${Thread.currentThread().name}]")
+            "two"  //返回结果赋值给task2
+        }.await()
+ 
+        Log.e("TAG", "task1 = $task1  , task2 = $task2 , 耗时 ${System.currentTimeMillis() - time1} ms  [当前线程为：${Thread.currentThread().name}]")
+    }
+}
+/**
+运行结果：
+2020-03-30 16:17:03.370 : 1.执行task1.... [当前线程为：DefaultDispatcher-worker-1]
+2020-03-30 16:17:04.373 : 2.执行task2.... [当前线程为：DefaultDispatcher-worker-1]
+2020-03-30 16:17:04.374 : task1 = one  , task2 = two , 耗时 3016 ms  [当前线程为：main]
+**/
+
+/**
+3、anko里的一个扩展函数  doAsync
+doAsync 拿出来单独解释，是因为它容易联想到协程中的 async，实际上又与 async 关系不大，因为 doAsync并没有用到协程库中的东西。粗略看了下 doAsync 的源码它的实现都是基于Java的 Future  类进行异步处理和通过Handler进行线程切换 ，从而封装的一个扩展函数方便线程切换
+**/
+btn.setOnClickListener {
+    doAsync {
+        Log.e("TAG", " doAsync...   [当前线程为：${Thread.currentThread().name}]")
+        uiThread {
+            Log.e("TAG", " uiThread....   [当前线程为：${Thread.currentThread().name}]")
+        }
+    }
+}
+/**
+运行结果：
+2020-03-30 16:58:42.268 :  doAsync...   [当前线程为：pool-1-thread-1]
+2020-03-30 16:58:42.270 :  uiThread....   [当前线程为：main]
+**/
+```
