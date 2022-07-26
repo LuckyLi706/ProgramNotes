@@ -1,6 +1,8 @@
-# 基础
+# JavaScript
 
-## 输出
++ [HTML语法](HTML.md)
++ [CSS语法](CSS.md)
+## 基础
 
 ```javascript
 let myVariable = '李雷';

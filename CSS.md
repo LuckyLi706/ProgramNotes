@@ -69,7 +69,7 @@ body {
 
 ### 内部样式表
 
-```
+```css
 <head>
 <style type="text/css">
   hr {color: sienna;}
@@ -81,7 +81,7 @@ body {
 
 ### 内联样式
 
-```
+```css
 <p style="color: sienna; margin-left: 20px">
 This is a paragraph
 </p>
@@ -240,11 +240,12 @@ applet ,button ,del ,iframe , ins ,map ,object , script
 利用CSS我们可以摆脱上面表格里HTML标签归类的限制，自由地在不同标签/元素上应用我们需要的属性。
 
 ## 主要用的CSS样式有以下三个：
+```css
 display:block  -- 显示为块级元素
 display:inline  -- 显示为内联元素
 display:inline-block -- 显示为内联块元素，表现为同行显示并可修改宽高内外边距等属性
 我们常将<ul>元素加上display:inline-block样式，原本垂直的列表就可以水平显示了。
-
+```
 # 样式
 
 ### 背景
@@ -343,7 +344,7 @@ outline-width	设置轮廓的宽度。
 
 ## 概述
 
-<img src="images\css_box_model.png" style="zoom:80%;" />
+<img src="Web\images\css_box_model.png" style="zoom:80%;" />
 
 ## 内边距
 

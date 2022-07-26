@@ -12,6 +12,7 @@
 + [Java](Java.md)
 + [Dart](Dart.md)
 + [PHP](PHP.md)
++ [JavaScript](JavaScript.md)
 
 ## DataStructuresAlgorithms
 
@@ -39,9 +40,8 @@
 
 ## Web
 
-+ [HTML](Web/HTML.md)
-+ [CSS](Web/CSS.md)
-+ [JavaScript](Web/JavaScript.md)
++ [Vue]()
++ [React]()
 + [Nodejs](Web/Nodejs.md)
 
 ## Server

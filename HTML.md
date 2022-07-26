@@ -24,7 +24,7 @@
   - [Media事件](#media%E4%BA%8B%E4%BB%B6)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
+# HTML
 ## 基础标签
 
 ```html
@@ -34,8 +34,8 @@
 4.<body>	定义文档的主体。
 5.<h1> to <h6>	定义 HTML 标题。
 6.<p>	定义段落。
-7.<br>	定义简单的折行。
-8.<hr>	定义水平线。
+7.<br>	定义简单的折行。(是一个独目标记)
+8.<hr>	定义水平线。(是一个独目标记)
 9.<!--...-->	定义注释。
 ```
 
