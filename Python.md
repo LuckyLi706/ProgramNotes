@@ -39,6 +39,15 @@
       - [局部变量和全局变量](#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E5%92%8C%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F)
       - [global关键字](#global%E5%85%B3%E9%94%AE%E5%AD%97)
   - [类和对象](#%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1)
+    - [类的定义](#%E7%B1%BB%E7%9A%84%E5%AE%9A%E4%B9%89)
+    - [构造函数](#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+    - [类变量和实例变量](#%E7%B1%BB%E5%8F%98%E9%87%8F%E5%92%8C%E5%AE%9E%E4%BE%8B%E5%8F%98%E9%87%8F)
+    - [类方法](#%E7%B1%BB%E6%96%B9%E6%B3%95)
+    - [静态方法](#%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95)
+    - [可见性](#%E5%8F%AF%E8%A7%81%E6%80%A7)
+    - [继承](#%E7%BB%A7%E6%89%BF)
+    - [super关键字](#super%E5%85%B3%E9%94%AE%E5%AD%97)
+    - [类的内置方法](#%E7%B1%BB%E7%9A%84%E5%86%85%E7%BD%AE%E6%96%B9%E6%B3%95)
 - [开源库](#%E5%BC%80%E6%BA%90%E5%BA%93)
   - [xlrd（操作Excel）](#xlrd%E6%93%8D%E4%BD%9Cexcel)
 
@@ -625,82 +634,161 @@ if __name__ == '__main__':
 
 ## 类和对象
 
+### 类的定义
 ```python
-#!/usr/bin/python3
-"""
-__ 符号来表示私有，没有的全是公共方法
-@staticmethod 用 @staticmethod 装饰的不带 self 参数的方法叫做静态方法，类的静态方法可以没有参数，可以直接使用类名调用。
-@classmethod 用 @staticmethod 装饰的默认有个 cls 参数，可以被类和对象调用。
-
-类的专有方法：（可以实现运算符充载）
-__init__ : 构造函数，在生成对象时调用
-__del__ : 析构函数，释放对象时使用
-__repr__ : 打印，转换
-__setitem__ : 按照索引赋值
-__getitem__: 按照索引获取值
-__len__: 获得长度
-__cmp__: 比较运算
-__call__: 函数调用
-__add__: 加运算
-__sub__: 减运算
-__mul__: 乘运算
-__truediv__: 除运算
-__mod__: 求余运算
-__pow__: 乘方
-"""
-
-
-# 类定义
-class People:
-    # 定义基本属性
+# 定义类
+class Student():
     name = ''
     age = 0
-    # 定义私有属性,私有属性在类外部无法直接进行访问
-    __weight = 0
 
-    # 定义构造方法
-    def __init__(self, n, a, w):
-        self.name = n
-        self.age = a
-        self.__weight = w
+    # 方法必须self
+    def print_file(self):  
+        # 方法里面使用全局变量必须要使用self来调用
+        print('name :' + self.name)  
+        print('age ：'+str(self.age))
 
-    def speak(self):
-        print("%s 说: 我 %d 岁。" % (self.name, self.age))
+# 调用
+student = Student()   # 实例化类
+student.print_file()  # 调用方法
+```
 
+### 构造函数
+```python
+class Student:
+    name = ''
+    age = 0
 
-# 单继承示例,Student继承与People
-class Student(People):
-    grade = ''
+    # 构造函数初始化
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
 
-    def __init__(self, n, a, w, g):
-        # 调用父类的构函
-        People.__init__(self, n, a, w)
-        self.grade = g
+    # 定义实例方法时,self必须显示的定义在方法列表里面,调用的时候不需要传入这个参数
+    def print_file(self):
+        # 方法里面使用全局变量必须要使用self来调用
+        print('name :' + self.name)
+        print('age ：' + str(self.age))
 
-    # 覆写父类的方法
-    def speak(self):
-        print("%s 说: 我 %d 岁了，我在读 %d 年级" % (self.name, self.age, self.grade))
-        self.__laugh()  # 内部调用私有方法
+# 调用
+if __name__ == '__main__':
+    student = Student("jacky", 17)
+    student.print_file()  # 打印name : jacky  age : 17
+```
 
-    def __laugh(self):  # 定义私有方法,外部不能调用
-        print("happy")
+### 类变量和实例变量
+```python
+class Student:
+    # 下面定义的两个变量叫做类变量（和其他语言不同,其他语言在这边定义的都叫实例变量,有点类似于java中static修饰的变量）
+    name = 'one'
+    age = 0
 
-    @staticmethod
-    def fun():
-        print('静态方法')
+    # 构造函数初始化
+    def __init__(self, name, age):
+        # 下面使用self修饰的才是实例变量
+        self.name = name
+        self.age = age
+        # 想访问类变量(下面两种方式都行)
+        print(Student.name)
+        print(self.__class__.name)
 
+    # 定义实例方法时,self必须显示的定义在方法列表里面,调用的时候不需要传入这个参数
+    def print_file(self):
+        # 方法里面使用全局变量必须要使用self来调用
+        print('name :' + self.name)
+        print('age ：' + str(self.age))
+
+# 调用
+student = Student("jacky", 17)  # 输出one one
+print(student.name)  # 输出jacky
+print(Student.name)  # 输出 one
+
+# 内置函数__dict__（打印对象的字典）
+print(student.__dict__) # 输出 {'name': 'jacky', 'age': 17}
+print(Stduent.__dict__) # 打印类的字典。
+```
+
+### 类方法
+```python
+class Student:
+    sum = 0
+
+    # 方法必须self
+    def __init__(self):
+        # 在实例方法中使用类变量
+        self.__class__.sum = self.__class__.sum + 1
+        print(Student.sum)
+
+    # 下面是定义类方法的方式(cls参数是必须的)
     @classmethod
-    def a(cls):
-        print('类方法')
+    def do_homework(cls):
+        cls.sum = cls.sum + 1
+        print(cls.sum)
+
+# 调用
+student = Student()
+student2 = Student()
+student3 = Student()
+# 调用（可以使用对象点方法也可以使用类的点方法）
+Student.do_homework()
+# 输出 1 2 3 4
+```
+
+### 静态方法
+```python
+class Student:
+    # 下面的定义类的静态方法 （入参不需要self或者cls）
+    @staticmethod
+    def add(a, b):
+        return a + b
+
+# 调用（可以使用对象点方法也可以使用类的点方法）
+student = Student()
+print(student.add(1, 2))  # 输出3
+print(Student.add(2, 3))  # 输出5
+```
+
+### 可见性
+```python
+class Student:
+    __a = 10   # 对于变量前面加两个下划线表示私有
+
+    # 对于构造方法,python认为前面和后面都有下划线的也是公开的
+    def __init__(self):
+        pass
+    # 对于方法前面加两个下划线表示私有
+    def __add(self, b):
+        pass
+```
+
+### 继承
+```python
+class People:
+    pass
 
 
-# 实例化类
-p = People('runoob', 10, 30)
-p.speak()
-s = Student('ken', 10, 60, 3)
-s.speak()
-Student.fun()
-Student.a()
+class Student(People):  # 继承People类
+    pass
+```
+
+### super关键字
+
+### 类的内置方法
+```python
+# 类的专有方法：（可以实现运算符充载）
+__init__  # 构造函数，在生成对象时调用
+__del__ # 析构函数，释放对象时使用
+__repr__ # 打印，转换
+__setitem__ # 按照索引赋值
+__getitem__ # 按照索引获取值
+__len__ # 获得长度
+__cmp__ # 比较运算
+__call__ # 函数调用
+__add__ # 加运算
+__sub__ # 减运算
+__mul__ # 乘运算
+__truediv__ # 除运算
+__mod__  # 求余运算
+__pow__ # 乘方
 ```
 
 # 开源库
