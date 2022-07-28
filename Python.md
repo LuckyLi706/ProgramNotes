@@ -48,6 +48,19 @@
     - [继承](#%E7%BB%A7%E6%89%BF)
     - [super关键字](#super%E5%85%B3%E9%94%AE%E5%AD%97)
     - [类的内置方法](#%E7%B1%BB%E7%9A%84%E5%86%85%E7%BD%AE%E6%96%B9%E6%B3%95)
+  - [正则表达式](#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    - [例子](#%E4%BE%8B%E5%AD%90)
+    - [普通字符和元字符](#%E6%99%AE%E9%80%9A%E5%AD%97%E7%AC%A6%E5%92%8C%E5%85%83%E5%AD%97%E7%AC%A6)
+    - [字符集](#%E5%AD%97%E7%AC%A6%E9%9B%86)
+    - [数量词](#%E6%95%B0%E9%87%8F%E8%AF%8D)
+    - [匹配0次1次或者无限多次](#%E5%8C%B9%E9%85%8D0%E6%AC%A11%E6%AC%A1%E6%88%96%E8%80%85%E6%97%A0%E9%99%90%E5%A4%9A%E6%AC%A1)
+    - [边界匹配](#%E8%BE%B9%E7%95%8C%E5%8C%B9%E9%85%8D)
+    - [组](#%E7%BB%84)
+    - [匹配模式参数](#%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F%E5%8F%82%E6%95%B0)
+    - [正则替换](#%E6%AD%A3%E5%88%99%E6%9B%BF%E6%8D%A2)
+    - [match和search](#match%E5%92%8Csearch)
+    - [group分组](#group%E5%88%86%E7%BB%84)
+  - [json](#json)
 - [开源库](#%E5%BC%80%E6%BA%90%E5%BA%93)
   - [xlrd（操作Excel）](#xlrd%E6%93%8D%E4%BD%9Cexcel)
 
@@ -789,6 +802,166 @@ __mul__ # 乘运算
 __truediv__ # 除运算
 __mod__  # 求余运算
 __pow__ # 乘方
+```
+
+## 正则表达式
+
+### 例子
+```python
+import re   # 导入re使用正则表达式
+
+if __name__ == '__main__':
+    # 字符串中是否存在Python
+    a = 'Java|Python|C++|C'
+    print(re.findall('Python', a))  # 返回列表['Python'],如果不存在返回空列表
+```
+
+### 普通字符和元字符
+```python
+import re
+
+if __name__ == '__main__':
+    # 找出字符串中所有的数字
+    a = '1Java2|Python|3C++|4C'
+    # \\d表示匹配所有的数字  \\D表示匹配所有的非数字 
+    # \\w表示匹配所有数字和字母 \\W表示匹配所有非数字非字母的字符
+    # \s 表示匹配所有空白字符  \\S表示匹配所有非空白字符的字符
+    # . 匹配除换行符\n之外其他所有字符
+    print(re.findall('\\d', a)) # 返回列表[1,2,3,4],没有则返回空列表
+
+# 正则表达式是一个特殊的字符序列（由普通字符或者元字符或者普通字符和元字符组合而成的）
+# 第一个例子中'Python'叫普通字符
+# 当前例子中'\\d'叫元字符
+```
+
+### 字符集
+```python
+import re
+
+if __name__ == '__main__':
+    a = 'abc,acd,acc,afd'
+    # []字符集是针对[]里面的每个字符进行匹配,如果前面加上^表示不匹配该字符
+    # 匹配所有数字也可以使用[0-9] 对应元字符\\d
+    # 匹配字母也可以使用[A-Za-z]  对应元字符\\D
+    # 匹配字母和数字可以使用[A-Za-z0-9] 对应元字符\\w
+    print(re.findall('a[cf]d', a))   # 左右两边使用a和d限制,中间匹配c或者f
+    print(re.findall('a[^c]d', a))   # 左右两边使用a和d限制,中间不匹配c
+```
+
+### 数量词
+```python
+import re
+
+if __name__ == '__main__':
+    # 匹配出词组python、java、php
+    a = 'python 23java33php'
+    # [a-z]{3,6}表示匹配的字符个数是最小3个到最大6个,python最大是6个字符,php最小是3个字符
+    print(re.findall('[a-z]{3,6}', a)) # 当前匹配模式贪婪模式
+```
+
+### 匹配0次1次或者无限多次
+```python
+import re
+
+if __name__ == '__main__':
+    a = 'pytho222python333pythonn444' 
+    # 这里的匹配次数是针对某个字符来说的
+    print(re.findall('python*', a))  #  *匹配0次或者无限多次 输出['pytho', 'python', 'pythonn']
+    print(re.findall('python+', a))  #  +匹配1次或者无限多次 输出['python', 'pythonn']
+    print(re.findall('python?', a))  #  ?匹配0次或者1次     输出['pytho', 'python', 'pythonn']
+```
+
+### 边界匹配
+```python
+import re
+
+if __name__ == '__main__':
+    a = '10000000001'
+    print(re.findall('^000', a))    # ^表示从字符串开始进行匹配 输出[]
+    print(re.findall('000$', a))    # $表示从字符串结束进行匹配 输出[]
+    print(re.findall('^000$', a))   # 表示从字符串开始和结束匹配
+```
+
+### 组
+```python
+import re
+
+if __name__ == '__main__':
+    a = 'PythonPythonPythonPython'
+    # ()是一个且关系,必须要包含里面所有的字符,形成一个组
+    print(re.findall('(Python){4}', a))  # 匹配字符串是否存在连续的4个Python,返回['Python']
+```
+
+### 匹配模式参数
+```python
+import re
+
+if __name__ == '__main__':
+    a = 'phpC#java'
+    print(re.findall('c#', a, re.I))  # 第三个参数是匹配模式
+```
+
+### 正则替换
+```python
+import re
+
+if __name__ == '__main__':
+    a = 'phpC#javaC#'
+    # 第一个参数正则,第二个参数替换后的字符,第三个参数原始字符串,count默认为0（替换所有匹配的）,1表示替换1次,依此类推
+    r = re.sub('C#', 'C', a, count=1)
+    print(r)
+
+# 使用函数作为参数
+import re
+
+
+def replace(value):
+    matched = value.group()
+    return "!!" + matched + "!!"
+
+
+if __name__ == '__main__':
+    a = 'phpC#javaC#'
+    # 第二个参数选择函数作为入参
+    r = re.sub('C#', replace, a, count=1)
+    print(r)
+```
+
+### match和search
+```python
+# re.match()   从第一个字符开始匹配,不匹配立马返回None（只会匹配一次）
+# re.search()  从整个字符串搜索,只要有匹配的立马返回（只会匹配一次）
+```
+
+### group分组
+```python
+import re
+
+if __name__ == '__main__':
+    a = '***https://www.baidu.com/...'
+    # 匹配https链接
+    r = re.search('https.*/', a)
+    print(r.group())  # 输出'https://www.baidu.com/'
+
+if __name__ == '__main__':
+    a = '***https://www.baidu.com/...'
+    r = re.search('https(.*)/', a)   # 将中间的数据作为一个组
+    print(r.group(1))    # 输出 ://www.baidu.com  group(0)返回的始终的是这个结果,group(1)返回第一个分组
+```
+
+## json
+
+```python
+import json
+
+if __name__ == '__main__':
+    json_str_load = '{"name":"jacky","age":2}'
+    json_load = json.loads(json_str_load)   # 将json字符串转换成json
+
+    json_dump = {"name": "jacky", "age": 10}
+    json_str_dump = json.dumps(json_dump)  # 将json转换为json字符串
+    print(type(json_load))   # 输出<class 'dict'>
+    print(type(json_str_dump)) # 输出<class 'str'>
 ```
 
 # 开源库
