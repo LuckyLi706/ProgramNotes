@@ -1,444 +1,585 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+# CSS
 
-- [基础](#%E5%9F%BA%E7%A1%80)
-  - [基础示例](#%E5%9F%BA%E7%A1%80%E7%A4%BA%E4%BE%8B)
-  - [css创建](#css%E5%88%9B%E5%BB%BA)
-    - [外部样式表](#%E5%A4%96%E9%83%A8%E6%A0%B7%E5%BC%8F%E8%A1%A8)
-    - [内部样式表](#%E5%86%85%E9%83%A8%E6%A0%B7%E5%BC%8F%E8%A1%A8)
-    - [内联样式](#%E5%86%85%E8%81%94%E6%A0%B7%E5%BC%8F)
-    - [例子](#%E4%BE%8B%E5%AD%90)
-- [选择器](#%E9%80%89%E6%8B%A9%E5%99%A8)
-  - [派生选择器](#%E6%B4%BE%E7%94%9F%E9%80%89%E6%8B%A9%E5%99%A8)
-  - [id 选择器](#id-%E9%80%89%E6%8B%A9%E5%99%A8)
-  - [class选择器](#class%E9%80%89%E6%8B%A9%E5%99%A8)
-  - [属性选择器](#%E5%B1%9E%E6%80%A7%E9%80%89%E6%8B%A9%E5%99%A8)
-  - [例子](#%E4%BE%8B%E5%AD%90-1)
-- [块和内联函数](#%E5%9D%97%E5%92%8C%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0)
-  - [块级元素(block)特性：](#%E5%9D%97%E7%BA%A7%E5%85%83%E7%B4%A0block%E7%89%B9%E6%80%A7)
-  - [内联元素(inline)特性：](#%E5%86%85%E8%81%94%E5%85%83%E7%B4%A0inline%E7%89%B9%E6%80%A7)
-  - [块级元素主要有：](#%E5%9D%97%E7%BA%A7%E5%85%83%E7%B4%A0%E4%B8%BB%E8%A6%81%E6%9C%89)
-  - [内联元素主要有：](#%E5%86%85%E8%81%94%E5%85%83%E7%B4%A0%E4%B8%BB%E8%A6%81%E6%9C%89)
-  - [可变元素(根据上下文关系确定该元素是块元素还是内联元素)：](#%E5%8F%AF%E5%8F%98%E5%85%83%E7%B4%A0%E6%A0%B9%E6%8D%AE%E4%B8%8A%E4%B8%8B%E6%96%87%E5%85%B3%E7%B3%BB%E7%A1%AE%E5%AE%9A%E8%AF%A5%E5%85%83%E7%B4%A0%E6%98%AF%E5%9D%97%E5%85%83%E7%B4%A0%E8%BF%98%E6%98%AF%E5%86%85%E8%81%94%E5%85%83%E7%B4%A0)
-  - [CSS中块级、内联元素的应用：](#css%E4%B8%AD%E5%9D%97%E7%BA%A7%E5%86%85%E8%81%94%E5%85%83%E7%B4%A0%E7%9A%84%E5%BA%94%E7%94%A8)
-  - [主要用的CSS样式有以下三个：](#%E4%B8%BB%E8%A6%81%E7%94%A8%E7%9A%84css%E6%A0%B7%E5%BC%8F%E6%9C%89%E4%BB%A5%E4%B8%8B%E4%B8%89%E4%B8%AA)
-- [样式](#%E6%A0%B7%E5%BC%8F)
-    - [背景](#%E8%83%8C%E6%99%AF)
-    - [文本](#%E6%96%87%E6%9C%AC)
-    - [字体](#%E5%AD%97%E4%BD%93)
-    - [链接](#%E9%93%BE%E6%8E%A5)
-    - [列表](#%E5%88%97%E8%A1%A8)
-    - [表格](#%E8%A1%A8%E6%A0%BC)
-    - [轮廓](#%E8%BD%AE%E5%BB%93)
-- [盒子模型](#%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B)
-  - [概述](#%E6%A6%82%E8%BF%B0)
-  - [内边距](#%E5%86%85%E8%BE%B9%E8%B7%9D)
-  - [边框](#%E8%BE%B9%E6%A1%86)
-  - [外边距](#%E5%A4%96%E8%BE%B9%E8%B7%9D)
-- [定位](#%E5%AE%9A%E4%BD%8D)
-  - [相对定位](#%E7%9B%B8%E5%AF%B9%E5%AE%9A%E4%BD%8D)
-  - [绝对定位](#%E7%BB%9D%E5%AF%B9%E5%AE%9A%E4%BD%8D)
-  - [浮动](#%E6%B5%AE%E5%8A%A8)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# 基础
-
-## 基础示例
-
+## 入门
 ```css
-body {
-  color: #000;
-  background: #fff;
-  margin: 0;
-  padding: 0;
-  font-family: Georgia, Palatino, serif;
-  }
-```
+/* css的基础 */
 
-## css创建
-
-### 外部样式表
-
-```
-<head>
-<link rel="stylesheet" type="text/css" href="mystyle.css" />
-</head>
-```
-
-### 内部样式表
-
-```css
-<head>
-<style type="text/css">
-  hr {color: sienna;}
-  p {margin-left: 20px;}
-  body {background-image: url("images/back40.gif");}
-</style>
-</head>
-```
-
-### 内联样式
-
-```css
-<p style="color: sienna; margin-left: 20px">
-This is a paragraph
-</p>
-```
-
-### 例子
-
-```css
-<!--优先级:内联样式）Inline style > （内部样式）Internal style sheet >（外部样式）External style sheet > 浏览器默认样式-->
-<html>
-<head>
-<!--当样式需要应用于很多页面时，外部样式表将是理想的选择,以下是定义方式，2.css在当前文件下-->
-<link rel="stylesheet" type="text/css" href="2.css">
-
-<!--当单个文档需要特殊的样式时，就应该使用内部样式表,定义如下-->
-<style>
-p
-{
-    text-align:center;
-	color:blue;
+h1 {
+  color: red; 
+  font-size: 12px
 }
-</style>
+
+/*
+CSS规则主要由两部分组成：选择器以及一条或者多条声明
+
+1.选择器用于指定CSS样式的HTML标签,花括号内是对该对象设置的具体样式
+2.属性和属性值是以键值对的形式出现
+3.属性是对指定对象设置的样式属性,例如字体大小,字体颜色等
+4.属性和属性值之间用英文的":"隔开
+5.多个键值对之间用英文的";"隔开
+*/
+```
+
+## 引入方式
+
+### 内部样式表（嵌入式）
+```css
+/*
+内部样式表是写到html内部,是将所有CSS代码抽取出来,单独放到<style>标签中去
+
+1.理论是可以放到HTML的任意位置,一般是放在<head>标签里面
+2.此种方式,可以方便控制当前整个页面中的元素样式设置
+3.代码结构清晰,但是结构和样式并没有完全分离
+4.这种方式一般是练习时候使用,不推荐
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>内部样式表</title>
+    <style>
+            div {
+                color: pink;
+            }
+     </style>
 </head>
 <body>
-<h4>欢迎光临</h4>
-<p>HELLO</p>
-<!--由于要将表现和内容混杂在一起，内联样式会损失掉样式表的许多优势。请慎用这种方法-->
-<p style="color:red;text-align:center">Hello,World</p>
+    <div>所谓内部样式表,就是在html页面内部写样式,但是是单独写到style标签内部.</div>
 </body>
 </html>
 ```
 
-# 选择器
-
-## 派生选择器
-
+### 行内样式表（行内式）
 ```css
-strong {
-     color: red;
-     }
+/*
+行内样式表是在元素标签内部的style属性中设定CSS样式.适用于简单修改样式
 
-h2 {
-     color: red;
-     }
-
-h2 strong {     //只会对h2标签下的strong标签有效
-     color: blue;
-     }
-
-<p>The strongly emphasized word in this paragraph is<strong>red</strong>.</p>
-<h2>This subhead is also red.</h2>
-<h2>The strongly emphasized word in this subhead is<strong>blue</strong>.</h2>
+1.style其实就是标签的属性
+2.在双引号中间,写法要符合CSS样式
+3.可以控制当前的标签设置样式
+4.不推荐大量使用,只有对当前元素添加简单样式的时候,可以考虑使用
+*/
 ```
 
-## id 选择器
-
+#### 例子
 ```css
- #dog{     //id选择器是以#开头
-        background-color: aqua;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>行内样式表</title>
+</head>
+<body>
+        <p>夏天夏天悄悄过去留下小秘密</p>
+
+        <p>压心底压心底不能告诉你</p>
+        
+        <p> 晚风吹过温暖我心底我又想起你</p>
+        
+        <p> 多甜蜜多甜蜜怎能忘记</p>
+        
+        <p>不能忘记你把你写在日记里</p>
+        
+        <p>不能忘记你心里想的还是你</p>
+        
+        <p>浪漫的夏季还有浪漫的一个你</p>
+        
+        <p style="color: pink; font-size: 20px;">给我一个粉红的回忆</p>
+</body>
+</html>
+```
+
+### 外部样式表（链接式）
+```css
+/*
+实际开发都是外部样式表,核心是：样式单独写道CSS中,之后把CSS文件引入到HTML中使用
+
+引入外部样式表步骤：
+步骤一：新建一个后缀名为.css的样式文件,把所有CSS代码都放到此文件中
+步骤二：在HTML页面中,使用<link>标签引入这个文件,
+<link rel="stylesheet"  href="css路径">
+*/
+```
+
+## 选择器
+
+### 标签选择器
+```css
+/*
+标签选择器是指用HTML标签名称作为选择器,按标签名称分类,为页面中某一类标签指定统一的CSS格式
+
+语法：
+标签名{
+  属性1：属性值1;
+  属性2：属性值2;
+  属性3：属性值3;
+}
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基础选择器之标签选择器</title>
+    <style>
+    /* 标签选择器 : 写上标签名 */
+    p {
+        color: green;
     }
+    div {
+        color: pink;
+    }
+    </style>
+</head>
+<body>
+    <p>男生</p>
+    <p>男生</p>
+    <p>男生</p>
+    <div>女生</div>
+    <div>女生</div>
+    <div>女生</div>
+</body>
+</html>
+```
+
+### 类选择器
+```css
+/*
+类选择器是指可以选一个或多个标签
+类选择器在HTML中以class属性表示,在CSS中,类选择器以一个点"."号显示
+
+语法：
+.类名{
+  属性1：属性值1;
+  属性2：属性值2;
+}
+
+注意：
+1.类选择器使用"."来标识,后面紧跟类名（自定义的名称）
+2.可以理解为给这个标签起一个名字
+3.长名称或词组可以使用中横线为选择器命名
+4.不要使用纯数字、中文等命名,尽量使用英文字母来表示
+5.命名要有意义,尽量是别人一眼就能知道这个类名的含义.
+
+类选择器(多类名)
+<div class="red font">你好</div>
+1.在属性class中写多个类名
+2.多个类名中间使用空格隔开
+使用场景：
+1.可以把一些标签元素相同的的样式（共同的部分）放到一个类里面
+2.这些标签都可以调用这个公共的类,然后再调用自己独有的类
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基础选择器之类选择器</title>
+    <style>
+        /* 类选择器口诀: 样式点定义  结构类(class)调用  一个或多个 开发最常用*/
+      .red {
+          color: red;
+      }
+      .star-sing {
+        color: green;
+      }
+      .memeda {  
+         color: pink;
+      }
+    </style>
+</head>
+<body>
+    <ul>
+        <li class="red">冰雨</li>
+        <li class="red">来生缘</li>
+        <li>李香兰</li>
+        <li class="memeda">生僻字</li>
+        <li class="star-sing">江南style</li>
+    </ul>
+    <div class="red">我也想变红色</div>
+</body>
+</html>
+
+/*  多类名的使用场景*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>利用类选择器画三个盒子</title>
+    <style>
+        .box {
+            width: 150px;
+            height: 100px;
+            font-size: 30px;
+        }
+        .red {
+        
+            /* 背景颜色 */
+            background-color: red;
+        }
+        .green {
+           
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="box red">红色</div>
+    <div class="box green">绿色</div>
+    <div class="box red">红色</div>
+</body>
+</html>
+```
+
+### id选择器
+```css
+/*
+id选择器可以为标有特定id的HTML元素指定特定的样式
+HTML元素以id属性来设置id选择器,CSS中id选择器以"#"来定义
+
+语法：
+#id名{
+  属性:属性值;
+  ......
+}
+
+id选择器和类选择器的区别：
+1.类选择器好比人的名字,一个人可以有多个名字,同时一个名字可以被多个人使用
+2.id选择器好比人的身份证号码,全中国是唯一的,不能重复.
+3.id选择器和类选择器最大不同是在使用次数上.
+4.类选择器在修改样式上使用的最多,id选择器一般用于唯一性的元素上,经常和JavaScript配合使用
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基础选择器之id选择器</title>
+    <style>
+        /* id选择器的口诀: 样式#定义, 结构id调用, 只能调用一次, 别人切勿使用 */
+      #pink {
+          color: pink;
+      }
     
- <div class="to">
-    <p id="dog">指定具有id元素的样式</p>
-```
-
-## class选择器
-
-```css
-.center {    //class选择器是以.开通
-    text-align: center
-    }
-
-<h1 class="center">
-This heading will be center-aligned
-</h1>
-
-<p class="center">
-This paragraph will also be center-aligned.
-</p>
-```
-
-## 属性选择器
-
-```css
-//为带有 title 属性的所有元素设置样式
-[title]
-{
-color:red;
-}
-
-//下面的例子为 title="W3School" 的所有元素设置样式：
-[title=W3School]
-{
-border:5px solid blue;
-}
-```
-
-## 例子
-
-```html
-<!--css注释使用/* */的方式-->
-<html>
-<head>
-<title>id和class选择器</title>
-<style>
-/* p标签使用以下的样式 */
-p
-{
-	color:yellow;
-	text-align:center;
-}
-/* 使用#id的形式来用来给id声明的元素 */
-#html
-{
-    color:red;
-	text-align:center;
-} 
-/* 使用.class的形式来用来给有class声明的元素 */
-.html2
-{
-    color:blue;
-	text-align:center;
-}
-</style>
+    </style>
 </head>
 <body>
-<p>Hello World!</p>
-<!--使用id来起个名字，不能以数字开头，只能有一个id-->
-<p id="html">Hello,id!</p>
-<!--使用class来起个名字，不能以数字开头，可以在多个元素中使用-->
-<p class="html2">Hello,class!</p>
+    <div id="pink">迈克尔·杰克逊</div>
+    <div>pink老师</div>
 </body>
 </html>
 ```
 
-# 块和内联函数
-
-## 块级元素(block)特性：
-总是独占一行，表现为另起一行开始，而且其后的元素也必须另起一行显示;
-宽度(width)、高度(height)、内边距(padding)和外边距(margin)都可控制;
-
-## 内联元素(inline)特性：
-和相邻的内联元素在同一行;
-宽度(width)、高度(height)、内边距的top/bottom(padding-top/padding-bottom)和外边距的top/bottom(margin-top/margin-bottom)都不可改变，就是里面文字或图片的大小;
-
-## 块级元素主要有：
-address , blockquote , center , dir , div , dl , fieldset , form , h1 , h2 , h3 , h4 , h5 , h6 , hr , isindex , menu , noframes , noscript , ol , p , pre , table , ul , li
-
-## 内联元素主要有：
-a , abbr , acronym , b , bdo , big , br , cite , code , dfn , em , font , i , img , input , kbd , label , q , s , samp , select , small , span , strike , strong , sub , sup ,textarea , tt , u , var
-
-## 可变元素(根据上下文关系确定该元素是块元素还是内联元素)：
-applet ,button ,del ,iframe , ins ,map ,object , script
-
-## CSS中块级、内联元素的应用：
-利用CSS我们可以摆脱上面表格里HTML标签归类的限制，自由地在不同标签/元素上应用我们需要的属性。
-
-## 主要用的CSS样式有以下三个：
+### 通配符选择器
 ```css
-display:block  -- 显示为块级元素
-display:inline  -- 显示为内联元素
-display:inline-block -- 显示为内联块元素，表现为同行显示并可修改宽高内外边距等属性
-我们常将<ul>元素加上display:inline-block样式，原本垂直的列表就可以水平显示了。
-```
-# 样式
+/*
+通配符选择器使用"*"定义,他表示获取页面所有元素(标签)
 
-### 背景
-
-```css
-/**
-background    简写属性，作用是将背景属性设置在一个声明中。
-background-color  设置元素的背景颜色。
-background-image  background-image
-**/
-```
-
-### 文本
-
-```css
-/**
-color:文本颜色
-direction：文本方向
-letter-spacing：字符间距
-text-align：对齐元素中的文本
-word-spacing：字间距
-**/
-```
-
-### 字体
-
-```css
-/**
-font：设置所有字体属性
-font-family:设置文本字体系列
-font-size:设置文本的字体大小
-font-style：文本的字体样式
-font-weight:字体的粗细
-**/
-
-//例子
-font:italic bold 12px/30px Georgia, serif;
-
-```
-
-### 链接
-
-```css
-/**
-a:link - 普通的、未被访问的链接
-a:visited - 用户已访问的链接
-a:hover - 鼠标指针位于链接的上方
-a:active - 链接被点击的时刻
-
-a:hover 必须跟在 a:link 和 a:visited后面
-a:active 必须跟在 a:hover后面
-**/
-
-例子：
-a:link {color:#FF0000;}		/* 未被访问的链接 */
-a:visited {color:#00FF00;}	/* 已被访问的链接 */
-a:hover {color:#FF00FF;}	/* 鼠标指针移动到链接上 */
-a:active {color:#0000FF;}	/* 正在被点击的链接 */
-```
-
-### 列表
-
-```css
-/**
-list-style	用于把所有用于列表的属性设置于一个声明中。
-list-style-image	将图象设置为列表项标志。
-list-style-position	设置列表中列表项标志的位置。
-list-style-type	设置列表项标志的类型。
-**/
-```
-
-### 表格
-
-```css
-/**
-border-collapse	设置是否把表格边框合并为单一的边框。
-border-spacing	设置分隔单元格边框的距离。
-caption-side	设置表格标题的位置。
-empty-cells	设置是否显示表格中的空单元格。
-table-layout	设置显示单元、行和列的算法。
-**/
-```
-
-### 轮廓
-
-```css
-/**
-轮廓（outline）是绘制于元素周围的一条线，位于边框边缘的外围，可起到突出元素的作用。
-outline-color	设置轮廓的颜色。	
-outline-style	设置轮廓的样式。	
-outline-width	设置轮廓的宽度。
-**/
-```
-
-# 盒子模型
-
-## 概述
-
-<img src="Web\images\css_box_model.png" style="zoom:80%;" />
-
-## 内边距
-
-```css
-/**
-padding	简写属性。作用是在一个声明中设置元素的所内边距属性。
-padding-bottom	设置元素的下内边距。
-padding-left	设置元素的左内边距。
-padding-right	设置元素的右内边距。
-padding-top	设置元素的上内边距。
-**/
-```
-
-## 边框
-
-```css
-/**
-border	简写属性，用于把针对四个边的属性设置在一个声明。
-border-style	用于设置元素所有边框的样式，或者单独地为各边设置边框样式。
-border-width	简写属性，用于为元素的所有边框设置宽度，或者单独地为各边边框设置宽度。
-border-color	简写属性，设置元素的所有边框中可见部分的颜色，或为 4 个边分别设置颜色。
-border-bottom	简写属性，用于把下边框的所有属性设置到一个声明中。
-border-bottom-color	设置元素的下边框的颜色。
-border-bottom-style	设置元素的下边框的样式。
-border-bottom-width	设置元素的下边框的宽度。
-border-left	简写属性，用于把左边框的所有属性设置到一个声明中。
-border-left-color	设置元素的左边框的颜色。
-border-left-style	设置元素的左边框的样式。
-border-left-width	设置元素的左边框的宽度。
-border-right	简写属性，用于把右边框的所有属性设置到一个声明中。
-border-right-color	设置元素的右边框的颜色。
-border-right-style	设置元素的右边框的样式。
-border-right-width	设置元素的右边框的宽度。
-border-top	简写属性，用于把上边框的所有属性设置到一个声明中。
-border-top-color	设置元素的上边框的颜色。
-border-top-style	设置元素的上边框的样式。
-border-top-width	设置元素的上边框的宽度。
-**/
-```
-
-## 外边距
-
-```css
-/**
-margin	简写属性。在一个声明中设置所有外边距属性。
-margin-bottom	设置元素的下外边距。
-margin-left	设置元素的左外边距。
-margin-right	设置元素的右外边距。
-margin-top	设置元素的上外边距。
-**/
-```
-
-# 定位
-
-## 相对定位
-
-```css
-/**
-相对定位是一个非常容易掌握的概念。如果对一个元素进行相对定位，它将出现在它所在的位置上。然后，可以通过设置垂直或水平位置，让这个元素“相对于”它的起点进行移动。
-
-如果将 top 设置为 20px，那么框将在原位置顶部下面 20 像素的地方。如果 left 设置为 30 像素，那么会在元素左边创建 30 像素的空间，也就是将元素向右移动。
-**/
-
-#box_relative {
-  position: relative;
-  left: 30px;
-  top: 20px;
+语法：
+* {
+  属性:属性值;
+  ......
 }
+1.通配符不需要调用,自动就给所有元素使用样式
+2.特殊情况下使用
+*/
 ```
 
-## 绝对定位
+## 属性
 
+### 字体属性
 ```css
-/**
-绝对定位使元素的位置与文档流无关，因此不占据空间。这一点与相对定位不同，相对定位实际上被看作普通流定位模型的一部分，因为元素的位置相对于它在普通流中的位置。
+/*
 
-普通流中其它元素的布局就像绝对定位的元素不存在一样：
-**/
-#box_relative {
-  position: absolute;
-  left: 30px;
-  top: 20px;
+字体的复合属性：
+body{
+  font:font-style font-weight font-size/line-height font-family;
 }
+注意点：
+1.使用font属性时,必须按照上面的语法格式的顺序书写,不能跟换顺序,并且各个属性间以空格隔开
+2.不需要设置的属性可以省略,单必须保留font-size和font-family属性,否则font属性不起作用
+*/
 ```
 
-## 浮动
-
+#### 例子
 ```css
-/**
-float属性：
-left	元素向左浮动。
-right	元素向右浮动。
-none	默认值。元素不浮动，并会显示在其在文本中出现的位置。
-inherit	规定应该从父元素继承 float 属性的值。
-**/
+/* 设置字体 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS字体属性之字体系列</title>
+    <style>
+     h2 {
+         font-family: '微软雅黑';
+     }
+     p {
+        /* font-family: 'Microsoft YaHei', Arial, Helvetica, sans-serif; */
+        font-family: 'Times New Roman', Times, serif;
+     }
+    </style>
+</head>
+<body>
+    <h2>pink的秘密</h2>
+    <p>那一抹众人中最漂亮的颜色,</p>
+    <p>优雅,淡然,又那么心中清澈.</p>
+    <p>前端总是伴随着困难和犯错,</p>
+    <p>静心,坦然,攻克一个又一个.</p>
+    <p>拼死也要克服它,</p>
+    <p>这是pink的秘密也是老师最终的嘱托.</p>
+</body>
+</html>
+
+/* 设置字体大小 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS字体属性之字体大小</title>
+    <style>
+        body {
+            font-size: 16px;
+        }
+        /* 标题标签比较特殊,需要单独指定文字大小 */
+        h2 {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h2>pink的秘密</h2>
+    <p>那一抹众人中最漂亮的颜色,</p>
+    <p>优雅,淡然,又那么心中清澈.</p>
+    <p>前端总是伴随着困难和犯错,</p>
+    <p>静心,坦然,攻克一个又一个.</p>
+    <p>拼死也要克服它,</p>
+    <p>这是pink的秘密也是老师最终的嘱托.</p>
+</body>
+</html>
+
+/* 设置字体粗细 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS字体属性之字体大小</title>
+    <style>
+       .bold {
+           /* font-weight: bold; */
+           /* 这个700 的后面不要跟单位  等价于 bold 都是加粗的效果 */
+           /* 实际开发中,我们跟提倡使用数字 表示加粗或者变细 */
+           font-weight: 700;    
+       }
+       h2 {
+           font-weight: 400;   
+           /* font-weight: normal;    */
+       }
+    </style>
+</head>
+<body>
+    <h2>pink的秘密</h2>
+    <p>那一抹众人中最漂亮的颜色,</p>
+    <p>优雅,淡然,又那么心中清澈.</p>
+    <p>前端总是伴随着困难和犯错,</p>
+    <p>静心,坦然,攻克一个又一个.</p>
+    <p class="bold">拼死也要克服它,</p>
+    <p>这是pink的秘密也是老师最终的嘱托.</p>
+</body>
+</html>
+
+/* 设置字体风格（倾斜还是正常）*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS字体属性之文字样式(风格)</title>
+    <style>
+      p {
+          font-style: italic;
+      }
+      em {
+          /* 让倾斜的字体不倾斜   就是赶紧脉动回来 */
+          font-style: normal;
+      }
+    </style>
+</head>
+<body>
+    <p>同学,上课时候的你</p>
+    <em>下课时候的你</em>
+</body>
+</html>
+
+/* 设置字体复合属性 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS字体属性之复合属性</title>
+    <style>
+       /* 想要div文字变倾斜 加粗 字号设置为16像素 并且 是微软雅黑 */
+       div {
+           /* font-style: italic;
+           font-weight: 700;
+           font-size: 16px;
+           font-family: 'Microsoft yahei'; */
+           /* 复合属性: 简写的方式  节约代码 */
+           /* font: font-style  font-weight  font-size/line-height  font-family; */
+           /* font: italic 700 16px 'Microsoft yahei'; */
+           font: 20px '黑体';
+       }
+    </style>
+</head>
+<body>
+   <div>三生三世十里桃花,一心一意百行代码</div>
+</body>
+</html>
 ```
 
+### 文本属性
+```css
+/*
+文本属性可定义文本的外观,比如文本的颜色、对齐文本、装饰文本、文本缩进、行间距等
+color 文本颜色
+text-align 文本对齐属性
+text-decoration 装饰器,可以给文本添加下划线、删除线、上划线等,设置none去除下划线
+text-indent 文本缩进
+line-geight 行间距
+*/
+```
+
+#### 例子
+```css
+/* 文本颜色 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS文本外观属性之颜色</title>
+    <style>
+       div {
+           /* color: deeppink; */
+           /* color: #cc00ff; */
+           color: rgb(255, 0, 255);
+       }
+    </style>
+</head>
+<body>
+   <div>听说喜欢pink色的男生,都喜欢男人</div>
+</body>
+</html>
+
+/* 文本对齐 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS文本外观之文字对齐</title>
+    <style>
+        h1 {
+            /* 本质是让h1盒子里面的文字水平居中对齐 */
+            /* text-align: center; */
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h1>居中对齐的标题</h1>
+</body>
+</html>
+
+/* 文本装饰 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS文本外观之装饰文本</title>
+    <style>
+       div {
+           /* 下划线 */
+           /* text-decoration: underline;   */
+         /* 删除线 */
+           text-decoration: line-through;
+           /* 上划线 */
+           text-decoration: overline;
+
+       }
+       a {
+           /* 取消a默认的下划线 */
+           text-decoration: none;
+           color: #333;
+       }
+    </style>
+</head>
+<body>
+    <div>粉红色的回忆</div>
+    <a href="#">粉红色的回忆</a>
+</body>
+</html>
+
+/* 文本缩进 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS文本外观之文本缩进</title>
+    <style>
+        p {
+            font-size: 24px;
+            /* 文本的第一行首行缩进 多少距离  */
+            /* text-indent: 20px; */
+            /* 如果此时写了2em 则是缩进当前元素 2个文字大小的距离  */
+            text-indent: 2em;  
+        }
+    </style>
+</head>
+<body>
+        <p>打开北京、上海与广州的地铁地图，你会看见三张纵横交错的线路网络，这代表了中国最成熟的三套城市轨道交通系统。</p>
+
+       <p> 可即使这样，在北上广生活的人依然少不了对地铁的抱怨，其中谈及最多的问题便是拥挤——对很多人而言，每次挤地铁的过程，都像是一场硬仗。更何况，还都是败仗居多。</p>
+        
+       <p> 那么，当越来越多的二线甚至三线城市迎接来了自己的地铁，中国哪里的地铁是最拥挤的呢？</p>
+</body>
+</html>
+
+/* 行间距 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS文本外观之行间距</title>
+    <style>
+       div {
+           line-height: 26px;
+       }
+       p {
+           line-height: 25px;
+       }
+    </style>
+</head>
+<body>
+    <div>中国人</div>
+       <p>打开北京、上海与广州的地铁地图，你会看见三张纵横交错的线路网络，这代表了中国最成熟的三套城市轨道交通系统。</p>
+
+       <p> 可即使这样，在北上广生活的人依然少不了对地铁的抱怨，其中谈及最多的问题便是拥挤——对很多人而言，每次挤地铁的过程，都像是一场硬仗。更何况，还都是败仗居多。</p>
+        
+       <p> 那么，当越来越多的二线甚至三线城市迎接来了自己的地铁，中国哪里的地铁是最拥挤的呢？</p>
+</body>
+</html>
+```
