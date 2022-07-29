@@ -61,6 +61,9 @@
     - [match和search](#match%E5%92%8Csearch)
     - [group分组](#group%E5%88%86%E7%BB%84)
   - [json](#json)
+  - [高级语法](#%E9%AB%98%E7%BA%A7%E8%AF%AD%E6%B3%95)
+    - [枚举](#%E6%9E%9A%E4%B8%BE)
+    - [闭包](#%E9%97%AD%E5%8C%85)
 - [开源库](#%E5%BC%80%E6%BA%90%E5%BA%93)
   - [xlrd（操作Excel）](#xlrd%E6%93%8D%E4%BD%9Cexcel)
 
@@ -962,6 +965,90 @@ if __name__ == '__main__':
     json_str_dump = json.dumps(json_dump)  # 将json转换为json字符串
     print(type(json_load))   # 输出<class 'dict'>
     print(type(json_str_dump)) # 输出<class 'str'>
+```
+
+## 高级语法
+
+### 枚举
+```python
+from enum import Enum
+
+# 定义枚举类,必须要继承Enum
+# 枚举里面的定义建议大写
+class VIP(Enum):
+    YELLOW = 1
+    # 这个会被看作是YELLOW的别名,遍历时不会被打印出来
+    YELLOW = 1
+    GREEN = 2
+    BLACK = 3
+    RED = 4
+
+
+if __name__ == '__main__':
+    VIP.RED = 3  # 这样会报错
+    print(VIP.YELLOW.value)   # 输出1
+    print(VIP.YELLOW)  # 输出VIP.YELLOW（这是enum类型）
+    print(VIP.YELLOW.name)  # YELLOW（这是str类型）
+    print(VIP['YELLOW'])  # 输出VIP.YELLOW
+    print(VIP(1))  # 枚举的数据转换,输出VIP.YELLOW
+
+
+# 限制枚举不能取相同值
+from enum import IntEnum, unique
+
+@unique
+class VIP(IntEnum):
+    YELLOW = 1
+    GREEN = 2
+    BLACK = 3
+    RED = 3   # 这边会报错
+```
+
+### 闭包
+```python
+# 闭包 = 函数 + 环境变量
+def curve_pre():
+    a = 25   # 这个定义在curve的外部,不能是全局变量
+
+    def curve(x):
+        return a * x * x
+
+    return curve
+
+
+if __name__ == '__main__':
+    f = curve_pre()
+    print(f.__closure__)    # 打印他的闭包
+    print(f.__closure__[0].cell_contents)  # 打印他的参数 输出25
+    print(f(2))  # 输出100
+
+# 一个小案例
+origin = 0
+
+
+# 非闭包实现
+def go(step):
+    global origin
+    origin = origin + step
+    return origin
+
+
+# 闭包实现（可以不使用全局变量）
+def go_2(pos):
+    def go_step(step):
+        nonlocal pos
+        new_pos = pos + step
+        pos = new_pos
+        return pos
+
+    return go_step
+
+
+if __name__ == '__main__':
+    f = go_2(origin)
+    print(f(2))
+    print(f(3))
+    print(f(5))
 ```
 
 # 开源库
