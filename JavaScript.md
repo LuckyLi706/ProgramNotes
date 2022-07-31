@@ -1,7 +1,6 @@
 # JavaScript
 
-+ [HTML语法](HTML.md)
-+ [CSS语法](CSS.md)
++ [HTML和CSS](HTMLCSS.md)
 ## 基础
 
 ```javascript
