@@ -2545,3 +2545,154 @@ margin-right  右内边距
 </body>
 </html>
 ```
+
+### 圆角边框（重点）
+```css
+/*
+在CSS3中,新增了圆角边框样式,这样我们的盒子就可以变成圆角了.
+
+语法：
+border-radius: length;
+
+1.参数值可以为数值或者百分比的形式
+2.如果是正方形，想要设置为一个圆，把数值修改为高度或者宽度的一半即可，或者直接写为 50%
+3.该属性是一个简写属性，可以跟四个值，分别代表左上角、右上角、右下角、左下角
+4.分开写：border-top-left-radius、border-top-right-radius、border-bottom-right-radius 和border-bottom-left-radius
+5.兼容性 ie9+ 浏览器支持, 但是不会影响页面布局,可以放心使用
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>圆角边框常用写法</title>
+    <style>
+        .yuanxing {
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+            /* border-radius: 100px; */
+            /* 50% 就是宽度和高度的一半  等价于 100px */
+            border-radius: 50%;
+        }
+        .juxing {
+            width: 300px;
+            height: 100px;
+            background-color: pink;
+            /* 圆角矩形设置为高度的一半 */
+            border-radius: 50px;
+        }
+        .radius {
+            width: 200px;
+            height: 200px;
+            /* border-radius: 10px 20px 30px 40px; */
+            /* border-radius: 10px 40px; */
+            border-top-left-radius: 20px;
+            background-color: pink;
+        }
+    </style>
+</head>
+
+<body>
+    /*1. 圆形的做法:*/
+    <div class="yuanxing"></div>
+    /*2. 圆角矩形的做法:*/
+    <div class="juxing"></div>
+    /*3. 可以设置不同的圆角:*/
+    <div class="radius"></div>
+</body>
+</html>
+```
+
+### 盒子阴影（重点）
+```css
+/*
+CSS3中新增了盒子阴影,我们可以是呀box-shadow属性为盒子添加阴影
+语法：
+box-shadow: h-shadow v-shadow blur spread color inset;
+h-shadow   必需 水平阴影的位置,允许负值
+v-shadow   必需 垂直阴影的位置,允许负值
+blur   可选,模糊距离
+spread 可选,阴影的尺寸
+color  可选,阴影的颜色
+inset  可选,将外部阴影改为内部阴影
+
+注意：
+1. 默认的是外阴影(outset),但是不可以写这个单词,否则阴影无效.
+2.盒子阴影不占用空间,不会影响其他盒子排列
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>盒子阴影</title>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+            margin: 100px auto;
+            /* box-shadow: 10px 10px; */
+        }
+
+        div:hover {
+            box-shadow: 10px 10px 10px -4px rgba(0, 0, 0, .3);
+        }
+
+        /* 原先盒子没有影子,当我们鼠标经过盒子就添加阴影效果 */
+    </style>
+</head>
+<body>
+    <div></div>
+</body>
+</html>
+```
+
+### 文字阴影（了解）
+```css
+/*
+CSS3中新增了文字阴影,我们可以是呀text-shadow属性为盒子添加阴影
+语法：
+text-shadow: h-shadow v-shadow blur color;
+h-shadow   必需 水平阴影的位置,允许负值
+v-shadow   必需 垂直阴影的位置,允许负值
+blur   可选,模糊距离
+color  可选,阴影的颜色
+*/
+```
+
+#### 例子
+```css
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>文字阴影</title>
+    <style>
+        div {
+            font-size: 50px;
+            color: orangered;
+            font-weight: 700;
+            text-shadow: 5px 5px 6px rgba(0, 0, 0, .3);
+
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        你是阴影,我是火影
+    </div>
+</body>
+</html>
+```
