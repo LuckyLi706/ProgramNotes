@@ -64,6 +64,13 @@
   - [高级语法](#%E9%AB%98%E7%BA%A7%E8%AF%AD%E6%B3%95)
     - [枚举](#%E6%9E%9A%E4%B8%BE)
     - [闭包](#%E9%97%AD%E5%8C%85)
+  - [函数式编程](#%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B)
+    - [lambda表达式](#lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    - [三元表达式](#%E4%B8%89%E5%85%83%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    - [map](#map)
+    - [reduce](#reduce)
+    - [filter](#filter)
+    - [装饰器](#%E8%A3%85%E9%A5%B0%E5%99%A8)
 - [开源库](#%E5%BC%80%E6%BA%90%E5%BA%93)
   - [xlrd（操作Excel）](#xlrd%E6%93%8D%E4%BD%9Cexcel)
 
@@ -1050,6 +1057,85 @@ if __name__ == '__main__':
     print(f(3))
     print(f(5))
 ```
+
+## 函数式编程
+
+### lambda表达式
+```python
+# lambda定义,后面只能跟表达式
+a = lambda x, y: x + y
+
+if __name__ == '__main__':
+    print(a(1, 2))
+```
+
+### 三元表达式
+```python
+if __name__ == '__main__':
+    x = 1
+    y = 2
+    r = x if x > y else y   # 三元表达式
+    print(r)
+```
+
+### map
+```python
+def square(x):
+    return x * x
+
+
+list_x = [1, 2, 3, 4, 5, 6, 7, 8]
+
+if __name__ == '__main__':
+    # map传入一个方法和一个参数或者多个参数,对后面给定的参数来给到前面的方法体进行计算,
+    m = map(square, list_x)
+    print(list(m))   # 输出 [1, 4, 9, 16, 25, 36, 49, 64]
+
+
+# map结合lambda表达式
+list_x = [1, 2, 3, 4, 5, 6, 7, 8]
+
+if __name__ == '__main__':
+    m = map(lambda x: x * x, list_x)
+    print(list(m))
+
+# 多参数
+list_x = [1, 2, 3, 4, 5, 6, 7, 8]
+list_y = [1, 2, 3, 4, 5, 6, 7, 8]
+
+if __name__ == '__main__':
+    m = map(lambda x, y: x * x + y, list_x, list_y)
+    print(list(m))
+```
+
+### reduce
+```python
+# reduce 在进行连续的计算，不断执行lambda运算
+from functools import reduce   # 导入reduce
+
+list_x = [1, 2, 3, 4, 5, 6, 7, 8]
+
+if __name__ == '__main__':
+    # reduce表示不断求和的过程,第一次x和y为1和2,第二次x和y为3和3
+    r = reduce(lambda x, y: x + y, list_x)    # 输出36
+    r = reduce(lambda x, y: x + y, list_x, 2)  # 指定初始值,输出38
+    print(r)
+```
+
+### filter
+```python
+list_x = [1, 0, 1, 0, 1, 0]
+
+if __name__ == '__main__':
+    # filter就是判断真和假的来过滤的
+    # 过滤0
+    f = filter(lambda x: True if x == 1 else False, list_x)
+    print(list(f))  # 输出[1,1,1]
+
+```
+
+### 装饰器
+暂不了解
 
 # 开源库
 
