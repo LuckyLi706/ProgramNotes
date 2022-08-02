@@ -89,6 +89,12 @@
         - [例子](#%E4%BE%8B%E5%AD%90-31)
       - [清除内外边距](#%E6%B8%85%E9%99%A4%E5%86%85%E5%A4%96%E8%BE%B9%E8%B7%9D)
         - [例子](#%E4%BE%8B%E5%AD%90-32)
+    - [圆角边框（重点）](#%E5%9C%86%E8%A7%92%E8%BE%B9%E6%A1%86%E9%87%8D%E7%82%B9)
+      - [例子](#%E4%BE%8B%E5%AD%90-33)
+    - [盒子阴影（重点）](#%E7%9B%92%E5%AD%90%E9%98%B4%E5%BD%B1%E9%87%8D%E7%82%B9)
+      - [例子](#%E4%BE%8B%E5%AD%90-34)
+    - [文字阴影（了解）](#%E6%96%87%E5%AD%97%E9%98%B4%E5%BD%B1%E4%BA%86%E8%A7%A3)
+      - [例子](#%E4%BE%8B%E5%AD%90-35)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -2696,3 +2702,193 @@ color  可选,阴影的颜色
 </body>
 </html>
 ```
+
+## 网页布局方式
+```css
+/*
+网页布局第一准则：多个块级元素纵向排列找标准流,多个块级元素横向排列找浮动.
+
+*/
+```
+
+### 标准流
+```css
+/*
+所谓标准流：就是标签按照规定好默认方式排列
+
+1. 块级元素会独占一行，从上向下顺序排列。常用元素：div、hr、p、h1~h6、ul、ol、dl、form、table
+2. 行内元素会按照顺序，从左到右顺序排列，碰到父元素边缘则自动换行。常用元素：span、a、i、em 等 
+
+以上都是标准流布局，我们前面学习的就是标准流，标准流是最基本的布局方式。
+*/
+```
+
+### 浮动（float）
+```css
+/*
+1. 如何让多个块级元素（div）水平排列成一行？
+
+2. 如何实现两个盒子左右对齐？
+
+有很多布局效果,标准流没法完成,此时就可以利用浮动来完成布局.因为浮动可以改变元素标签默认的排列方式.
+浮动最典型的应用：可以让多个块级元素一行内排列显示.
+
+什么是浮动？
+float属性用于创建浮动框,将其移动到一边,直到左边缘或右边缘触及包含块或另一个浮动框的边缘.
+
+语法：
+选择器{
+    float: 属性值;
+}
+属性值：
+none  元素不浮动（默认值）
+left  元素向左浮动
+right 元素向右浮动
+
+浮动特性（重难点）
+加了浮动之后的元素,会具有很多特性,需要我们掌握的.
+1.脱离标准普通流的控制(浮)移动到指定位置(动),(俗称脱标)
+2.浮动的元素会一行内显示并且元素顶部对齐
+如果多个盒子都设置了浮动,则他们会按照属性值一行内显示并且顶端对齐
+3.浮动的元素会具有行内块元素的特性
+任何元素都可以浮动,不管原先是什么模式的元素,添加浮动之后具有行内块元素的特性。
+如果块级盒子没有设置宽度,默认宽度和父级一样宽,但是添加浮动后,他的大小根据内容来决定。
+浮动的盒子中间是没有缝隙的,是紧挨在一起的。
+行内元素同理。
+
+浮动元素经常和标准流父级搭配使用：
+先用标准流的父元素排列上下位置,之后内部子元素采取浮动排列左右位置,符合网页第一准则.
+
+注意点：
+1.浮动和标准的父盒子搭配
+先用标准流的父元素排列上下位置,之后内部子元素采取浮动排列左右位置
+2.一个元素抖动了,理论上其余的兄弟元素也要抖动
+一个盒子里面有多个子盒子,如果其中一个盒子浮动了,那么其他兄弟也应该浮动,以防止引发问题.
+浮动的盒子只会影响浮动盒子后面的标准流,不会影响前面的标准流.
+
+清除浮动：
+1.为什么需要清除浮动？
+由于父级盒子很多情况下,不方便给高度,但是子盒子浮动又不占有位置,最后父级盒子高度为0时,就会影响下面的标准流盒子.
+2.清除浮动本质
+清除浮动的本质是清除浮动元素造成的影响
+如果父盒子本身有高度,则不需清除浮动
+清除浮动之后,父级就会根据浮动的子盒子自动检测高度,父级有了高度,就不会影响下面的标准流了.
+语法：
+选择器{
+   clear: 属性值;
+}
+属性值：
+left  不允许左侧有浮动元素（清除左侧浮动的影响）
+right 不允许右侧有浮动元素（清除右侧浮动的影响）
+both  同时清除两侧浮动的元素
+实际开发中,一般只使用clear: both
+
+清除浮动方法：
+1.额外标签法也叫隔墙法,是W3C推荐的做法
+2.父级添加overflow属性
+3.父级添加atfer伪元素
+4.父级添加双伪元素
+*/
+```
+
+#### 例子
+```css
+/* 浮动特性：脱标 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>浮动特性1</title>
+    <style>
+        /* 设置了浮动（float）的元素会：
+        1. 脱离标准普通流的控制（浮）移动到指定位置（动）。
+        2.浮动的盒子不在保留原先的位置 */
+        .box1 {
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+
+        .box2 {
+            width: 300px;
+            height: 300px;
+            background-color: rgb(0, 153, 255);
+        }
+    </style>
+</head>
+<body>
+    <div class="box1">浮动的盒子</div>
+    <div class="box2">标准流的盒子</div>
+</body>
+</html>
+
+/* 浮动特性：浮动的元素会一行内显示并且元素顶部对齐*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>浮动元素特性-浮动元素一行显示</title>
+    <style>
+        div {
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+        .two {
+            background-color: purple;
+            height: 249px;
+        }
+        .four {
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+    <div>1</div>
+    <div class="two">2</div>
+    <div>3</div>
+    <div class="four">4</div>
+</body>
+</html>
+
+/* 浮动特性：浮动元素经常和标准流父级搭配使用*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>浮动元素搭配标准流父盒子1</title>
+    <style>
+        .box {
+            width: 1200px;
+            height: 460px;
+            background-color: pink;
+            margin: 0 auto;
+        }
+        .left {
+            float: left;
+            width: 230px;
+            height: 460px;
+            background-color: purple;
+        }
+        .right {
+            float: left;
+            width: 970px;
+            height: 460px;
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="left">左侧</div>
+        <div class="right">右侧</div>
+    </div>
+</body>
+</html>
+```
+
+### 定位
