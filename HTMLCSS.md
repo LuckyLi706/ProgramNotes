@@ -2784,10 +2784,56 @@ both  同时清除两侧浮动的元素
 实际开发中,一般只使用clear: both
 
 清除浮动方法：
-1.额外标签法也叫隔墙法,是W3C推荐的做法
-2.父级添加overflow属性
-3.父级添加atfer伪元素
-4.父级添加双伪元素
+1.额外标签法也叫隔墙法,是W3C推荐的做法（实际开发不常用）
+
+使用方式：
+​		额外标签法会在浮动元素末尾添加一个空的标签。
+例如 <div style="clear:both"></div>，或者其他标签（如<br />等）。
+​		优点： 通俗易懂，书写方便
+​		缺点： 添加许多无意义的标签，结构化较差
+​		注意： 要求这个新的空标签必须是块级元素。
+
+2.父级添加overflow属性（重点）
+
+可以给父级添加 overflow 属性，将其属性值设置为 hidden、 auto 或 scroll 。
+例如：
+overflow:hidden | auto | scroll;
+优点：代码简洁
+缺点：无法显示溢出的部分
+注意：是给父元素添加代码
+
+3.父级添加atfer伪元素（重点）
+
+:after 方式是额外标签法的升级版。给父元素添加：
+.clearfix:after {  
+   content: ""; 
+   display: block; 
+   height: 0; 
+   clear: both; 
+   visibility: hidden;  
+ } 
+ .clearfix { 
+    //IE6、7 专有
+   *zoom: 1;
+}   
+
+
+4.父级添加双伪元素（重点）
+
+给父元素添加
+.clearfix:before,.clearfix:after {
+   content:"";
+   display:table; 
+}
+ .clearfix:after {
+   clear:both;
+}
+ .clearfix {
+    *zoom:1;
+}   
+优点：代码更简洁
+缺点：照顾低版本浏览器
+代表网站：小米、腾讯等
 */
 ```
 
@@ -2889,6 +2935,255 @@ both  同时清除两侧浮动的元素
     </div>
 </body>
 </html>
+
+/* 清除浮动之额外标签法 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>清除浮动之额外标签法</title>
+    <style>
+        .box {
+            width: 800px;
+            border: 1px solid blue;
+            margin: 0 auto;
+        }
+        .damao {
+            float: left;
+            width: 300px;
+            height: 200px;
+            background-color: purple;
+        }
+        .ermao {
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+        .footer {
+            height: 200px;
+            background-color: black;
+        }
+        .clear {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="damao">大毛</div>
+        <div class="ermao">二毛</div>
+        <div class="ermao">二毛</div>
+        <div class="ermao">二毛</div>
+        <div class="ermao">二毛</div>
+        <!-- <div class="clear"></div> -->
+        <!-- 这个新增的盒子要求必须是块级元素不能是行内元素 -->
+        <span class="clear"></span>
+    </div>
+    <div class="footer"></div>
+</body>
+</html>
+
+/* 清除浮动之父级添加overflow属性  */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>为什么需要清除浮动</title>
+    <style>
+        .box {
+            /* 清除浮动 */
+            overflow: hidden;
+            width: 800px;
+            border: 1px solid blue;
+            margin: 0 auto;
+        }
+        .damao {
+            float: left;
+            width: 300px;
+            height: 200px;
+            background-color: purple;
+        }
+        .ermao {
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+        .footer {
+            height: 200px;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="damao">大毛</div>
+        <div class="ermao">二毛</div>
+    </div>
+    <div class="footer"></div>
+</body>
+</html>
+
+/* 清除浮动之父级添加atfer伪元素 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>伪元素清除浮动</title>
+    <style>
+        .clearfix:after {
+            content: "";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+        }
+        .clearfix {
+            /* IE6、7 专有 */
+            *zoom: 1;
+        }
+        .box {
+            width: 800px;
+            border: 1px solid blue;
+            margin: 0 auto;
+        }
+        .damao {
+            float: left;
+            width: 300px;
+            height: 200px;
+            background-color: purple;
+        }
+        .ermao {
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+        .footer {
+            height: 200px;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="box clearfix">
+        <div class="damao">大毛</div>
+        <div class="ermao">二毛</div>
+    </div>
+    <div class="footer"></div>
+</body>
+</html>
+
+/* 清除浮动之伪元素清除浮动 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>伪元素清除浮动</title>
+    <style>
+        .clearfix:before,
+        .clearfix:after {
+            content: "";
+            display: table;
+        }
+        .clearfix:after {
+            clear: both;
+        }
+        .clearfix {
+            *zoom: 1;
+        }
+        .box {
+            width: 800px;
+            border: 1px solid blue;
+            margin: 0 auto;
+        }
+        .damao {
+            float: left;
+            width: 300px;
+            height: 200px;
+            background-color: purple;
+        }
+        .ermao {
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+        .footer {
+            height: 200px;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="box clearfix">
+        <div class="damao">大毛</div>
+        <div class="ermao">二毛</div>
+    </div>
+    <div class="footer"></div>
+</body>
+</html>
 ```
 
 ### 定位
+```css
+/*
+以下情况使用标准流或者浮动能实现吗？
+1.当我们滚动窗口时,盒子是固定屏幕某个位置的
+
+定位：
+1.浮动可以让多个块级元素一行没有缝隙排列显示,经常用于横向排列盒子
+2.定位则是可以让盒子自由的在某个盒子内移动位置或者固定屏幕某个位置,并且可以压住其他盒子.
+
+定位组成：
+定位：将盒子定在某一个位置,所以定位也是在摆放盒子,按照定位的方式移动盒子
+定位 = 定位模式 + 边偏移
+定位模式用于指定一个元素在文档中的定位方式.边偏移则决定了该元素的最终位置.
+
+定位模式：
+定位模式决定元素的定位方式,它通过CSS的position属性来设置,其值可以分为四个：
+static   静态定位
+relative 相对定位
+absolute 绝对定位
+fixed    固定定位
+
+边偏移：
+边偏移就是定位的盒子移动到最终位置.有top、bottom、left、right四个属性
+例如：
+top : 80px   顶部偏移量,定义元素相对于其父元素上边线的距离
+
+一、静态定位：（了解）
+静态定位是元素的默认定位方式,无定位的意思.
+语法：
+选择器{
+    position: static;
+}
+1.静态定位按照标准流摆放位置,他没有边偏移
+2.布局中很少使用
+
+二 相对定位：（重要）
+相对定位是元素在移动位置的时候,是相对于它原来的位置来说的（自恋型）
+语法{
+    position: relative;
+}
+相对定位的特点：（务必记住）
+1.它是相对于自己原来的位置来移动的（移动位置的时候的参照点是自己原来的位置）
+2.原来在标准流的位置继续占有,后面的盒子仍然以标准流的方式对待它（不脱标,继续保留原来的位置）
+
+三、绝对定位：（重要）
+绝对定位是元素在移动位置的时候,是相对于他的祖先元素来说的（拼爹型）
+语法：
+选择器{
+    position: absolute;
+}
+绝对定位的特点：（务必记住）
+1.如果没有祖先元素或者祖先元素没有定位,则以浏览器为准定位（Document文档）
+2.如果祖先元素有定位（相对、绝对、固定定位）,则以最近一级的有定位祖先元素为参考点移动位置
+3.绝对定位不再占有原先的点（脱标）
+*/
+```
