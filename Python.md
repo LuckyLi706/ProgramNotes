@@ -176,6 +176,14 @@ except 异常类型：
     语句块2
 """
 
+# 例子
+"""
+try:
+    语句块
+except Exception as result:  // 捕捉所有异常的父类Exception
+    print(result)    //打印异常信息
+"""
+
 # 异常捕捉(try...except....else....finally)
 """
 try：
@@ -187,6 +195,24 @@ else：                   //对应语句块3在不发生异常是执行
 finally：                //对应语句块4一定执行
     语句块4
 """
+
+# raise关键字（向上层抛出异常）
+def test1(value):
+    if value == 0:
+        raise Exception("2222")   # 向上层方法抛出异常,可以指定异常抛出
+    else:
+        print(value)
+
+
+def test2():
+    try:
+        test1(0)
+    except Exception as result:
+        print(result)   # 捕捉异常,打印异常信息
+
+
+if __name__ == '__main__':
+    test2()
 ```
 
 ### 包和模块
