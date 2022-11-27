@@ -96,7 +96,8 @@
 - javadoc生成帮助文档的工具
 - jar.exe位于jdk的bin目录下，主要处理jar包
 
-
+## JDK华为镜像下载地址
+[JDK](https://repo.huaweicloud.com/java/jdk/)
 
 # 数据类型
 

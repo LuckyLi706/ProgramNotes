@@ -65,8 +65,8 @@
 
 ## Script
 
-+ [Bat]()
-+ [Shell]()
++ [Bat](Script/Bat.md)
++ [Shell](Script/Shell.md)
 
 ## Network
 
