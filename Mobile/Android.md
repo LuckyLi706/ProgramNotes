@@ -82,6 +82,7 @@
     - [开源飞控以及地面站](https://dev.qgroundcontrol.com/master/en/getting_started/)
   + [PC端下载Google Play的apk](https://apkpure.com/cn/ )
   + [安卓面试整理](Android面试.md)
+  + [安卓上架各个商店](android_upload_shop.md)
 
 ## 逆向
 
@@ -112,15 +113,15 @@
 + [上传自己的库到jcenter](https://blog.csdn.net/linglongxin24/article/details/53415932)
   ```groovy
   /** 以下开始是将Android Library上传到jcenter的相关配置**/
-
+  
   apply plugin: 'com.github.dcendents.android-maven'
   apply plugin: 'com.jfrog.bintray'
-
+  
   //项目主页
   def siteUrl = 'https://github.com/LuckyLi706/AndroidPlugin'    // project homepage
   //项目的版本控制地址
   def gitUrl = 'https://github.com/LuckyLi706/AndroidPlugin.git' // project git
-
+  
   //发布到组织名称名字，必须填写
   group = "com.lucky.commplugin"
   //发布到JCenter上的项目名字，必须填写
@@ -128,7 +129,7 @@
   // 版本号，下次更新是只需要更改版本号即可
   version = "1.0.0"
   /**  上面配置后上传至jcenter后的编译路径是这样的： compile 'cn.bluemobi.dylan:sqlitelibrary:1.0'  **/
-
+  
   //生成源文件
   task sourcesJar(type: Jar) {
       from android.sourceSets.main.java.srcDirs
@@ -144,7 +145,7 @@
       options.version true
       failOnError false
   }
-
+  
   //文档打包成jar
   task javadocJar(type: Jar, dependsOn: javadoc) {
       classifier = 'javadoc'
@@ -155,13 +156,13 @@
       from "${buildDir}/docs/"
       into "docs"
   }
-
+  
   //上传到jcenter所需要的源码文件
   artifacts {
       archives javadocJar
       archives sourcesJar
   }
-
+  
   // 配置maven库，生成POM.xml文件
   install {
       repositories.mavenInstaller {
@@ -193,7 +194,7 @@
           }
       }
   }
-
+  
   //上传到jcenter
   bintray {
       user = rootProject.ext.user    //读取config.gradle文件里面的 bintray.user
