@@ -93,6 +93,7 @@
 + [AndroidStudio](IDE/AndroidStudio.md)
 + [VisualStudio](IDE/VisualStudio.md)
 + [IDA Pro](IDE/IDA.md)
++ [VSCode](IDE/VSCode.md)
 + [Other](IDE/Other.md)
 
 ## Audio/ Video
