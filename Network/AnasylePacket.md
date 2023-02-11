@@ -23,27 +23,32 @@
 
 + [Fiddler抓包和修改WebSocket数据，支持wss](https://blog.csdn.net/weixin_30947043/article/details/97329308)
 
-+ 安卓7.0以上抓取https
++ 安卓7.0以上抓取https（7.0以上默认不信任用户的证书）
 
-  ```xml
-  //在res/xml中新建文件 network_security_config.xml，
-  <?xml version="1.0" encoding="utf-8"?>
-  <network-security-config>
-      <!-- 支持 Android 9.0 以上使用部分域名时使用 http -->
-      <domain-config cleartextTrafficPermitted="true">
-          <domain includeSubdomains="true">sample.domain</domain>
-      </domain-config>
-      <!-- 支持 Android 7.0 以上调试时，信任 Charles 和 Fiddler 等用户信任的证书 -->
-      <base-config cleartextTrafficPermitted="true">
-          <trust-anchors>
-              <certificates src="system" />
-              <certificates src="user" />
-          </trust-anchors>
-      </base-config>
-  </network-security-config>
-  //创建完后，在androidManifest.xml中的application里面写：
-  android:networkSecurityConfig="@xml/network_security_config"
-  ```
+  - 在res/xml中新建文件 network_security_config.xml
+  
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <network-security-config>
+        <!-- 支持 Android 9.0 以上使用部分域名时使用 http -->
+        <domain-config cleartextTrafficPermitted="true">
+            <domain includeSubdomains="true">sample.domain</domain>
+        </domain-config>
+        <!-- 支持 Android 7.0 以上调试时，信任 Charles 和 Fiddler 等用户信任的证书 -->
+        <base-config cleartextTrafficPermitted="true">
+            <trust-anchors>
+                <certificates src="system" />
+                <certificates src="user" />
+            </trust-anchors>
+        </base-config>
+    </network-security-config>
+    //创建完后，在androidManifest.xml中的application里面写：
+    android:networkSecurityConfig="@xml/network_security_config"
+    ```
+  
+  - 移动代理证书到系统目录下（需要root权限）
+  
+    将证书移动到/system/etc/security/cacerts/目录下
 
 ## Charles
 
@@ -79,11 +84,7 @@ w2 start/w2 stop
 + [Wireshark解密HTTPS流量的两种方法，最新版ssl改成tls](https://www.cnblogs.com/yurang/p/11505741.html)
 + [wireshark 实用过滤表达式（针对ip、协议、端口、长度和内容）](https://www.cnblogs.com/softidea/p/10446388.html)
 
-## Packet Capture
-
-直接在安卓手机抓包
-
-+ [下载地址](https://apkpure.com/cn/packet-capture/app.greyshirts.sslcapture)
++ https://apkpure.com/cn/packet-capture/app.greyshirts.sslcapture)
 
 ## tcpdump
 
