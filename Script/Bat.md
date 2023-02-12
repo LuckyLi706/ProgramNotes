@@ -18,6 +18,10 @@
 + pause
 
   会暂停批处理的执行并在屏幕上显示Press any key to continue…的提示，等待用户按任意键后继续
+  
++ \>nul 2>nul
+
+  不回显当前命令的结果，java \>nul 2>nul -jar xxx（表示当前命令的结果不显示在控制台上面）
 
 ```vbscript
 @echo off
@@ -143,6 +147,102 @@ a=bbs.bathome.cn
 %a:~-3,2%   -------- “.c”        变量a 偏离-3位，截取倒数后3位的前两2位字符
 %a:~3%     -------- “.bathome.cn”变量a 偏离3位，截取完后面的字符。
 %a:~,3%     -------- “bbs”      变量a 偏离0位，截取3位字符。
+```
+
+#### 数组
+
+##### 创建数组
+
+```
+方式一：
+set list=1 2 3 4 
+
+方式二：
+set a[0]=0
+set a[1]=1
+set a[2]=2
+```
+
+##### 访问数组
+
+```
+简单访问：
+@echo off
+set a[0]=1 
+set a[1]=2 
+set a[2]=3 
+echo The first element of the array is %a[0]% 
+echo The second element of the array is %a[1]% 
+echo The third element of the array is %a[2]%
+
+输出：
+The first element of the array is 1 
+The second element of the array is 2 
+The third element of the array is 3
+
+复杂访问（使用变量来充当）：
+@echo off
+setlocal EnableDelayedExpansion
+set a=0
+set b[0]=1
+call echo !b[%a%]!
+
+输出：
+1
+```
+
+##### 数组长度
+
+```
+@echo off 
+set Arr[0]=1 
+set Arr[1]=2 
+set Arr[2]=3 
+set Arr[3]=4 
+set "x=0" 
+:SymLoop 
+
+if defined Arr[%x%] ( 
+   call echo %%Arr[%x%]%% 
+   set /a "x+=1"
+   GOTO :SymLoop 
+)
+echo "The length of the array is" %x%
+pause
+
+输出：
+1
+2
+3
+4
+"The length of the array is" 4
+Press any key to continue . . .
+```
+
+##### 数组结构体
+
+```
+@echo off 
+set obj[0].Name=Joe 
+set obj[0].ID=1 
+set obj[1].Name=Mark 
+set obj[1].ID=2 
+set obj[2].Name=Mohan 
+set obj[2].ID=3 
+FOR /L %%i IN (0 1 2) DO  (
+   call echo Name = %%obj[%%i].Name%%
+   call echo Value = %%obj[%%i].ID%%
+)
+pause
+
+输出：
+Name = Joe
+Value = 1
+Name = Mark
+Value = 2
+Name = Mohan
+Value = 3
+Press any key to continue . . .
 ```
 
 ### 运算符
