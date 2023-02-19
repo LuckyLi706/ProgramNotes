@@ -1,3 +1,32 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [抓包](#%E6%8A%93%E5%8C%85)
+  - [客户端配置](#%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE)
+    - [Android](#android)
+      - [Charles](#charles)
+      - [问题点总结](#%E9%97%AE%E9%A2%98%E7%82%B9%E6%80%BB%E7%BB%93)
+    - [IOS](#ios)
+      - [Charles](#charles-1)
+      - [Stream（App）](#streamapp)
+    - [Mac](#mac)
+      - [Charles](#charles-2)
+      - [问题点总结](#%E9%97%AE%E9%A2%98%E7%82%B9%E6%80%BB%E7%BB%93-1)
+    - [Windows](#windows)
+      - [Charles](#charles-3)
+      - [问题点总结](#%E9%97%AE%E9%A2%98%E7%82%B9%E6%80%BB%E7%BB%93-2)
+  - [抓包工具](#%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7)
+    - [Flidder（支持全平台）](#flidder%E6%94%AF%E6%8C%81%E5%85%A8%E5%B9%B3%E5%8F%B0)
+    - [Charles（支持全平台）](#charles%E6%94%AF%E6%8C%81%E5%85%A8%E5%B9%B3%E5%8F%B0)
+    - [HttpCanary（小黄鸟，只支持安卓）](#httpcanary%E5%B0%8F%E9%BB%84%E9%B8%9F%E5%8F%AA%E6%94%AF%E6%8C%81%E5%AE%89%E5%8D%93)
+    - [Stream（只支持IOS）](#stream%E5%8F%AA%E6%94%AF%E6%8C%81ios)
+    - [whistle](#whistle)
+    - [Wireshark](#wireshark)
+    - [tcpdump](#tcpdump)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # 抓包
 
 ## 客户端配置
@@ -10,7 +39,7 @@
 2. 如果只想抓取手机端的包，在Charles中去掉勾选Proxy -> Windows Proxy（Mac是macOS Proxy），默认都是开启的。
 3. 选择Proxy -> Proxy Settings，HTTP Proxy下面两个都勾选。查看当前监听的端口号。
 4. 选择Proxy -> SSL Proxy Setting，添加Location，在Host输入自己要抓包的域名；如果想看所有抓包情况，Host中输入\*，Port中输入\*；或者只过滤https的，可以在Host中输入\*，Port中输入443
-5. 最后手机设置代理，长按当前Wifi名；高级选项 -> 代理 ->  手动 ，然后输入ip和监听的端口号。然后在手机浏览器中输入http://chls.pro/ssl去下载安装证书。
+5. 最后手机设置代理，长按当前Wifi名；高级选项 -> 代理 ->  手动 ，然后输入ip和监听的端口号。然后在手机浏览器中输入 http://chls.pro/ssl 去下载安装证书。
 
 #### 问题点总结
 
@@ -81,7 +110,7 @@
     待完善
 
     1. 在手机中开启一个虚拟机，可以开启root和使用Xposed插件（如VMOS PRO，[VirtualXposed](https://github.com/android-hacker/VirtualXposed)，[太极](https://github.com/android-hacker/exposed)）
-    2. xp插件关闭SSL验证：[ustTrustMe](https://github.com/Fuzion24/JustTrustMe)、JustMePlush、 [TrustMeAlready](https://github.com/ViRb3/TrustMeAlready)
+    2. xp插件关闭SSL验证：[JustTrustMe](https://github.com/Fuzion24/JustTrustMe)、JustMePlush、 [TrustMeAlready](https://github.com/ViRb3/TrustMeAlready)
 
 + Android Studio自带模拟器开启代理抓包
 
@@ -130,10 +159,10 @@
 5. 
    + IOS 模拟器
      + 注意点：Help -> SSL Proxying -> Install Charles Root Certificate in IOS Simulators 这个选项没效果，依然抓不到https的包
-     + 直接在浏览器中输入http://chls.pro/ssl去下载安装证书。然后在Settings -> General -> About -> Profile 里面去安装证书
+     + 直接在浏览器中输入 http://chls.pro/ssl 去下载安装证书。然后在Settings -> General -> About -> Profile 里面去安装证书
      + 最后在Settings -> General -> About -> Certificate Trust Settings中勾选证书。
    + IOS 真机
-     + 手机设置代理，点击连接网络的详细信息；配置代理 ->  手动 ，然后输入ip和监听的端口号。然后在手机浏览器中输入http://chls.pro/ssl去下载安装证书。
+     + 手机设置代理，点击连接网络的详细信息；配置代理 ->  手动 ，然后输入ip和监听的端口号。然后在手机浏览器中输入 http://chls.pro/ssl 去下载安装证书。
      + 然后在设置-> 通用-> 关于-> 描述文件  里面去安装证书
      + 需要到iPhone设置 -> 关于本机 -> 证书信任设置中启用根证书 
 
