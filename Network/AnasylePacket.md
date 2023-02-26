@@ -16,6 +16,15 @@
     - [Windows](#windows)
       - [Charles](#charles-3)
       - [问题点总结](#%E9%97%AE%E9%A2%98%E7%82%B9%E6%80%BB%E7%BB%93-2)
+  - [其他场景](#%E5%85%B6%E4%BB%96%E5%9C%BA%E6%99%AF)
+    - [抓VPN的包（比如开启翻墙和内网测试）](#%E6%8A%93vpn%E7%9A%84%E5%8C%85%E6%AF%94%E5%A6%82%E5%BC%80%E5%90%AF%E7%BF%BB%E5%A2%99%E5%92%8C%E5%86%85%E7%BD%91%E6%B5%8B%E8%AF%95)
+      - [Charles配置](#charles%E9%85%8D%E7%BD%AE)
+    - [部分应用不能抓包的另类方法](#%E9%83%A8%E5%88%86%E5%BA%94%E7%94%A8%E4%B8%8D%E8%83%BD%E6%8A%93%E5%8C%85%E7%9A%84%E5%8F%A6%E7%B1%BB%E6%96%B9%E6%B3%95)
+      - [原因](#%E5%8E%9F%E5%9B%A0)
+      - [例子](#%E4%BE%8B%E5%AD%90)
+      - [解决方案](#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88)
+        - [Android配置](#android%E9%85%8D%E7%BD%AE)
+        - [IOS配置](#ios%E9%85%8D%E7%BD%AE)
   - [抓包工具](#%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7)
     - [Flidder（支持全平台）](#flidder%E6%94%AF%E6%8C%81%E5%85%A8%E5%B9%B3%E5%8F%B0)
     - [Charles（支持全平台）](#charles%E6%94%AF%E6%8C%81%E5%85%A8%E5%B9%B3%E5%8F%B0)
@@ -211,6 +220,105 @@
   3. 和工具端一样，将证书存储到“受信任的根证书颁发机构”下，后面直接下一步即可
 + 如果不能抓Chrome的包，可以下载安装Chrome插件[switch sharp](https://www.crx4chrome.com/crx/543/)，手动设置代理
 + 手动设置代理，设置 -> 网络和Internet -> 使用代理服务器
+
+## 其他场景
+
+### 抓VPN的包（比如开启翻墙和内网测试）
+
+抓包软件开启双重代理，抓包软件的数据都走VPN的端口。
+
+#### Charles配置
+
+1. Proxy -> External Proxy Settings 
+2. 选中Use external proxy servers
+3. 如果是http就选中web proxy(http)，如果是https就选中secure web proxy(https) 
+4. 在弹窗右侧填入顶层的代理，比如公司的xxxx:xxxx代理ip和端口，比如使用翻墙软件Clash默认就是127.0.0.1:7890
+5. 点击ok 
+6. 手机挂上电脑的ip和8888端口。也就是抓包工具的代理。然后就可以愉快的抓包测试了
+
+### 部分应用不能抓包的另类方法
+
+#### 原因
+
++ 一般情况下我们已经在系统层面上设置了代理，通常http客户端都是按要求去实现的，在进行http请求前会先检查系统代理，如果有设置代理，客户端会直接使用完整uri去连接代理服务器
++ 不同的平台通常会实现自己的的http客户端的，虽然他们都按照协议要求实现了代理功能，但是并不一定在默认情况下会直接使用系统代理。
+
+#### 例子
+
++ 默认Flutter不会主动使用系统代理，需要单独设置。
+
++ Android的Okhttp可以配置不走代理
+
+  ```java
+  // proxy(Proxy.NO_PROXY) 表示不走系统代理
+  OkHttpClient okHttpClient = new OkHttpClient().newBuilder().proxy(Proxy.NO_PROXY).build(); 
+  ```
+
++ Android端可以检测到代理
+
+  ```java
+  //方案一：检测是否使用了代理
+  private static boolean isWifiProxy() {
+      final boolean IS_ICS_OR_LATER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+      String proxyAddress;
+      int proxyPort;
+      if (IS_ICS_OR_LATER) {
+          proxyAddress = System.getProperty("http.proxyHost");
+          String portStr = System.getProperty("http.proxyPort");
+          proxyPort = Integer.parseInt((portStr != null ? portStr : "-1"));
+      } else {
+          proxyAddress = android.net.Proxy.getHost(mContext);
+          proxyPort = android.net.Proxy.getPort(mContext);
+      }
+      return (!TextUtils.isEmpty(proxyAddress)) && (proxyPort != -1);
+  }
+  
+  //方案二：设置代理
+  /**
+  System.setProperty(“key”,"value");
+  这个方法能够设置代理ip/端口，
+  对应的参数为:
+  key:http.proxyHost--这里对应的是ip，System.setProperty("http.proxyHost","ip")；
+  key:http.proxyPort--这里对应的是端口，同上；
+  这里介绍只针对http请求，
+  但是打点发现这里也可以设置https的,但是目前没有亲测,不知道能不能行，
+  好吧 继续说关于抓数据的事情 你这里可以本机的ip 和端口号，但是你要是不想别      人抓你服务器的数据怎么办？
+  你可以把你的http.proxyHost的value设置成自己服务器的ip 比如项目开发过程中服务端童鞋给你的接口：
+  http://test.xx.xx.xx/test/list? 你可以把这个url的的test.xx.xx.xx给截取出来，
+  当http.proxyHost的value 这样别人在wifi哪里设置的参数就会被这个方法设置的参数所覆盖了，
+  在wifi哪里设置代理也就没用了，这个方法记得放在请求发送之前，
+  要是你自己在开发过程中需要抓数据，你只需要开个入口动态设置下这个参数就
+  **/
+  ```
+
+#### 解决方案
+
+使用VPN将终端设备的流量转发到代理服务器（默认会转发所有流量）
+
+##### Android配置
+
+1. 安装[drony](https://files.cnblogs.com/files/lulianqi/Drony_102.apk) ，drony会在你的手机上创建一个VPN，将手机上的所有流量都重定向到drony自身（不是流向vpn服务器） ，这样drony就可以管理所有手机上的网络流量，甚至可以对手机上不同APP的流量进行单独配置。
+2. 开启代理抓包软件
+3. 配置drony转发，打开Drony（处于OFF状态），滑动到SETING页，点击选择Networks Wi-Fi 进入配置
+4. 在网络列表中选择点击当前手机wifi连接的网络 （需要确保该网络与Fiddler代理服务器网络是联通的）
+5. 配置要为当前网络使用的代理入口（这里直接填写fiddler代理地址就可以），选择代理模式为手动（Manual）
+6. Filter default value 选择 Direct all ，然后点击下面的Rule设置应用规则
+7. 默认您的规则里应该是空的，这里直接点击上面的加号添加一个规则（符合规则要求的才会被转发）
+8. 在Network id处 选择当前wifi的SSID
+   Action 选择 Local proxy chain
+   Application 选择需要强制代理的APP
+   Hostname 及 Port 不填 表示所有的都会被强制代理，因为APP可能会使用其他的网络协议不一定都是http，可能不希望把所有流量都引流到http代理服务器，这个时候就会使用这个配置指定ip及端口才转发
+   完成后保存即可，然后返回到SETTING主页，滑动到LOG页，点击下面按钮，使其处于ON的状态（表示启用）
+
+##### IOS配置
+
+为了完成流量重新定向，Shadowrocket与drony一样会先在设备上创建本地VPN服务，再使用您设置的规则处理流量。不过Shadowrocket的使用会更加方便，直接打开软件如下图配置即可
+
+1. 选择全局路由为「代理」
+2. 添加服务节点（类型选择HTTP及HTTPS ，服务器地址及端口为您代理抓包工具的地址与端口）
+3. 设置状态为启用 （IOS会同时自动创建VPN）
+
+![](images/Shadowrocket.png)
 
 ## 抓包工具
 
