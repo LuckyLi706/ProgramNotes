@@ -38,6 +38,28 @@
 
 # 抓包
 
+## 抓包原理
+
+Fiddler 或 Charles 这类使用的代理的抓包软件与Wireshark是完全不同的（Wireshark 使用的网卡数据复制，只要是经过指定网卡都会被抓取），其只能对使用代理的应用层网络协议生效，比如常见的HTTP（https），Websocket 。
+
+这里以HTTP为例简单说明下：
+
+![](images/anasyle_packet_principle_http_request.png)
+
+客户端需要完成一次HTTP请求，通常需要先找到服务器，客户端会根据http请求中url的主机名（实际会使用host中的主角名）及其端口与目标主机建立tcp连接，建立连接后会将http报文发送给目标服务器 （更多细节参考[HTTP](HTTP.md)）
+
+接下来我来看下HTTP代理是如何运作的，我们启动Fiddler 或 Charles就是启动了一个HTTP代理服务器，这类工具会通知操作系统，“现在我在系统上创建了一个HTTP代理，IP为XXXXXX端口为XX。如果您使用的是linux您可以手动通知操作系统(export http_proxy=ip:port export https_proxy=$http_proxy),如果您使用的是手机等移动设备您可以在当前wifi设置处告诉系统你要使用http代理。 现在我们已经告诉系统我们想要使用代理，这个时候运行在系统上的http客户端再去发送请求的时候，他就不会再去进行DNS解析，去连接目标服务器，而是直接连接系统告诉他代理所在的地址（代理的ip及端口，注意无论是http或https或其他支持代理的协议都会连接同一个端口）。然后代理服务器会与客户端建立连接，再然后代理服务器根据请求信息再去连接真正的服务器。
+
+![](images/anasyle_packet_principle_http_request_1.png)
+
+这里还有个细节正常在没有代理的情况下客户端向服务器发送的请求行里只包含部分URI（实际上是没有方案，主机名及端口的）
+
+![](images/anasyle_packet_principle_http_request_2.png)
+
+如上图如果在没有代理的情况下，对www.baidu.com/index.html的请求的请求行实际上是GET /index.html HTTP/1.1 其实并不是我们常见的完整uri。因为在原始的HTTP设计中没有考虑中间服务器（即代理）的情况，客户端在发送报文前已经知道服务器的地址并与之建立了连接，没有必要再发送方案，主机名及端口。不过代理出现后这种做法就会有问题了，客户端连接了代理服务器，而代理服务器却没有办法连接正确的服务器。因此客户端发送给代理的请求其实稍有不同，客户端会在请求行里使用完整的uri，这样代理服务器才能解析真实的服务器的地址。
+
+现在我们的请求实际上都是通过代理服务器（Fiddler 或 Charles）发送出去的，所以代理抓包软件不仅知道http请求及响应的所有报文，甚至还可以随时修改请求及响应。
+
 ## 客户端配置
 
 ### Android
@@ -335,7 +357,58 @@
   注册用户名: https://zhile.io
   注册码    : 48891cf209c6d32bf4
 
-+ [入门篇](https://www.52pojie.cn/thread-1468565-1-1.html)
+#### 过滤网络请求
+
+使用方法一做一些临时性的封包过滤，使用方法二做一些经常性的封包过滤。方法三可以临时性的，快速地过滤出一些没有通过关键字的一类网络请求。
+
++ 方法一：
+
+  在主界面的中部的 Filter 栏中填入需要过滤出来的关键字。例如我们的服务器的地址是：[http://ceshi.com](https://links.jianshu.com/go?to=http%3A%2F%2Fyuantiku.com%2F), 那么只需要在 Filter 栏中填入 ceshi 即可。
+
++ 方法二：
+
+  在想过滤的网络请求上右击，选择 “Focus”，之后在 Filter 一栏勾选上 Focussed 一项。
+
++ 方法三：
+
+  在 Charles 的菜单栏选择 Proxy -> Recording Settings，然后选择 Include 栏，选择添加一个项目，然后填入需要监控的协议，主机地址，端口号。这样就可以只截取目标网站的封包了
+
+#### 修改请求和响应
+
++ 通过compose修改请求报文，这种方式类似postman的模拟请求（只能修改请求）
+
+  选中charles拦截的请求，右键–>compose，右边界面就可以对数据和header进行修改了，修改完成然后点击下面的Execute按钮。
+
++ 通过本地映射（map local）修改响应值（只能修改响应）
+
+  1. 选中charles拦截的请求，右键选择 save response，可以保存为.json格式
+  2. 打开刚刚保存的文件，修改里面的数据
+  3. 再次右键这个请求，选择 map local，打开配置窗口
+  4. 选择响应的文件，就是刚刚save response保存的文件
+
++ 通过rewrite 修改请求以及响应报文（功能强大）
+
+  1. 菜单栏选择Tools -> Rewrite
+  2. 启用Rewrite，左边选择Add，给配置起个名字
+  3. 上面的Add添加规则，配置具体规则，配置请求路径
+  4. 下面的Add添加rewrite规则（可以修改其他类型比如响应状态码等数据），一个url规则可以对应多个rewrite规则，可以选择Request或者Reponse，在Replace中的Value输入具体的请求值或者响应值
+
++ 通过断点修改请求与响应（可以修改请求和响应，但是客户端会超时）
+
+  1. 选中charles拦截的请求，右键选择 breakpoints
+  2. 可以选择编辑请求和编辑响应
+  3. 修改完成然后点击下面的Execute按钮
+
+#### 请求重定向
+
++ 网络请求重定向到本地文件（Map Local）
+
+  上面介绍过
+
++ 网络请求重定向到另一个网址请求地址（Map Remote）
+
+  1. 选中请求，右键选择Map Remote，这时候源地址已经填好了
+  2. 然后填写目的地址，对于不需要限制的条件，可以留空。
 
 ### HttpCanary（小黄鸟，只支持安卓）
 

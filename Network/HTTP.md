@@ -111,8 +111,8 @@ HTTP报文可分为报文首部和报文实体两块,二者由最初的空行来
 
 ## 一次HTTP请求的解析
 ### 参考文章
-+ https://blog.csdn.net/u013777975/article/details/80496121（DNS解析过程很详细）
-+ https://www.jianshu.com/p/ed5735c663d7
++ [参考文章1](https://blog.csdn.net/u013777975/article/details/80496121)（DNS解析过程很详细）
++ [参考文章2](https://www.jianshu.com/p/ed5735c663d7)
 
 给一个简单的实例来看看http协议的执行过程上图中用户点击了一个链接指向清华大学院系设置的页面，其URL是http://www.tsinghua.edu.cn/chn/yxsz/index.htm用http/1.0更具体的说明用户在点击鼠标后发生的事件：
 
@@ -257,7 +257,7 @@ CDN（ContentDeliveryNetwork或ContentDistributionNetwork），译为：内容�
 + HTTPS的默认端口号是443（HTTP是80）
 + SSL/TLS也可以用在其他协议上，比如FTP->FTPS，SMTP->SMTPS
 
-## OpenSSL
+## OpenSSL（自签证书）
 
 OpenSSL是SSL/TLS协议的开源实现，始于1998年，支持Windows、Mac、Linux等平台
 
@@ -279,13 +279,13 @@ OpenSSL是SSL/TLS协议的开源实现，始于1998年，支持Windows、Mac、L
 
 + [Https详解+wireshark抓包演示](https://www.jianshu.com/p/a3a25c6627ee)
 
-![](C:\Users\test\Desktop\ProgramNotes\Network\images\network_https_process_1.jpeg)
+![](images\network_https_process_1.jpeg)
 
-![](C:\Users\test\Desktop\ProgramNotes\Network\images\network_https_process_2.png)
+![](images\network_https_process_2.png)
 
-![](C:\Users\test\Desktop\ProgramNotes\Network\images\network_https_process_3.jpeg)
+![](images\network_https_process_3.jpeg)
 
-![](C:\Users\test\Desktop\ProgramNotes\Network\images\network_https_process_4.webp)
+![](images\network_https_process_4.webp)
 
 ### 1、Client Hello
 

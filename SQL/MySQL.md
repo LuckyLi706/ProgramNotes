@@ -1,27 +1,52 @@
-# 基础
+# MySQL
+
++ [MySQL下载地址](https://downloads.mysql.com/archives/community/)
 
 + [mac数据库操作（忘记密码）](https://blog.csdn.net/w893932747/article/details/89337631)
 + [Mac上修改MySQL默认字符集为utf8](https://www.cnblogs.com/jie-fang/p/10214207.html)
 + [mysql命令行修改字符编码](https://www.cnblogs.com/chcong/p/6197238.html)
 
-## 安装
+## 安装和启动
 
 ### mac
 
-```
-brew install mysql  //默认安装8.0版本
+1. 下载MySQL，[下载地址](https://downloads.mysql.com/archives/community/)
 
-默认配置文件位置：/usr/local/etc/my.cnf
+   brew install mysql       //默认安装8.0版本
 
+2. 配置文件
 
-```
+   默认配置文件位置：/usr/local/etc/my.cnf
+
+3. 启动
+
+   ````
+   //使用服务
+   brew services start mysql
+   //不使用服务，只是启动
+   mysql.server start
+   ````
+
+4. 进入数据库
+
+   ```
+   //进入mysql工作台
+   mysql -u root -p   //mac默认没有密码
+   
+   //windows,根据初始化密码进入数据库,然后插入修改密码
+   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';
+   
+   //mac mysql8.0修改验证方式
+   1、找到mysql配置文件并加入default_authentication_plugin=mysql_native_password
+   2、ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码';
+   ```
 
 ### windows
 
-```
-//压缩版
-1、在解压后的文件目录下新建一个my.ini文件
-内容：
+1. 下载MySQL，[下载地址](https://downloads.mysql.com/archives/community/)
+2. 在解压后的文件目录下新建一个my.ini文件（以下是配置内容）
+
+```ini
 [mysqld]
 # 设置端口
 port=3306
@@ -46,62 +71,136 @@ default-character-set=utf8
 # 客户端连接服务端时默认使用的端口
 port=3306
 default-character-set=utf8
-
-2、初始化数据
-mysqld --initialize --console
-在这边拿到初始化密码
-[Server] A temporary password is generated for root@localhost:初始密码
-
-3、mysqld --install
-成功后会提示安装成功
 ```
 
+2. 初始化数据
+   mysqld --initialize --console
+   在这边拿到初始化密码
+   [Server] A temporary password is generated for root@localhost:初始密码
 
+3. mysqld --install
+   成功后会提示安装成功
 
-## 启动
+4. 启动
 
-### mac
+   ```
+   net start mysql  //启动数据库
+   net stop mysql  //关闭数据库
+   ```
 
-```
-//使用服务
-brew services start mysql
-//不使用服务，只是启动
-mysql.server start
-```
+5. 进入数据库
+
+   ```
+   //进入mysql工作台
+   mysql -u root -p   //mac默认没有密码
+   
+   //windows,根据初始化密码进入数据库,然后插入修改密码
+   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';
+   
+   //mac mysql8.0修改验证方式
+   1、找到mysql配置文件并加入default_authentication_plugin=mysql_native_password
+   2、ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码';
+   ```
 
 ### linux
 
-```
-service mysqld start  //启动数据库
-service mysqld stop  //关闭数据库
-```
+1. 查看是否有MySQL
 
-### windows
+   ```
+   rpm -qa | grep mysql  //查看是否安装了MySQL
+   rpm -e xxx   //删除
+   ```
 
-```
-net start mysql  //启动数据库
-net stop mysql  //关闭数据库
-```
+2. 下载MySQL，[下载地址](https://downloads.mysql.com/archives/community/)
 
+   wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz
 
+3. 解压下载的mysql
 
-## 运行
+   tar xzvf mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz
 
-```sql
-//进入mysql工作台
-mysql -u root -p   //mac默认没有密码
+4. 移动mysql到/usr/local目录下
 
-//windows,根据初始化密码进入数据库,然后插入修改密码
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';
+   mv mysql-5.7.24-linux-glibc2.12-x86_64 /usr/local/
+   cd /usr/local/
+   mv mysql-5.7.24-linux-glibc2.12-x86_64 mysql
 
-//mac mysql8.0修改验证方式
-1、找到mysql配置文件并加入default_authentication_plugin=mysql_native_password
-2、ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码';
-```
+5. 改变mysql权限
 
-# 增删改查
+   chown -R mysql:mysql /usr/local/mysql
+   chmod -R 755 /usr/local/mysql
 
-## 基础命令
+6. 编辑配置文件my.cnf，添加配置如下（文件在/etc/my.cnf，没有就新建）
+
+   ```mysql
+   [mysqld]
+   bind-address=0.0.0.0
+   port=3306
+   user=mysql
+   basedir=/usr/local/mysql
+   datadir=/usr/local/mysql/data/
+   socket=/tmp/mysql.sock
+   log-error=/usr/local/mysql/data/mysql.err
+   pid-file=/usr/local/mysql/data/mysql.pid
+   #character config
+   character_set_server=utf8mb4
+   symbolic-links=0
+   explicit_defaults_for_timestamp=true
+   ```
+
+7. 初始化（临时密码在/usr/local/mysql/data/mysql.err里面）
+
+   ```
+   cd /usr/local/mysql/bin/
+   ./mysqld --defaults-file=/etc/my.cnf --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --user=root --initialize
+   ```
+
+8. 启动MySQL
+
+   ```
+   cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql
+   service mysql start   //启动数据库
+   service mysql stop   //停止数据库
+   service mysql restart   //重启数据库
+   ```
+
+9. 进入数据库
+
+   ```
+   mysql -u root -p   //输入密码
+   ```
+
+#### 问题点
+
++ 执行第5步的时候，出现error while loading shared libraries: libnuma.so.1: cannot open shared object file: No such file or directory
+
+  ```shell
+  yum -y install numactl
+  ```
+
++ Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+
+  ```shell
+  //建立软链接
+  ln -s /var/lib/mysql/mysql.sock /tmp/mysql.sock
+  ln -s /tmp/mysql.sock /var/lib/mysql/mysql.sock
+  ```
+
++ You must reset your password using ALTER USER statement before executing this statement.
+
+  ```
+  //MySQL版本5.7.6版本以前用户可以使用如下命令：
+  mysql> SET PASSWORD = PASSWORD('Admin2022!');
+  
+  MySQL版本5.7.6版本开始的用户可以使用如下命令：
+  mysql> ALTER USER USER() IDENTIFIED BY 'Admin2022!';
+  ```
+
+  
+
+## 增删改查
+
+### 基础命令
 
 ```sql
 1.show databases;   //显示所有数据库
@@ -117,7 +216,7 @@ create table Student(id int(4) not null primary key auto_increment,name char(20)
 7.describe Student;  //展示学生表的内容
 ```
 
-## 增
+### 增
 
 + 插入语句
 ```sql
@@ -144,7 +243,7 @@ INSERT INTO student VALUES(5,'lilei',99),(6,'hanmeimei',87),(8,'poly',76);
 //同时向学生表插入三条数据
 ```
 
-## 删
+### 删
 
 + 删除部分数据
 ```sql
@@ -159,7 +258,7 @@ DELETE FROM 表名
 DELETE FROM student;    //删除学生表的所有数据
 ```
 
-## 改
+### 改
 
 + 更新数据
 ```sql
@@ -173,7 +272,7 @@ UPDATE student SET grade=80;
 //更新学生表中全部记录,将grade字段更新为80
 ```
 
-## 查
+### 查
 
 ```sql
 SELECT 字段名1,字段名2,… FROM 表名
