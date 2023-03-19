@@ -1,53 +1,6 @@
-# 传输层
+# TCP
 
-传输层有2个协议
-
-+ TCP（Transmission Control Protocol），传输控制协议
-+ UDP（User Datagram Protocol），用户数据报协议
-
-![](images/network_transport.png)
-
-## UDP
-
-+ UDP是无连接的，减少了建立和释放连接的开销
-+ UDP尽最大能力交付，不保证可靠交付
-+ 因此不需要维护一些复杂的参数，首部只有8个字节（TCP的首部至少20个字节）
-
-### 数据包格式
-
-![](images/network_transport_udp_format.png)
-
-+ UDP长度（Length）占16位
-
-  首部的长度+ 数据的长度
-
-+ 检验和的计算内容：伪首部+ 首部+ 数据
-
-  伪首部：仅在计算检验和时起作用，并不会传递给网络层
-
-  ![](images/network_transport_udp_checksum.png)
-
-+ 端口（Port）
-
-  - UDP首部中端口是占用2字节，端口范围在0~65535
-
-  - 客户端的源端口是临时开启的随机端口
-
-  - 防火墙可以设置开启\关闭某些端口来提高安全性
-
-  - 常用命令行
-
-    ```
-    netstat –an：查看被占用的端口
-    netstat –anb：查看被占用的端口、占用端口的应用程序
-    telnet 主机端口：查看是否可以访问主机的某个端口
-    
-    安装telnet：控制面板– 程序– 启用或关闭Windows功能– 勾选“Telnet Client” – 确定
-    ```
-
-## TCP
-
-### 数据包格式
+## 数据包格式
 
 ![](images/network_transport_tcp_format.bmp)
 
@@ -88,6 +41,8 @@
 窗口（Window） 占2字节
 这个字段有流量控制功能，用以告知对方下一次允许发送的数据大小（字节为单位）
 ```
+
+## 三大特点
 
 ### 可靠传输
 
@@ -228,6 +183,8 @@ rwnd=receive window（接收窗口）
   当rwnd<cwnd,是接收方的接收能力限制发送窗口的最大值
   当rwnd>cwnd,是网络的拥塞限制发送窗口的最大值
   ```
+
+## 连接过程
 
 ### 建立连接
 
