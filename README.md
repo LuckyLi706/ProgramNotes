@@ -48,6 +48,7 @@
 
 + [SpringBoot](Server/SpringBoot.md)
 + [Flask](Server/Flask.md)
++ [Nginx](Server/Nginx.md)
 + [后端云(无需自己搭建后台)](Server/Server_Sky.md)
 + [Apipost](https://www.apipost.cn/)（服务端接口测试，比postman好）
 
