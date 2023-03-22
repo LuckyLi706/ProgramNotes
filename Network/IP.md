@@ -4,11 +4,11 @@
 
 由首部和数据段两部分组成
 
-![](C:/Users/lijie/Desktop/ProgramNotes/Network/images/network_network_data_package.png)
+![](images/network_network_data_package.png)
 
 + 总长度
 
-  ![](C:/Users/lijie/Desktop/ProgramNotes/Network/images/network_network_total_length.png)
+  ![]images/network_network_total_length.png)
 
 + 片偏移
 
@@ -16,11 +16,11 @@
 
 + 生存时间
 
-  ![](C:/Users/lijie/Desktop/ProgramNotes/Network/images/network_network_surivial_time.png)
+  ![](images/network_network_surivial_time.png)
 
 + 协议
 
-  ![](C:/Users/lijie/Desktop/ProgramNotes/Network/images/network_network_protocol.png)
+  ![](images/network_network_protocol.png)
 
 ```
 版本（Version）,占4位
@@ -73,5 +73,3 @@ ping ip地址 -i TTL    //设置TTL的值
 
 通过tracert、pathping命令，可以跟踪数据包经过了哪些路由器
 ```
-
-## 
