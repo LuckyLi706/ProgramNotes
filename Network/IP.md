@@ -8,7 +8,7 @@
 
 + 总长度
 
-  ![]images/network_network_total_length.png)
+  ![](images/network_network_total_length.png)
 
 + 片偏移
 
@@ -61,15 +61,4 @@
 
 首部校验和（Header Checksum）
 用于检查首部是否有错误
-```
-
-#### ping命令
-
-```
-ping /?   //查看ping的用法
-ping ip地址 -l 数据包大小   //发送指定大小的数据包
-ping ip地址 -f        //不允许网络层分片
-ping ip地址 -i TTL    //设置TTL的值
-
-通过tracert、pathping命令，可以跟踪数据包经过了哪些路由器
 ```
