@@ -134,28 +134,77 @@ flutter:
 
 ## 问题
 
-+ [Waiting for another flutter command to release the startup lock](https://blog.csdn.net/lucynie/article/details/106929170)
+1. [Waiting for another flutter command to release the startup lock](https://blog.csdn.net/lucynie/article/details/106929170)
 
-+ flutter pub get一直卡住
+2. flutter pub get一直卡住
 
-  - 使用镜像
+   + 方案一：使用镜像
 
-    ```
-    //由于在国内访问Flutter有时可能会受到限制，Flutter官方为中国开发者搭建了临时镜像，大家可以将如下环境变量加入到用户环境变量中
-    
-    mac：
-    ～/.bash_profile 文件中加入以下
-    export PUB_HOSTED_URL=https://pub.flutter-io.cn
-    export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
-    
-    windows
-    环境变量加入
-    PUB_HOSTED_URL   https://pub.flutter-io.cn
-    FLUTTER_STORAGE_BASE_URL    https://storage.flutter-io.cn
-    ```
+     ```
+     //由于在国内访问Flutter有时可能会受到限制，Flutter官方为中国开发者搭建了临时镜像，大家可以将如下环境变量加入到用户环境变量中
+     
+     mac：
+     ～/.bash_profile 文件中加入以下
+     export PUB_HOSTED_URL=https://pub.flutter-io.cn
+     export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+     
+     windows
+     环境变量加入
+     PUB_HOSTED_URL   https://pub.flutter-io.cn
+     FLUTTER_STORAGE_BASE_URL    https://storage.flutter-io.cn
+     ```
 
-  - 使用代理
+   + 方案二：使用代理，终端开代理，然后执行命令
 
-    ```
-    终端开代理，然后执行命令
-    ```
+3. flutter2.x版本每次编译安卓遇到网络错误都会删除.gradle文件，.gradle目录存放的是下载的第三方开源库和gradle文件（flutter3.x问题已修复）
+
+   + 出现原因：https://github.com/flutter/flutter/issues/89959
+
+   + 解决方案：
+
+     1. ` ~/flutter/packages/flutter_tools/lib/src/android/gradle_errors.dart` and open it for editing.
+
+        ```dart
+        @visibleForTesting
+        final GradleHandledError networkErrorHandler = GradleHandledError(
+          test: _lineMatcher(const <String>[
+            'java.io.FileNotFoundException: https://downloads.gradle.org',
+            'java.io.IOException: Unable to tunnel through proxy',
+            'java.lang.RuntimeException: Timeout of',
+            'java.util.zip.ZipException: error in opening zip file',
+            'javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake',
+            'java.net.SocketException: Connection reset',
+            'java.io.FileNotFoundException',
+            "> Could not get resource 'http",
+          ]),
+          handler: ({
+            required String line,
+            required FlutterProject project,
+            required bool usesAndroidX,
+            required bool multidexEnabled,
+          }) async {
+            globals.printError(
+              '${globals.logger.terminal.warningMark} Gradle threw an error while downloading artifacts from the network. '
+              'Retrying to download...'
+            );
+            //删除以下代码
+            // try {
+            //   final String? homeDir = globals.platform.environment['HOME'];
+            //   if (homeDir != null) {
+            //     final Directory directory = globals.fs.directory(globals.fs.path.join(homeDir, '.gradle'));
+            //     ErrorHandlingFileSystem.deleteIfExists(directory, recursive: true);
+            //   }
+            // } on FileSystemException catch (err) {
+            //   globals.printTrace('Failed to delete Gradle cache: $err');
+            // }
+            return GradleBuildStatus.retry;
+          },
+          eventLabel: 'network',
+        );
+        ```
+
+     2. 去 ~/flutter/bin/cache这个目录去删除flutter_tools.stamp 和 flutter_tools.snapshot文件。
+
+     3. 然后执行命令flutter doctor。然后.gradle目录就不会被删除了。
+
+4. 
