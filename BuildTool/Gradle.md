@@ -1034,6 +1034,11 @@ android {
         path "CMakeLists.txt"  //指定CMakeLists文件
     }
   }
+  
+  //指定ndk版本,路径在sdk/ndk/版本
+  android {
+     ndkVersion "25.2.9519653"
+  }
 }
 ```
 
