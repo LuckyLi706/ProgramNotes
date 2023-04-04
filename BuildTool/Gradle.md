@@ -33,121 +33,263 @@
 
 # Gradle
 
-+ [gradle中文文档](https://doc.yonyoucloud.com/doc/wiki/project/GradleUserGuide-Wiki/about_this_user_guide.html)
-
-+ gradle的组成
-  - groovy核心语法
-  - build script block
-  - gradle api
-+ 优势
-  - 灵活性上
-  - 粒度性上
-  - 扩展性上
-  - 兼容性上
++ [Gadle中文文档](https://doc.yonyoucloud.com/doc/wiki/project/GradleUserGuide-Wiki/about_this_user_guide.html)
 
 ## Groovy语法
 
-### 初探
+### 简介
 
 - 介绍
 
-       1. 是一种基于JVM的敏捷开发语言
-          2. 结合了Python、Ruby、Smalltalk的许多强大的特性
-          3. 可以与Java完美结合，而且可以使用Java所有的库
+   1. 是一种基于JVM的敏捷开发语言
+   2. 结合了Python、Ruby、Smalltalk的许多强大的特性
+   3. 可以与Java完美结合，而且可以使用Java所有的库
 
 - 特性
 
     1. 语法上支持动态类型，闭包等新一代特性
-       2. 无缝基础所有已经存在的java类库
-       3. 既支持面向对象又面向过程编程
+    2. 无缝基础所有已经存在的java类库
+    3. 既支持面向对象又面向过程编程
 
 - 优势
 
     1. 一种更加敏捷的编程语言
-       2. 入门很容易，功能很强大
-       3. 既可以作为编程语言，也可以作为脚本语言
-
-### 入门
+    2. 入门很容易，功能很强大
+    3. 既可以作为编程语言，也可以作为脚本语言
 
 - 可以不需要main方法，像脚本语言一样直接运行
 - 不需要使用分号结尾
 - 打印可以使用println或者println()
 
-### 变量类型
+```groovy
+//以下两种方式都可以，可以省略括号
+println "Hello,World"
+println("Hello,World")
+```
+
+### 数据类型
+
+#### 变量定义方式
+
+1. 强类型定义（和java一样，需要强制声明变量的类型）
+2. 弱类型定义（使用**def关键字**来定义，不需要指定类型，可以重新赋值给其他类型的值）
+
+```groovy
+int a_1=12  //强类型定义
+def b_1=12  //弱类型定义
+b_1="12"    //重新赋值
+```
+
+#### 基本数据类型
 
 + 基本类型和对象类型和java一样，唯一不同的是基本类型都是包装类型
 
-  ```groovy
-  例子:
-  int a=12
-  println(a.class)
-  double b=12
-  println(b.class)
-  /*
-  输出结果
-  class java.lang.Integer
-  class java.lang.Double
-  * */
-  ```
 
-+ 定义方式
+```groovy
+/**
+以下是基本数据类型
+byte -这是用来表示字节值。例如2。
+short -这是用来表示一个短整型。例如10。
+int -这是用来表示整数。例如1234。
+long -这是用来表示一个长整型。例如10000090。
+float -这是用来表示32位浮点数。例如12.34。
+double -这是用来表示64位浮点数，这些数字是有时可能需要的更长的十进制数表示。例如12.3456565。
+char -这定义了单个字符文字。例如“A”。
+Boolean -这表示一个布尔值，可以是true或false。
+**/
 
-   1. 强类型定义（和java一样，需要强制声明变量的类型）
+//例子:
+int a=12
+println(a.class)
+double b=12
+println(b.class)
 
-   2. 弱类型定义（使用**def关键字**来定义，不需要指定类型，可以重新赋值给其他类型的值）
+/*
+输出结果
+class java.lang.Integer
+class java.lang.Double
+* */
+```
 
-      ```groovy
-      int a_1=12  //强类型定义
-      def b_1=12  //弱类型定义
-      b_1="12"    //重新赋值
-      ```
+#### 字符串（String和GString）
 
-+ 字符串
+```groovy
+//groovy 有两种字符串 String和GString
+//只有双引号或者三个双引号的字符串才能成为GString，可以使用插值表达式。
 
-  ```groovy
-  /**
-  单引号和三引号区别（类型为String）
-  1、单引号（和双引号一样）
-  2、三引号（可以有格式，和python一样）
-  使用扩展表达式定义${变量}（带有扩展表达式的类型为GString，可以和String无缝对接）
-  **/
-  def name = '123'
-  def doublename = "123"   //和上面单引号一样
-  //有格式
-  def tuplename = '''      
-  123
-  123
-  123'''
-  println(tuplename)
-  def one = "123"
-  //使用${变量}
-  def two = "sayHello${one}"
-  println(two)
-  println(two.class)
-  def sum = "two add three equal${2 + 3}"   //扩展表达式
-  println(sum)
-  
-  //输出结果
-  123
-  123
-  123
-  sayHello123
-  class org.codehaus.groovy.runtime.GStringImpl
-  two add three equal5
-  ```
+//1.单引号字符串
+def x = "123"
+def str = 'abc' //不可变字符串,不支持占位插值符$
+def str1 = 'abc${x}' //无法解析${x} 结果为abc${x}
 
-### 逻辑控制
+//2.双引号字符串
+def x = "123"
+def str = "abc${x}" //可变字符串，支持占位插值符$ 结果为abc123，{}可以省略
 
-- 顺序逻辑
-- 条件逻辑
+//3.三个单引号字符串
+def x = "123"
+def str = '''abc${x}''' //可以多行输入,不支持占位插值符$,结果为abc${x}
+def str1 = '''
+hello
+world
+'''
+//结果为
+hello
+world
 
-       1. if/else
-          2. switch/case
+//4.三个双引号字符串
+def x = "123"
+def str = """abc $x""" //可以多行输入,支持占位插值符$,结果为abc 123
 
-- 循环逻辑
+//基本用法
+def a = "Hello"
+def b = "World"
+def c = a + b  //通过加号将两个字符串相加
+println c      //输出HelloWorld
+println c[4]   //输出字符串的第四个字符，输出o
+println c[2, 5] //输出字符串的第二个和第五个字符，输出lW
+println c[2..6] //输出字符串从第二个到第六个字符串，输出lloWo
+println c * 2   //使用*运算符来实现字符串的重复，输出HelloWorldHelloWorld
+println c.length() //输出字符串的长度，输出10
 
-    1. while循环
-       2. for循环
+//其他方法
+/**
+center()
+返回一个新的长度为numberOfChars的字符串，该字符串由左侧和右侧用空格字符填充的收件人组成。
+compareToIgnoreCase()
+按字母顺序比较两个字符串，忽略大小写差异。
+concat()
+将指定的String连接到此String的结尾。
+eachMatch()
+处理每个正则表达式组（参见下一节）匹配的给定String的子字符串。
+endsWith()
+测试此字符串是否以指定的后缀结尾。
+equalsIgnoreCase()
+将此字符串与另一个字符串进行比较，忽略大小写注意事项。
+getAt()
+它在索引位置返回字符串值
+indexOf()
+返回此字符串中指定子字符串第一次出现的索引。
+matches()
+它输出字符串是否匹配给定的正则表达式。
+minus()
+删除字符串的值部分。
+next()
+此方法由++运算符为String类调用。它增加给定字符串中的最后一个字符。
+padLeft（）
+填充字符串，并在左边附加空格。
+padRight()
+填充字符串，并在右边附加空格。
+plus()
+追加字符串
+previous()
+此方法由CharSequence的 - 运算符调用。
+replaceAll（）
+通过对该文本的关闭结果替换捕获的组的所有出现。
+reverse()
+创建一个与此String相反的新字符串。
+split()
+将此String拆分为给定正则表达式的匹配项。
+subString()
+返回一个新的String，它是此String的子字符串。
+toUpperCase()
+将此字符串中的所有字符转换为大写。
+toLowerCase()
+将此字符串中的所有字符转换为小写。
+**/
+```
+
+#### 列表（List）
+
+```groovy
+//列表数据结构
+def list=[1,2,3,4]
+println list.class     //输出class java.util.ArrayList
+println list.size()    //输出4
+
+//定义数组
+//第一种方式,使用as关键字
+def array=[1,2,3,4] as int[]
+//第二种方式，使用强类型定义
+int[] array2=[1,2,34]
+println array.class   //输出class [I
+```
+
+#### 范围（Range）
+
+```groovy
+//范围数据结构(对象是Range，是List的子类)
+def range=1..10  //定义1-10范围的数据
+println range[0]  //输出1
+println range.contains(10) //输出true
+println range.from  //输出1
+println range.to   //输出10
+//遍历
+range.each {
+    print it   //输出12345678910
+}
+println range.class   //输出groovy.lang.IntRange
+```
+
+#### 映射（Map）
+
+```groovy
+//映射数据结构（相当于Java的Map）
+//可以添加任意元素
+//key默认为单引号不可变字符串
+
+def colors=[rea:"123",ble:"222"]
+//获取值第一种方式
+println colors["rea"]   //输出123
+//获取值第二种方式
+println colors.rea    //输出123
+//添加元素
+colors.yello="111"
+//添加多个元素
+colors.complex=[a:1,b:2]
+println colors   //输出[rea:123, ble:222, yello:111, complex:[a:1, b:2]]
+println colors.getClass()   //输出class java.util.LinkedHashMap
+```
+
+### 运算符、条件语句和循环
+
+见Java
+
+### 方法
+
+#### 定义
+
+```groovy
+//方法和变量一样，返回值类型可以使用弱类型def定义，也可以指定强类型
+def hello(){
+    return "Hello,World"
+}
+
+String world(){
+    return "Hello,World"
+}
+
+println hello()   //输出Hello,World
+println world()   //输出Hello,World
+```
+
+#### 参数
+
+```groovy
+//带参数的函数
+def sum(int a,int b){
+    return a+b
+}
+
+//带默认参数的函数
+def plus(int a,int b=2){
+    return a-b
+}
+
+println sum(1,2)  //输出3
+println plus(2)    //输出0
+println plus(10,4)  //输出6
+```
 
 ### 闭包
 
@@ -381,78 +523,6 @@
   My name is lucky
   ```
 
-### 复杂类型
-
-#### 列表
-
-```groovy
-//列表数据结构
-def list=[1,2,3,4]
-println list.class
-println list.size()
-//定义数组
-//第一种方式,使用as关键字
-def array=[1,2,3,4] as int[]
-//第二种方式，使用强类型定义
-int[] array2=[1,2,34]
-println array.class
-
-//输出
-class java.util.ArrayList
-4
-class [I
-```
-
-#### 映射
-
-```groovy
-//映射数据结构（相当于Java的Map）
-//可以添加任意元素
-//key默认为单引号不可变字符串
-
-def colors=[rea:"123",ble:"222"]
-//获取值第一种方式
-println colors["rea"]
-//获取值第二种方式
-println colors.rea
-//添加元素
-colors.yello="111"
-//添加多个元素
-colors.complex=[a:1,b:2]
-println colors
-println colors.getClass()
-
-//结果
-123
-123
-[rea:123, ble:222, yello:111, complex:[a:1, b:2]]
-class java.util.LinkedHashMap
-```
-
-#### 范围
-
-```java
-//范围数据结构(对象是Range，是List的子类)
-def range=1..10  //定义1-10范围的数据
-println range[0]
-println range.contains(10)
-println range.from
-println range.to
-//遍历
-range.each {
-    print it
-}
-println range.class
-
-//输出
-1
-true
-1
-10
-12345678910
-class groovy.lang.IntRange
-```
-
 ### 面向对象
 
 #### 定义
@@ -553,6 +623,68 @@ cry+[]mehod
 male
 MALE
 static method
+```
+
+### 文件
+
+#### 读取文件
+
+```groovy
+//按行读取
+new File("E:/Example.txt").eachLine {  
+         line -> println "line : $line"; 
+      }
+
+//读取所有内容
+File file = new File("E:/Example.txt") 
+println file.text 
+```
+
+#### 写入文件
+
+```groovy
+new File('E:/','Example.txt').withWriter('utf-8') { 
+         writer -> writer.writeLine 'Hello World' 
+      }  
+```
+
+#### 删除文件
+
+```groovy
+def file = new File('E:/Example.txt')
+file.delete()
+```
+
+#### 其他
+
+```groovy
+//1.获取文件大小
+File file = new File("E:/Example.txt")
+println "The file ${file.absolutePath} has ${file.length()} bytes"
+
+//2.测试文件是否为目录
+def file = new File('E:/') 
+println "File? ${file.isFile()}" 
+println "Directory? ${file.isDirectory()}"
+
+//3.创建目录
+def file = new File('E:/Directory')
+file.mkdir()
+
+//4.复制文件
+def src = new File("E:/Example.txt")
+def dst = new File("E:/Example1.txt")
+dst << src.text
+
+//5.输出目录下的所有文件（不包含子文件夹下的文件）
+new File("E:/Temp").eachFile() {  
+         file->println file.getAbsolutePath()
+}
+
+//6.输出输出目录下的所有文件（包含子文件夹下的文件）
+new File("E:/temp").eachFileRecurse() {
+         file -> println file.getAbsolutePath()
+}
 ```
 
 ## Android
