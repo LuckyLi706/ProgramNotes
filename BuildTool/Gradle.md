@@ -577,6 +577,8 @@ static method
 
 #### AndroidStudio关联Gradle源码
 
++ [从AGP构建过程到APK打包过程](https://juejin.cn/post/6963527524609425415)
+
 ```groovy
 dependencies {
 
@@ -608,6 +610,8 @@ project(':demo2app').projectDir = new File("Demo2\\demo2app")
 
 ### build.gradle（外）
 
++ [AGP版本与Gradle版本对应关系](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn)
+
 ```groovy
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
@@ -618,11 +622,8 @@ buildscript {//这里是gradle脚本执行所需依赖，分别是对应的maven
         jcenter()//是一个类似于github的代码托管仓库，声明了jcenter()配置，可以轻松引用 jcenter上的开源项目
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'此处是android的插件gradle，gradle是一个强大的项目构建工具
-        
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        //安卓的gradle插件（AGP）
+        classpath 'com.android.tools.build:gradle:4.1.0'
     }
 }
 
@@ -639,6 +640,14 @@ allprojects {//这里是项目本身需要的依赖，比如项目所需的maven
 // gradle使用groovy语言，调用method时可以不用加（）。
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+
+//安卓Gradle插件7.0以上，该文件变成以下内容
+plugins {
+    id 'com.android.application' version '7.4.1' apply false
+    id 'com.android.library' version '7.4.1' apply false
+    id 'org.jetbrains.kotlin.android' version '1.5.31' apply false
 }
 ```
 
