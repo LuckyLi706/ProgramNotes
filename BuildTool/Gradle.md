@@ -35,659 +35,100 @@
 
 + [Gadle中文文档](https://doc.yonyoucloud.com/doc/wiki/project/GradleUserGuide-Wiki/about_this_user_guide.html)
 
-## Groovy语法
++ [Gradle入门很好的文章](https://juejin.cn/post/7155109977579847710)
 
-### 简介
++ 特点
 
-- 介绍
+  1. Gradle是一个基于JVM运行的构建工具，使用java编写；
 
-   1. 是一种基于JVM的敏捷开发语言
-   2. 结合了Python、Ruby、Smalltalk的许多强大的特性
-   3. 可以与Java完美结合，而且可以使用Java所有的库
+  2. 脚本语言(DSL)使用[Groovy](../Groovy.md)(.gradle)、[Kotlin](../Kotlin.md)(.gradle.kts)编写，都是高级语言，都是面向对象编程；
 
-- 特性
+  3. Gradle中的核心对象是`Task`，Task是Gradle中最小的构建单元，Action是最小的执行单元；
 
-    1. 语法上支持动态类型，闭包等新一代特性
-    2. 无缝基础所有已经存在的java类库
-    3. 既支持面向对象又面向过程编程
+  4. Gradle中的`Project`对应一个工程，是树形结构，可以向下或向上遍历，还用来关联Task；
 
-- 优势
+  5. Gradle提供了很好的扩展能力，可以根据需求自定义插件及配置；
 
-    1. 一种更加敏捷的编程语言
-    2. 入门很容易，功能很强大
-    3. 既可以作为编程语言，也可以作为脚本语言
+  6. Gradle在各个`生命周期`阶段提供了丰富的回调，对于切面处理的扩展很有帮助；
 
-- 可以不需要main方法，像脚本语言一样直接运行
-- 不需要使用分号结尾
-- 打印可以使用println或者println()
+## Gradle初级
 
-```groovy
-//以下两种方式都可以，可以省略括号
-println "Hello,World"
-println("Hello,World")
+### 配置
+
+#### gradle-wrapper
+
++ [Gradle下载地址](https://services.gradle.org/distributions/)
+
+  下载的Gradle类型分为all、bin、doc
+
+  - `doc`：顾名思义，用户文档；
+  - `bin`：即binary，可运行并不包含多余的东西；
+  - `all`：包含所有，除了bin之外还有用户文档、sample等；
+
++ [Gradle、Android Gradle Plugin、Android Studio三者的版本映射关系](https://developer.android.google.cn/studio/releases/gradle-plugin?hl=zh-cn#updating-gradle)
+
+`wrapper`是对Gradle的一层封装，封装的意义在于可以使Gradle的版本跟着项目走，这样这个项目就可以很方便的在不同的设备上运行，比如开源项目一般都不会把gradle文件夹设置到`gitignore`文件里，就是为了保证你clone下来是可以运行的。
+
+- `gradle-wrapper.jar`：主要是Gradle的运行逻辑，包含下载Gradle；
+
+- `gradle-wrapper.properties`：gradle-wrapper的配置文件，核心是定义了Gradle版本；
+
+
+```ini
+#Sun Oct 16 15:59:36 CST 2022
+# 下载的Gradle的压缩包解压后的主目录；
+distributionBase=GRADLE_USER_HOME
+# Gradle版本的下载地址；
+distributionUrl=https://services.gradle.org/distributions/gradle-7.4-bin.zip
+# 相对于distributionBase的解压后的Gradle的路径，为wrapper/dists；
+distributionPath=wrapper/dists
+# 同distributionPath，不过是存放zip压缩包的；
+zipStorePath=wrapper/dists
+# 同distributionBase，不过是存放zip压缩包的主目录；
+zipStoreBase=GRADLE_USER_HOME
 ```
 
-### 数据类型
+### 常用命令及构建参数
 
-#### 变量定义方式
+### 生命周期
 
-1. 强类型定义（和java一样，需要强制声明变量的类型）
-2. 弱类型定义（使用**def关键字**来定义，不需要指定类型，可以重新赋值给其他类型的值）
+#### 三个阶段
 
-```groovy
-int a_1=12  //强类型定义
-def b_1=12  //弱类型定义
-b_1="12"    //重新赋值
-```
+任何构建任务都会执行这三个阶段
 
-#### 基本数据类型
+1. Initialization (初始化)
 
-+ 基本类型和对象类型和java一样，唯一不同的是基本类型都是包装类型
+   在 Initialization (初始化) 阶段，Gradle会决定构建中包含哪些项目，并会为每个项目创建Project实例。为了决定构建中会包含哪些项目，Gradle首先会寻找settings.gradle来决定此次为单项目构建还是多项目构建，单项目就是module，多项目即project+app+module(1+n)
 
+2. Configuration (配置)
 
-```groovy
-/**
-以下是基本数据类型
-byte -这是用来表示字节值。例如2。
-short -这是用来表示一个短整型。例如10。
-int -这是用来表示整数。例如1234。
-long -这是用来表示一个长整型。例如10000090。
-float -这是用来表示32位浮点数。例如12.34。
-double -这是用来表示64位浮点数，这些数字是有时可能需要的更长的十进制数表示。例如12.3456565。
-char -这定义了单个字符文字。例如“A”。
-Boolean -这表示一个布尔值，可以是true或false。
-**/
+   在 Configuration (配置) 阶段，Gradle会评估构建项目中包含的所有构建脚本，随后应用插件、使用DSL配置构建，并在最后注册Task，同时惰性注册它们的输入，因为并不一定会执行。
 
-//例子:
-int a=12
-println(a.class)
-double b=12
-println(b.class)
+3. Execution (执行)
 
-/*
-输出结果
-class java.lang.Integer
-class java.lang.Double
-* */
-```
+   最后，在 Execution (执行) 阶段，Gradle会执行构建所需的Task集合。
 
-#### 字符串（String和GString）
+## Gradle中级
 
-```groovy
-//groovy 有两种字符串 String和GString
-//只有双引号或者三个双引号的字符串才能成为GString，可以使用插值表达式。
+### 依赖管理
 
-//1.单引号字符串
-def x = "123"
-def str = 'abc' //不可变字符串,不支持占位插值符$
-def str1 = 'abc${x}' //无法解析${x} 结果为abc${x}
+### buildSrc
 
-//2.双引号字符串
-def x = "123"
-def str = "abc${x}" //可变字符串，支持占位插值符$ 结果为abc123，{}可以省略
+### 打包配置
 
-//3.三个单引号字符串
-def x = "123"
-def str = '''abc${x}''' //可以多行输入,不支持占位插值符$,结果为abc${x}
-def str1 = '''
-hello
-world
-'''
-//结果为
-hello
-world
+### Task
 
-//4.三个双引号字符串
-def x = "123"
-def str = """abc $x""" //可以多行输入,支持占位插值符$,结果为abc 123
+### Project
 
-//基本用法
-def a = "Hello"
-def b = "World"
-def c = a + b  //通过加号将两个字符串相加
-println c      //输出HelloWorld
-println c[4]   //输出字符串的第四个字符，输出o
-println c[2, 5] //输出字符串的第二个和第五个字符，输出lW
-println c[2..6] //输出字符串从第二个到第六个字符串，输出lloWo
-println c * 2   //使用*运算符来实现字符串的重复，输出HelloWorldHelloWorld
-println c.length() //输出字符串的长度，输出10
+## Gradle高级
 
-//其他方法
-/**
-center()
-返回一个新的长度为numberOfChars的字符串，该字符串由左侧和右侧用空格字符填充的收件人组成。
-compareToIgnoreCase()
-按字母顺序比较两个字符串，忽略大小写差异。
-concat()
-将指定的String连接到此String的结尾。
-eachMatch()
-处理每个正则表达式组（参见下一节）匹配的给定String的子字符串。
-endsWith()
-测试此字符串是否以指定的后缀结尾。
-equalsIgnoreCase()
-将此字符串与另一个字符串进行比较，忽略大小写注意事项。
-getAt()
-它在索引位置返回字符串值
-indexOf()
-返回此字符串中指定子字符串第一次出现的索引。
-matches()
-它输出字符串是否匹配给定的正则表达式。
-minus()
-删除字符串的值部分。
-next()
-此方法由++运算符为String类调用。它增加给定字符串中的最后一个字符。
-padLeft（）
-填充字符串，并在左边附加空格。
-padRight()
-填充字符串，并在右边附加空格。
-plus()
-追加字符串
-previous()
-此方法由CharSequence的 - 运算符调用。
-replaceAll（）
-通过对该文本的关闭结果替换捕获的组的所有出现。
-reverse()
-创建一个与此String相反的新字符串。
-split()
-将此String拆分为给定正则表达式的匹配项。
-subString()
-返回一个新的String，它是此String的子字符串。
-toUpperCase()
-将此字符串中的所有字符转换为大写。
-toLowerCase()
-将此字符串中的所有字符转换为小写。
-**/
-```
+### 插件开发
 
-#### 列表（List）
+### 编译提速
 
-```groovy
-//列表数据结构
-def list=[1,2,3,4]
-println list.class     //输出class java.util.ArrayList
-println list.size()    //输出4
+### Android打包流程
 
-//定义数组
-//第一种方式,使用as关键字
-def array=[1,2,3,4] as int[]
-//第二种方式，使用强类型定义
-int[] array2=[1,2,34]
-println array.class   //输出class [I
-```
-
-#### 范围（Range）
-
-```groovy
-//范围数据结构(对象是Range，是List的子类)
-def range=1..10  //定义1-10范围的数据
-println range[0]  //输出1
-println range.contains(10) //输出true
-println range.from  //输出1
-println range.to   //输出10
-//遍历
-range.each {
-    print it   //输出12345678910
-}
-println range.class   //输出groovy.lang.IntRange
-```
-
-#### 映射（Map）
-
-```groovy
-//映射数据结构（相当于Java的Map）
-//可以添加任意元素
-//key默认为单引号不可变字符串
-
-def colors=[rea:"123",ble:"222"]
-//获取值第一种方式
-println colors["rea"]   //输出123
-//获取值第二种方式
-println colors.rea    //输出123
-//添加元素
-colors.yello="111"
-//添加多个元素
-colors.complex=[a:1,b:2]
-println colors   //输出[rea:123, ble:222, yello:111, complex:[a:1, b:2]]
-println colors.getClass()   //输出class java.util.LinkedHashMap
-```
-
-### 运算符、条件语句和循环
-
-见Java
-
-### 方法
-
-#### 定义
-
-```groovy
-//方法和变量一样，返回值类型可以使用弱类型def定义，也可以指定强类型
-def hello(){
-    return "Hello,World"
-}
-
-String world(){
-    return "Hello,World"
-}
-
-println hello()   //输出Hello,World
-println world()   //输出Hello,World
-```
-
-#### 参数
-
-```groovy
-//带参数的函数
-def sum(int a,int b){
-    return a+b
-}
-
-//带默认参数的函数
-def plus(int a,int b=2){
-    return a-b
-}
-
-println sum(1,2)  //输出3
-println plus(2)    //输出0
-println plus(10,4)  //输出6
-```
-
-### 闭包
-
-#### 基础
-
-+ 闭包定义
-
-  ```groovy
-  //定义闭包
-  def clouser={ println("Hello groovy")}
-  //调用闭包
-  clouser.call()
-  //或者
-  clouser()
-  
-  //输出
-  Hello groovy
-  Hello groovy
-  ```
-
-+ 闭包参数
-
-  ```groovy
-  //定义携带参数的闭包
-  //->左边是参数，右边是闭包体
-  def clouser1={ String name->println("Hello,${name}")}
-  //多个参数使用逗号隔开
-  def clouser2={ String name,int age->println("Hello,${name},${age}")}
-  //每个闭包都有一个默认的隐式参数it
-  def clouser3={ println("Hello,${it}")}
-  clouser1.call("groovy")
-  clouser2.call("groovy",2)
-  clouser3.call("groovy")
-  
-  //输出
-  Hello,groovy
-  Hello,groovy,2
-  Hello,groovy
-  Hello groovy
-  ```
-
-+ 闭包返回值
-
-  ```groovy
-  //返回值
-  //闭包是一定有返回值的
-  def clouser4={ println("Hello groovy")}
-  println clouser4.call()
-  //使用return作为返回值
-  def clouser5={ return ("Hello groovy")}
-  println clouser5.call()
-  
-  //输出
-  null
-  Hello groovy
-  ```
-
-#### 使用
-
-+ 与基础类型使用
-
-  ```groovy
-  int x = fab(5)
-  int y = fab2(5)
-  int z=cal(101)
-  println(x)
-  println(y)
-  println(z)
-  //计算阶乘的方法1
-  int fab(int number) {
-      int result = 1
-      //upto实现递增循环
-      1.upto(number, { num -> result *= num })
-      return result
-  }
-  //计算阶乘的方法2
-  int fab2(int number) {
-      int result = 1
-      //upto实现递减循环
-      //闭包作为方法参数的最后一个可以直接使用{}
-      number.downto(1) {
-          num -> result *= num
-      }
-      return result
-  }
-  //求和运算
-  int cal(int number) {
-      int result = 0
-      //从0开始做循环
-      number.times {
-          num->result += num
-      }
-      return result
-  }
-  
-  //输出
-  120
-  120
-  5050
-  ```
-
-+ 与String集合使用
-
-  ```groovy
-  //与字符串结合使用
-  String str = "the 2 and 3 is 5"
-  //each的遍历
-  str.each {}
-  //find来查找符合条件的第一个
-  println str.find {
-          //查找是否为Number类型
-      String value -> value.isNumber()
-  }
-  //findAll查找所有符合条件的
-  def list = str.findAll {
-      String value -> value.isNumber()
-  }
-  println list.toListString()
-  //any只要满足一个条件，返回true
-  def result = str.any {
-      String value -> value.isNumber()
-  }
-  println(result)
-  //every只要不满足一个条件，就返回false
-  println str.every {
-      String value -> value.isNumber()
-  }
-  
-  //输出
-  2
-  [2, 3, 5]
-  true
-  false
-  ```
-
-+ 与数据结构结合使用
-
-+ 与文件结合使用
-
-#### 详解
-
-+ 关键变量（关键字this、owner、delegate）
-
-  ```groovy
-  println("***********************闭包的详细讲解****************************")
-  //三个重要变量this、owner、delegate
-  def scriptClouser = {
-      println "this:" + this   //代表闭包定义处的类
-      println "owner:" + owner //代表闭包定义处的类或者对象
-      println "delegate" + delegate  //代表任意对象，默认与owner一样
-  }
-  scriptClouser.call()
-  //内部类中定义闭包
-  println "****************内部类中定义闭包************************"
-  class Person{
-      def classClouser={
-          println "classClouser this:" + this
-          println "classClouser owner:" + owner
-          println "classClouser delegate" + delegate
-      }
-      //方法中的闭包
-      def say(){
-          def classClouser={
-              println "classMethodClouser this:" + this
-              println "classMethodClouser owner:" + owner
-              println "classMethodClouser delegate" + delegate
-          }
-          classClouser.call()
-      }
-  }
-  Person p=new Person()
-  p.classClouser.call()
-  p.say()
-  //闭包中定义闭包
-  println "**************闭包中定义闭包***********************"
-  def nestClouser={
-      def innerClouser={
-          println "innerClouser this:" + this
-          println "innerClouser owner:" + owner      //输出nestClouser实例对象
-          println "innerClouser delegate" + delegate  //输出nestClouser实例对象
-      }
-      innerClouser.delegate=p   //修改默认的delegate对象
-      innerClouser.call()
-  }
-  nestClouser.call()
-  
-  //输出
-  ***********************闭包的详细讲解****************************
-  this:variable.ClousrerStudy@71075444
-  owner:variable.ClousrerStudy@71075444
-  delegatevariable.ClousrerStudy@71075444
-  ****************内部类中定义闭包************************
-  classClouser this:variable.Person@6cb107fd
-  classClouser owner:variable.Person@6cb107fd
-  classClouser delegatevariable.Person@6cb107fd
-  classMethodClouser this:variable.Person@6cb107fd
-  classMethodClouser owner:variable.Person@6cb107fd
-  classMethodClouser delegatevariable.Person@6cb107fd
-  **************闭包中定义闭包***********************
-  innerClouser this:variable.ClousrerStudy@71075444
-  innerClouser owner:variable.ClousrerStudy$_run_closure13@239a307b
-  innerClouser delegatevariable.Person@6cb107fd
-  ```
-
-+ 委托策略
-
-  ```groovy
-  println "********************委托策略*********************"
-  class Student{
-      String name
-      def pretty={ println "My name is ${name}"}
-  
-      @Override
-      String toString() {
-          return pretty.call()
-      }
-  }
-  
-  class Teacher{
-      String name
-  }
-  Student stu=new Student(name:"jack")
-  Teacher tea=new Teacher(name:"lucky")
-  stu.pretty.delegate=tea
-  //闭包默认会从自己的类中找name，设置以下就会从delegate对象中优先查找，找不到再去自己的类中查找
-  stu.pretty.resolveStrategy=Closure.DELEGATE_FIRST //闭包的委托策略设置
-  stu.toString()
-  
-  //输出
-  ********************委托策略*********************
-  My name is lucky
-  ```
-
-### 面向对象
-
-#### 定义
-
-```groovy
-//类、抽象类（使用trait关键字）、接口（使用interface关键字）定义
-
-//1、groovy中默认都是public的
-class Person implements Action,DefaultAction{
-    //定义属性
-    int age
-    String name
-    //定义方法
-    def increaseAge(Integer years){
-        this.age=years
-    }
-
-    @Override
-    def drink() {
-        return null
-    }
-
-    @Override
-    def eat() {
-        return null
-    }
-}
-
-//抽象类DefaultAction
-//抽象类
-trait DefaultAction {
-    abstract eat()
-
-    def learn(){
-        println "我在学习"
-    }
-}
-
-//接口Action
-//接口
-interface Action {
-    def drink()
-}
-
-//调用
-//无论你是直接使用点或者get/set,最终都会调用get/set方法
-//只要声明了属性，会自动生成get/set方法
-def person=new Person(name:"lucky",age:10)   //初始化可以直接给属性初始化值
-println "the name is ${person.name},the age is ${person.age}"
-person.increaseAge(19)
-println "the name is ${person.getName()},the age is ${person.getAge()}"
-
-//输出
-the name is lucky,the age is 10
-the name is 19,the age is 10
-```
-
-#### 方法
-
-```groovy
-class Person {
-    //定义属性
-    int age
-    String name
-    /**
-     * 一个方法找不到时，用它来代替
-     * @param name
-     * @param args
-     * @return
-     */
-    @Override
-    def invokeMethod(String name, Object args) {
-        return "mehod"
-    }
-
-    def methodMissing(String name, Object args) {
-        return "${name}+${args}"+"mehod"
-    }
-}
-
-//调用
-def person=new Person(name:"lucky",age:10)
-
-//不存在该方法时，优先去metaClass找，然后是否存在methodMissing，最后是否存在invokeMethod，都没有抛出异常
-println person.cry()
-//为类动态添加一个属性
-person.metaClass.sex="male"
-println person.sex
-//为类动态注入一个方法,需要使用闭包
-person.metaClass.sexUpperCase={ ->sex.toUpperCase()}
-println person.sexUpperCase()
-//为类添加动态的静态方法
-Person.metaClass.static.AddStaticMethod={ -> println "static method"}
-Person.AddStaticMethod()
-
-//输出
-cry+[]mehod
-male
-MALE
-static method
-```
-
-### 文件
-
-#### 读取文件
-
-```groovy
-//按行读取
-new File("E:/Example.txt").eachLine {  
-         line -> println "line : $line"; 
-      }
-
-//读取所有内容
-File file = new File("E:/Example.txt") 
-println file.text 
-```
-
-#### 写入文件
-
-```groovy
-new File('E:/','Example.txt').withWriter('utf-8') { 
-         writer -> writer.writeLine 'Hello World' 
-      }  
-```
-
-#### 删除文件
-
-```groovy
-def file = new File('E:/Example.txt')
-file.delete()
-```
-
-#### 其他
-
-```groovy
-//1.获取文件大小
-File file = new File("E:/Example.txt")
-println "The file ${file.absolutePath} has ${file.length()} bytes"
-
-//2.测试文件是否为目录
-def file = new File('E:/') 
-println "File? ${file.isFile()}" 
-println "Directory? ${file.isDirectory()}"
-
-//3.创建目录
-def file = new File('E:/Directory')
-file.mkdir()
-
-//4.复制文件
-def src = new File("E:/Example.txt")
-def dst = new File("E:/Example1.txt")
-dst << src.text
-
-//5.输出目录下的所有文件（不包含子文件夹下的文件）
-new File("E:/Temp").eachFile() {  
-         file->println file.getAbsolutePath()
-}
-
-//6.输出输出目录下的所有文件（包含子文件夹下的文件）
-new File("E:/temp").eachFileRecurse() {
-         file -> println file.getAbsolutePath()
-}
-```
-
-## Android
+## Android（AGP）
 
 ### 源码相关
 
@@ -729,9 +170,13 @@ dependencies {
 }
 ```
 
-### setting.gradle
+### 配置相关
 
-大多数setting.gradle的作用是为了配置子工程，再Gradle多工程是通过工程树表示的
+#### setting.gradle
+
+##### 7.0之前
+
+大多数setting.gradle的作用是为了配置子工程，在Gradle多工程是通过工程树表示的
 
 ```groovy
 include ':demo1app', ':demo2app'    //指定Module的名字
@@ -740,9 +185,35 @@ project(':demo1app').projectDir = new File("Demo1\\demo1app") //可以手动指�
 project(':demo2app').projectDir = new File("Demo2\\demo2app")
 ```
 
-### build.gradle（外）
+##### 7.0之后
+
+```groovy
+//插件管理，指定插件下载的仓库，及版本。
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+//依赖管理，指定依赖库的仓库地址，及版本。即7.0之前的allprojects。顺序决定了先从哪个仓库去找依赖库并下载，一般为了编译稳定，会把阿里的镜像地址（或自建私有仓库）放在Google()仓库之前。
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "GradleX"   //项目名称
+include ':app'   //用于指定构建应用时应将哪些模块包含在内，即参与构建的模块.
+```
+
+#### build.gradle（Project）
 
 + [AGP版本与Gradle版本对应关系](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn)
+
+##### 7.0之前
 
 ```groovy
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -783,9 +254,41 @@ plugins {
 }
 ```
 
-### build.gradle（内）
+##### 7.0之后
+
+Gradle7.0之后，project下的`build.gradle`文件变动很大，默认只有plugin的引用了，其他原有的配置挪到`settings.gradle`文件中了。
+
+```groovy
+//7.0以上版本如果无法确认id，可以添加如下方式确认插件
+buildscript {
+    ...
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.20"
+    }
+}
+
+//plugin格式  id «plugin id» version «plugin version» [apply «false»] 
+//apply false表示不将该plugin应用于当前项目，比如在多项目构建中，我只想在某个子项目依赖该plugin就好了
+plugins {
+    id 'com.android.application' version '7.3.0' apply false
+    id 'com.android.library' version '7.3.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
+}
+
+//我只想在某个子项目依赖该plugin
+if (subproject.name == "subProject") {
+        apply plugin: 'org.jetbrains.kotlin.android'
+   }
+}
+```
+
+#### build.gradle（Module）
 
 + [flavorDimensions多维度理解](https://blog.csdn.net/chen_xi_hao/article/details/80526049)
++ apply plugin和apply from的区别
+  + apply plugin：'yechaoa'：叫做二进制插件，二进制插件一般都是被打包在一个jar里独立发布的，比如我们自定义的插件，再发布的时候我们也可以为其指定plugin id，这个plugin id最好是一个全限定名称，就像你的包名一样；
+  + apply from：'yechaoa.gradle'：叫做应用脚本插件，应用脚本插件，其实就是把这个脚本加载进来，和二进制插件不同的是它使用的是`from`关键字，后面紧跟一个脚本文件，可以是本地的，也可以是网络存在的，如果是网络上的话要使用`HTTP URL`。
+    - 虽然它不是一个真正的插件，但是不能忽视它的作用，它是脚本文件模块化的基础，我们可以把庞大的脚本文件进行分块、分段整理拆分成一个个共用、职责分明的文件，然后使用apply from来引用它们，比如我们可以把常用的函数放在一个utils.gradle脚本里，供其他脚本文件引用。
 
 ```groovy
 /**
@@ -793,10 +296,14 @@ plugins 闭包，定义当前的项目类型
 com.android.application //表示当前为app项目
 com.android.library   //表示当前为库文件
 
-之前可以这样写
+7.0之前这样写
 apply plugin: 'com.android.application'
 apply plugin: 'com.android.library'
 
+7.0之后这样写
+plugins {
+    id 'com.android.application'
+}
 **/
 plugins {
     id 'com.android.application'
@@ -804,6 +311,7 @@ plugins {
 
 /**
 android{} 闭包
+是Android插件提供的一个扩展类型，可以让我们自定义Gradle Android工程，是Gradle Android工程配置的唯一入口。
 主要为了配置项目构建的各种属性
 **/
 android{
@@ -865,6 +373,9 @@ android{
             zipAlignEnabled true//是否对APK包执行ZIP对齐优化，减小zip体积，增加运行效率
             applicationIdSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
             versionNameSuffix 'test'//在applicationId 中添加了一个后缀，一般使用的不多
+            multiDexEnabled：      //是否拆成多个Dex
+            multiDexKeepFile：     //指定文本文件编译进主Dex文件中
+            multiDexKeepProguard： //指定混淆文件编译进主Dex文件中
         }
         debug {// 测试环境
             buildConfigField("boolean", "LOG_DEBUG", "true")//配置Log日志
@@ -935,7 +446,12 @@ android{
             resValue "string", "appName", '"333"'
         }
     }
-    
+  
+    //开启或关闭构建功能，常见的有viewBinding、dataBinding、compose。
+    buildFeatures {
+        viewBinding = true
+        // dataBinding = true
+    }
     
     /**
     自定义包的名字和文件输出路径
@@ -975,9 +491,91 @@ android{
         abortOnError false //即使报错也不会停止打包
         checkReleaseBuilds false  //打包release版本的时候进行检测
     }
-    
-    
 }
+
+/**
+implementation：该依赖方式所依赖的库不会传递，只会在当前module中生效。
+api：该依赖方式会传递所依赖的库，当其他module依赖了该module时，可以使用该module下使用api依赖的库。
+provided：只在编译时有效，不会参与打包。
+testImplementation：只在单元测试代码的编译以及最终打包测试apk时有效
+debugImplementation：只在debug模式的编译和最终的debug apk打包时有效
+releaseImplementation：仅仅针对Release 模式的编译和最终的Release apk打包。
+**/
+dependencies {
+    //依赖libs目录下的所有jar文件
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+```
+
+#### gradle.properties
+
+位于项目的根目录下，用于指定 Gradle 构建工具包本身的设置，也可用于项目版本管理。
+
+```ini
+# Project-wide Gradle settings.
+# IDE (e.g. Android Studio) users:
+# Gradle settings configured through the IDE *will override*
+# any settings specified in this file.
+# For more details on how to configure your build environment visit
+# http://www.gradle.org/docs/current/userguide/build_environment.html
+# Specifies the JVM arguments used for the daemon process.
+# The setting is particularly useful for tweaking memory settings.
+org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m
+# When configured, Gradle will run in incubating parallel mode.
+# This option should only be used with decoupled projects. More details, visit
+# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
+# org.gradle.parallel=true
+# AndroidX package structure to make it clearer which packages are bundled with the
+# Android operating system, and which are packaged with your app"s APK
+# https://developer.android.com/topic/libraries/support-library/androidx-rn
+android.useAndroidX=true
+# Automatically convert third-party libraries to use AndroidX
+android.enableJetifier=true
+# Kotlin code style for this project: "official" or "obsolete":
+kotlin.code.style=official
+
+# ---------- 编译相关 start ----------
+
+#并行编译
+org.gradle.parallel=true
+
+#构建缓存
+org.gradle.caching=true
+
+# ---------- 编译相关 end ----------
+
+# ---------- 版本相关 start ----------
+
+yechaoaPluginVersion="1.0.0"
+# 以下是gradle的引用方式
+# pluginManagement {
+#  plugins {
+#        id 'com.yechaoa.gradlex' version "${yechaoaPluginVersion}"
+#    }
+# }
+# ---------- 版本相关 end ----------
+```
+
+#### local.properties
+
+```ini
+## This file must *NOT* be checked into Version Control Systems,
+# as it contains information specific to your local configuration.
+#
+# Location of the SDK. This is only used by Gradle.
+# For customization when using a Version Control System, please read the
+# header note.
+#Mon Feb 08 19:07:41 CST 2021
+sdk.dir=/Users/yechao/Library/Android/sdk
+
+# ndk的这种引入方式已废弃，直接在gradle下的android{}下设置
+ndk.dir=/Users/yechao/Library/Android/ndk   
 ```
 
 ### 多渠道打包脚本
