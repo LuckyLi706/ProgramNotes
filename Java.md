@@ -2,20 +2,26 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [入门简介和工具](#%E5%85%A5%E9%97%A8%E7%AE%80%E4%BB%8B%E5%92%8C%E5%B7%A5%E5%85%B7)
-  - [发展历史](#%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2)
-  - [classpath环境变量](#classpath%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)
-  - [JDK、JRE和JVM区别](#jdkjre%E5%92%8Cjvm%E5%8C%BA%E5%88%AB)
-  - [工具](#%E5%B7%A5%E5%85%B7)
-- [数据类型](#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
-  - [数组类型](#%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B)
-  - [字符串类型（String）](#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8Bstring)
-  - [基本数据包装类型](#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E5%8C%85%E8%A3%85%E7%B1%BB%E5%9E%8B)
-    - [包装类型](#%E5%8C%85%E8%A3%85%E7%B1%BB%E5%9E%8B)
-    - [拆箱/装箱](#%E6%8B%86%E7%AE%B1%E8%A3%85%E7%AE%B1)
-    - [equal和==](#equal%E5%92%8C)
+- [基础](#%E5%9F%BA%E7%A1%80)
+  - [入门简介和工具](#%E5%85%A5%E9%97%A8%E7%AE%80%E4%BB%8B%E5%92%8C%E5%B7%A5%E5%85%B7)
+    - [发展历史](#%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2)
+    - [classpath环境变量](#classpath%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)
+    - [JDK、JRE和JVM区别](#jdkjre%E5%92%8Cjvm%E5%8C%BA%E5%88%AB)
+    - [工具](#%E5%B7%A5%E5%85%B7)
+    - [JDK华为镜像下载地址](#jdk%E5%8D%8E%E4%B8%BA%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80)
+  - [数据类型](#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
+    - [数组类型](#%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B)
+    - [字符串类型（String）](#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8Bstring)
+    - [基本数据包装类型](#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E5%8C%85%E8%A3%85%E7%B1%BB%E5%9E%8B)
+      - [包装类型](#%E5%8C%85%E8%A3%85%E7%B1%BB%E5%9E%8B)
+      - [拆箱/装箱](#%E6%8B%86%E7%AE%B1%E8%A3%85%E7%AE%B1)
+      - [equal和==](#equal%E5%92%8C)
     - [引用类型](#%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B)
 - [类](#%E7%B1%BB)
+  - [三大特性](#%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7)
+    - [封装](#%E5%B0%81%E8%A3%85)
+    - [继承](#%E7%BB%A7%E6%89%BF)
+    - [多态](#%E5%A4%9A%E6%80%81)
   - [类之抽象类和接口](#%E7%B1%BB%E4%B9%8B%E6%8A%BD%E8%B1%A1%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3)
   - [类之内部类和Lambda表达式](#%E7%B1%BB%E4%B9%8B%E5%86%85%E9%83%A8%E7%B1%BB%E5%92%8Clambda%E8%A1%A8%E8%BE%BE%E5%BC%8F)
 - [基础类库](#%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%BA%93)
@@ -24,7 +30,11 @@
 - [异常](#%E5%BC%82%E5%B8%B8)
   - [关键字throw和throws](#%E5%85%B3%E9%94%AE%E5%AD%97throw%E5%92%8Cthrows)
   - [Throwable对象](#throwable%E5%AF%B9%E8%B1%A1)
+    - [Error（错误)](#error%E9%94%99%E8%AF%AF)
+    - [Exception（异常）](#exception%E5%BC%82%E5%B8%B8)
   - [可查异常和不可查异常](#%E5%8F%AF%E6%9F%A5%E5%BC%82%E5%B8%B8%E5%92%8C%E4%B8%8D%E5%8F%AF%E6%9F%A5%E5%BC%82%E5%B8%B8)
+    - [可查异常（编译器要求必须处置的异常）](#%E5%8F%AF%E6%9F%A5%E5%BC%82%E5%B8%B8%E7%BC%96%E8%AF%91%E5%99%A8%E8%A6%81%E6%B1%82%E5%BF%85%E9%A1%BB%E5%A4%84%E7%BD%AE%E7%9A%84%E5%BC%82%E5%B8%B8)
+    - [不可查异常(编译器不要求强制处置的异常)](#%E4%B8%8D%E5%8F%AF%E6%9F%A5%E5%BC%82%E5%B8%B8%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%8D%E8%A6%81%E6%B1%82%E5%BC%BA%E5%88%B6%E5%A4%84%E7%BD%AE%E7%9A%84%E5%BC%82%E5%B8%B8)
 - [注解](#%E6%B3%A8%E8%A7%A3)
 - [集合](#%E9%9B%86%E5%90%88)
   - [Set](#set)
@@ -33,7 +43,12 @@
     - [Deque(接口)](#deque%E6%8E%A5%E5%8F%A3)
       - [ArrayDeque(类)](#arraydeque%E7%B1%BB)
     - [PriorityQueue(类)](#priorityqueue%E7%B1%BB)
+    - [效率比较](#%E6%95%88%E7%8E%87%E6%AF%94%E8%BE%83)
+    - [BlockingQueue(接口)](#blockingqueue%E6%8E%A5%E5%8F%A3)
+      - [LinkedBlockingQueue](#linkedblockingqueue)
+      - [ArrayBlockingQueue](#arrayblockingqueue)
   - [Map](#map)
+    - [LinkedHashMap](#linkedhashmap)
 - [流](#%E6%B5%81)
   - [File和RandomAccessFile](#file%E5%92%8Crandomaccessfile)
   - [InputStream](#inputstream)
@@ -46,13 +61,30 @@
   - [线程池](#%E7%BA%BF%E7%A8%8B%E6%B1%A0)
     - [Java中的四类线程池（Executors的静态类）](#java%E4%B8%AD%E7%9A%84%E5%9B%9B%E7%B1%BB%E7%BA%BF%E7%A8%8B%E6%B1%A0executors%E7%9A%84%E9%9D%99%E6%80%81%E7%B1%BB)
     - [submit与execute的区别](#submit%E4%B8%8Eexecute%E7%9A%84%E5%8C%BA%E5%88%AB)
+    - [shutdown 和 shutdownNow 的区别](#shutdown-%E5%92%8C-shutdownnow-%E7%9A%84%E5%8C%BA%E5%88%AB)
+    - [手动创建线程池](#%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0)
   - [线程安全](#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8)
+    - [同步](#%E5%90%8C%E6%AD%A5)
+      - [synchronized和ReentrantLock](#synchronized%E5%92%8Creentrantlock)
+      - [原子类（Atomic）](#%E5%8E%9F%E5%AD%90%E7%B1%BBatomic)
+      - [ThreadLocal](#threadlocal)
+    - [辅助类](#%E8%BE%85%E5%8A%A9%E7%B1%BB)
+      - [CountDownLatch](#countdownlatch)
+      - [Semaphore](#semaphore)
+      - [CyclicBarrier](#cyclicbarrier)
+      - [Phaser](#phaser)
+      - [Exchanger](#exchanger)
   - [线程间通信](#%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1)
 - [网络编程](#%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B)
   - [基础类](#%E5%9F%BA%E7%A1%80%E7%B1%BB)
   - [Socket](#socket)
+    - [简介](#%E7%AE%80%E4%BB%8B)
+    - [基本操作](#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C)
+      - [使用TCP通信的Socket流程](#%E4%BD%BF%E7%94%A8tcp%E9%80%9A%E4%BF%A1%E7%9A%84socket%E6%B5%81%E7%A8%8B)
+      - [使用 UDP 通信的 Socket 流程](#%E4%BD%BF%E7%94%A8-udp-%E9%80%9A%E4%BF%A1%E7%9A%84-socket-%E6%B5%81%E7%A8%8B)
 - [反射](#%E5%8F%8D%E5%B0%84)
   - [基本方法](#%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95)
+    - [功能](#%E5%8A%9F%E8%83%BD)
   - [例子](#%E4%BE%8B%E5%AD%90)
   - [反射之集合泛型的本质](#%E5%8F%8D%E5%B0%84%E4%B9%8B%E9%9B%86%E5%90%88%E6%B3%9B%E5%9E%8B%E7%9A%84%E6%9C%AC%E8%B4%A8)
 - [JVM](#jvm)
@@ -62,9 +94,11 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# 入门简介和工具
+# 基础
 
-## 发展历史
+## 入门简介和工具
+
+### 发展历史
 
 - 1996年，Sun发布了JDK1.0，包含JDK和JRE
 - 1997年，Sun发布了JDK1.1，增加JIT（即时翻译）编译器
@@ -76,12 +110,12 @@
 - 2014年，Oracle发布了JDK1.8，带来了了全新的Lambda、流式编程等大量新特性
 - 2017年，Oracle发布了JDK1.9，这次升级强化了Java的模块化系统、采用了更高效、更智能的G1垃圾回收器
 
-## classpath环境变量
+### classpath环境变量
 - 	如果没有设置，java解释器默认就在当前路径下搜索
 - 	如果需要设置，记得加上点，代表当前路径
 - 	其实jdk1.5以上，都是可以不需要设置的
 
-## JDK、JRE和JVM区别
+### JDK、JRE和JVM区别
 + JDK 是java developmentkit
 
 是java的开发工具包，里面包含了各种类库和工具。当然也包括了另外一个Jre. 那么为什么要包括另外一个Jre呢？而且jdk/jre/bin同时有client和server两个文件夹下都包含一个jvm.dll。说明是有两个虚拟机的。
@@ -91,21 +125,21 @@
 
 + JVM是java virtual machine，是虚拟机
 
-## 工具
+### 工具
 - jdk1.9新增的工具，位于jdk的bin目录下，可以快速测试java的api
 - javadoc生成帮助文档的工具
 - jar.exe位于jdk的bin目录下，主要处理jar包
 
-## JDK华为镜像下载地址
+### JDK华为镜像下载地址
 [JDK](https://repo.huaweicloud.com/java/jdk/)
 
-# 数据类型
+## 数据类型
 
-## 数组类型
+### 数组类型
 
 工具类Arrays操作数组（jdk1.8出现的）
 
-## 字符串类型（String）
+### 字符串类型（String）
 
 ```java
 面试题：
@@ -131,54 +165,50 @@ StringBuffer和StringBuilder是可变类，StringBuffer是线程安全的，Stri
 String 不可变是因为在 JDK 中 String 类被声明为一个 final 类，且类内部的 value 字节数组也是 final 的，只有当字符串是不可变时字符串池才有可能实现，字符串池的实现可以在运行时节约很多 heap 空间，因为不同的字符串变量都指向池中的同一个字符串；如果字符串是可变的则会引起很严重的安全问题，譬如数据库的用户名密码都是以字符串的形式传入来获得数据库的连接，或者在 socket 编程中主机名和端口都是以字符串的形式传入，因为字符串是不可变的，所以它的值是不可改变的，否则黑客们可以钻到空子改变字符串指向的对象的值造成安全漏洞；因为字符串是不可变的，所以是多线程安全的，同一个字符串实例可以被多个线程共享，这样便不用因为线程安全问题而使用同步，字符串自己便是线程安全的；因为字符串是不可变的所以在它创建的时候 hashcode 就被缓存了，不变性也保证了 hash 码的唯一性，不需要重新计算，这就使得字符串很适合作为 Map 的键，字符串的处理速度要快过其它的键对象，这就是 HashMap 中的键往往都使用字符串的原因。
 ```
 
-## 基本数据包装类型
+### 基本数据包装类型
 
-### 包装类型
+#### 包装类型
 
-```java
-byte -> Byte
++ byte -> Byte
 
-short -> Short
++ short -> Short
 
-int -> Integer
++ int -> Integer
 
-long -> Long
++ long -> Long
 
-float -> Float
++ float -> Float
 
-double -> Double
++ double -> Double
 
-boolean -> Boolean
++ boolean -> Boolean
 
-char -> Character
-```
++ char -> Character
 
-### 拆箱/装箱
+#### 拆箱/装箱
 
 由基本类型向对应的包装类转换称为装箱，例如把 int 包装成 Integer 类的对象；（Integer i = Integer.valueOf(1); //手动装箱）
 
 包装类向对应的基本类型转换称为拆箱，例如把 Integer 类的对象重新简化为 int。（Integer i0 = new Integer(1);int i2 = i0.intValue(); //手动拆箱）
 
-### equal和==
+#### equal和==
 
-```java
-equal：
++ equal
 
-基本数据类型和包装类比较时，会先把基本数据类型包装成对应的包装类型，再进行比较。
+  基本数据类型和包装类比较时，会先把基本数据类型包装成对应的包装类型，再进行比较。
 
-==：
++ ==
 
-基本数据类型和包装类型比较时，会先把包装类拆箱再进行值比较（和equals是反的）
+  基本数据类型和包装类型比较时，会先把包装类拆箱再进行值比较（和equals是反的）
 
-包装类型的缓存范围
+  包装类型的缓存范围
 
-1. Integer类型有缓存-128-127的对象。缓存上限可以通过配置jvm更改
-2. Byte,Short,Long类型有缓存(-128-127)
-3. Character缓存0-127
-4. Boolean缓存TRUE、FALSE
+  1. Integer类型有缓存-128-127的对象。缓存上限可以通过配置jvm更改
+  2. Byte,Short,Long类型有缓存(-128-127)
+  3. Character缓存0-127
+  4. Boolean缓存TRUE、FALSE
 
-（注意，**只有valueOf方法构造对象时会用到缓存，缓存会返回同一个对象，new方法等不会使用缓存！**）
-```
+  （注意，**只有valueOf方法构造对象时会用到缓存，缓存会返回同一个对象，new方法等不会使用缓存！**）
 
 ### [引用类型](https://www.jianshu.com/p/e66d03c3e614)
 
@@ -202,154 +232,129 @@ equal：
 
 # 类
 
-```
-一、封装
-限定符
-public（公共访问权限）、protected（子类访问权限）、default（包访问权限）、private（当前类访问权限）
+## 三大特性
 
-属性声明
+### 封装
 
-this关键字
++ 限定符
 
-方法声明
-1、参数可变的方法（JDK1.5以后出现的）
-2、递归方法
-3、方法重载（方法名一样，形参列表不同）
+  public（公共访问权限）、protected（子类访问权限）、default（包访问权限）、private（当前类访问权限）
 
-static关键字
++ 属性声明
 
-final关键字（类似于C#的sealed关键字）
-修饰属性（不可改变）
-修饰方法（子类不可重写）
-修饰类（不可以有子类）
++ this关键字
 
-package、import、import static
-import导入包名，可以省略写包名
-import static可以导入静态方法或者变量，可以省略写类名（JDK1.5新增）
++ 方法声明
 
-二、继承
-方法重写（方法覆盖）
-子类重写或者覆盖父类的方法
+  1. 参数可变的方法（JDK1.5以后出现的）
+  2. 递归方法
+  3. 方法重载（方法名一样，形参列表不同）
 
-super关键字
-在子类方法中通过super关键字来调用父类被重写的方法
++ static关键字
 
-当调用子类构造器构造子类对象时，总是先调用父类的构造函数（如果父类没有默认的构造函数，必须显示的调用其其他构造函数），一直到Object类。
++ final关键字（类似于C#的sealed关键字）
 
-继承和组合（待看）
+  1. 修饰属性（不可改变）
+  2. 修饰方法（子类不可重写）
+  3. 修饰类（不可以有子类）
 
-初始化块和静态初始化块
-执行步骤：父类的静态初始化块，初始化块，构造器，再执行自己的静态初始化块，初始化块，构造器。
++ import关键字
 
-三、多态
-instanceof运算符
-前一个操作符是一个引用，后一个操作符是一个类，用来判断前面的是否为后面的子类，对象，或者引用。
+  1. import导入包名，可以省略写包名
+  2. import static可以导入静态方法或者变量，可以省略写类名（JDK1.5新增）
 
-父类引用指向子类对象，则引发多态。
-```
+### 继承
+
++ 方法重写（方法覆盖）
+
++ 子类重写或者覆盖父类的方法
+
++ super关键字
+
+  1. 在子类方法中通过super关键字来调用父类被重写的方法
+
+  2. 当调用子类构造器构造子类对象时，总是先调用父类的构造函数（如果父类没有默认的构造函数，必须显示的调用其其他构造函数），一直到Object类。
+
++ 继承和组合
+
++ 初始化块和静态初始化块
+
+  执行步骤：父类的静态初始化块，初始化块，构造器，再执行自己的静态初始化块，初始化块，构造器。
+
+### 多态
+
++ instanceof运算符
+
+  前一个操作符是一个引用，后一个操作符是一个类，用来判断前面的是否为后面的子类，对象，或者引用。
+
++ 父类引用指向子类对象，则引发多态。
 
 ## 类之抽象类和接口
 
-```
-抽象类和抽象方法
-使用关键字abstract来修饰抽象类和抽象方法，抽象类不可以创建实例
++ 抽象类和抽象方法
+  使用关键字abstract来修饰抽象类和抽象方法，抽象类不可以创建实例
 
-接口
-接口定义不再使用clss关键字，使用interface关键字（支持多实现）
-```
++ 接口
+  接口定义不再使用clss关键字，使用interface关键字（支持多实现）
 
 ## 类之内部类和Lambda表达式
 
-```java
-一、成员内部类
-1、非静态内部类
-内部类可以使用类.this.实例变量来访问外部类的实例变量，使用this.实例变量来访问非静态内部类的实例变量
-外部类想要访问非静态内部类的实例变量，必须显示的创建非静态内部的对象来访问其实例变量
-非静态内部类不允许有静态方法、静态变量、静态块
-在外部类以外使用语法：OuterClass.InnerClass innerClass=new OuterClass().new InnerClass();
-2、静态内部类
-使用static来修饰内部类，则这个类就属于外部类本身，叫做类内部类。
-静态内部类不能访问外部类的实例成员，只能访问外部类的类成员（即使内部类的实例方法也不可以）。
-外部类依然无法直接内部类的实例成员，可以通过类.实例变量来访问
-在外部类以外使用语法：OuterClass.StaicInnerClass staicInnerClass=new OuterClass.StaicInnerClass();
++ 成员内部类
+  - 非静态内部类
+    1. 内部类可以使用类.this.实例变量来访问外部类的实例变量，使用this.实例变量来访问非静态内部类的实例变量
+    2. 外部类想要访问非静态内部类的实例变量，必须显示的创建非静态内部的对象来访问其实例变量
+    3. 非静态内部类不允许有静态方法、静态变量、静态块
+    4. 在外部类以外使用语法：OuterClass.InnerClass innerClass=new OuterClass().new InnerClass();
+  - 静态内部类
+    1. 使用static来修饰内部类，则这个类就属于外部类本身，叫做类内部类。
+    2. 静态内部类不能访问外部类的实例成员，只能访问外部类的类成员（即使内部类的实例方法也不可以）。
+    3. 外部类依然无法直接内部类的实例成员，可以通过类.实例变量来访问
+    4. 在外部类以外使用语法：OuterClass.StaicInnerClass staicInnerClass=new OuterClass.StaicInnerClass();
++ 局部内部类
+  - 方法内部类（将内部类定义在方法里面，只能在该方法使用，实际应用很少）
 
-二、局部内部类
-方法内部类（将内部类定义在方法里面，只能在该方法使用，实际应用很少）
-1、匿名内部类
-匿名内部类不能有构造方法。
-匿名内部类不能定义任何静态成员、方法和类。
-匿名内部类不能是public,protected,private,static。
-只能创建匿名内部类的一个实例。
-2、一个匿名内部类一定是在new的后面，用其隐含实现一个接口或实现一个类。
-因匿名内部类为局部内部类，所以局部内部类的所有限制都对其生效。
-匿名类和内部类中的中的this：有时候，我们会用到一些内部类和匿名类。当在匿名类中用this时，这个this则指的是匿名类或内部类本身。这时如果我们要使用外部类的方法和变量的话，则应该加上外部类的类名。
-
-三、Lambda表达式（JDK1.8新增）
-语法：
-(parameters) -> expression
-或
-(parameters) ->{ statements; }
-例子：
-new Thread(() -> System.out.println("Hello world !")).start(); 
-```
++ Lambda表达式（JDK1.8新增）
+  - 语法：(parameters) -> expression或(parameters) ->{ statements; }
 
 # 基础类库
 
 ## 系统相关
 
-```
-一、System类（标准输入，标准输出和错误输出的类变量，环境变量和系统属性的静态方法，以及加载文件和动态链接的方法）
-1、System.getenv()（获取环境变量）
-2、System.getProperties()（获取系统属性）
-3、System.identityHashCode(Object);（返回某个对象的hashcode值，根据地址计算的）
-
-二、Runtime类（代表Java类的运行时环境）
-1、Runtime.getRuntime()（获取Runtime实例）
-2、gc方法
-3、load()和loadLibrary()来加载文件和动态链接库
-4、可以访问JVM信息，内存以及处理器数量
-5、exec()方法来启动其他程序
-
-三、Process和ProcessHandle（Process为进程类，ProcessHandle为jdk1.9新增的，可以获取相关进程ID，父进程，后代进程）
-```
++ System类（标准输入，标准输出和错误输出的类变量，环境变量和系统属性的静态方法，以及加载文件和动态链接的方法）
+  1. System.getenv()（获取环境变量）
+  2. System.getProperties()（获取系统属性）
+  3. System.identityHashCode(Object);（返回某个对象的hashcode值，根据地址计算的）
++ Runtime类（代表Java类的运行时环境）
+  1. Runtime.getRuntime()（获取Runtime实例）
+  2. gc方法
+  3. load()和loadLibrary()来加载文件和动态链接库\
+  4. 可以访问JVM信息，内存以及处理器数量
+  5. exec()方法来启动其他程序
 
 ## 常用库
 
-```java
-一、Object类（所有类的父类）
-1、equal方法（两个对象是否为同一个对象）
-2、finalize方法（当系统没有引用变量引用该对象时，垃圾回收器调用该方法回收资源）
-3、getClass方法（返回该对象的运行时类）
-4、hashCode方法（默认情况下，是根据地址来算，很多类重写了该方法，不再根据地址计算）
-5、toString方法
-6、还有wait、notify、notifyAll方法
-7、clone方法（得到当前对象的一个副本，且完全隔离，是protected修饰的，必须要重写，先实现Cloneable接口）
++ Object类（所有类的父类）
+  1. equal方法（两个对象是否为同一个对象）
+  2. finalize方法（当系统没有引用变量引用该对象时，垃圾回收器调用该方法回收资源）
+  3. getClass方法（返回该对象的运行时类）
+  4. hashCode方法（默认情况下，是根据地址来算，很多类重写了该方法，不再根据地址计算）
+  5. toString方法
+  6. 还有wait、notify、notifyAll方法
+  7. clone方法（得到当前对象的一个副本，且完全隔离，是protected修饰的，必须要重写，先实现Cloneable接口）
 
-二、Objects（jdk1.7新增的工具类 ，空指针安全）
++ Objects（jdk1.7新增的工具类 ，空指针安全）
 
-三、Math类（来完成复杂运算，全是类方法）
-
-四、Random和LocalThreadRandom（jdk1.7新增，随机数获取）
-
-五、BigDecimal类（为了能精确表示和计算浮点数）
-
-六、Date类和Calendar类（Date类很多方法都过时了，使用Calendar代替）
-
-七、日期时间类（jdk1.8新增，在java.time包下）
-Clock可以获取当前时间，代替System类获取时间
-    
-八、java.util.ResourceBundle（加载国家、语言资源包）
-    
-九、java.util.Locale（用于封装特定的国家/区域、语言环境）
-    
-十、java.text.MessageFormat（用于格式化带占位符的字符串）
-    
-十一、NumberFormat（格式化数字）
-    
-十二、DateFormat（格式化日期、时间）
-    
-十三、SimpleDateFromat（格式化日期）
-```
++ Math类（来完成复杂运算，全是类方法）
++ Random和LocalThreadRandom（jdk1.7新增，随机数获取）
++ BigDecimal类（为了能精确表示和计算浮点数）
++ Date类和Calendar类（Date类很多方法都过时了，使用Calendar代替）
++ 日期时间类（jdk1.8新增，在java.time包下）Clock可以获取当前时间，代替System类获取时间
++ java.util.ResourceBundle（加载国家、语言资源包）
++ java.util.Locale（用于封装特定的国家/区域、语言环境）
++ java.text.MessageFormat（用于格式化带占位符的字符串）
++ NumberFormat（格式化数字）
++ DateFormat（格式化日期、时间）
++ SimpleDateFromat（格式化日期）
 
 # 异常
 
@@ -363,19 +368,27 @@ Clock可以获取当前时间，代替System类获取时间
 
 有两个重要的子类:Exception（异常）和 Error（错误），二者都是 Java 异常处理的重要子类，各自都包含大量子类。
 
-Error（错误):是程序无法处理的错误，表示运行应用程序中较严重问题。大多数错误与代码编写者执行的操作无关，而表示代码运行时 JVM（Java 虚拟机）出现的问题。例如，Java虚拟机运行错误（Virtual MachineError），当 JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryError。这些异常发生时，Java虚拟机（JVM）一般会选择线程终止。
+### Error（错误)
+
+Error是程序无法处理的错误，表示运行应用程序中较严重问题。大多数错误与代码编写者执行的操作无关，而表示代码运行时 JVM（Java 虚拟机）出现的问题。例如，Java虚拟机运行错误（Virtual MachineError），当 JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryError。这些异常发生时，Java虚拟机（JVM）一般会选择线程终止。
 
 这些错误表示故障发生于虚拟机自身、或者发生在虚拟机试图执行应用时，如Java虚拟机运行错误（Virtual MachineError）、类定义错误（NoClassDefFoundError）等。这些错误是不可查的，因为它们在应用程序的控制和处理能力之 外，而且绝大多数是程序运行时不允许出现的状况。对于设计合理的应用程序来说，即使确实发生了错误，本质上也不应该试图去处理它所引起的异常状况。在 Java中，错误通过Error的子类描述。
 
-Exception（异常）:是程序本身可以处理的异常。
+### Exception（异常）
+
+Expection是程序本身可以处理的异常。
 
 Exception 类有一个重要的子类 RuntimeException。RuntimeException 类及其子类表示“JVM 常用操作”引发的错误。例如，若试图使用空值对象引用、除数为零或数组越界，则分别引发运行时异常（NullPointerException、ArithmeticException）和 ArrayIndexOutOfBoundException。
 
 ## 可查异常和不可查异常
 
-可查异常（编译器要求必须处置的异常）:正确的程序在运行中，很容易出现的、情理可容的异常状况。可查异常虽然是异常状况，但在一定程度上它的发生是可以预计的，而且一旦发生这种异常状况，就必须采取某种方式进行处理。除了RuntimeException及其子类以外，其他的Exception类及其子类都属于可查异常。这种异常的特点是Java编译器会检查它，也就是说，当程序中可能出现这类异常，要么用try-catch语句捕获它，要么用throws子句声明抛出它，否则编译不会通过。
+### 可查异常（编译器要求必须处置的异常）
 
-不可查异常(编译器不要求强制处置的异常):包括运行时异常（RuntimeException与其子类）和错误（Error）。
+正确的程序在运行中，很容易出现的、情理可容的异常状况。可查异常虽然是异常状况，但在一定程度上它的发生是可以预计的，而且一旦发生这种异常状况，就必须采取某种方式进行处理。除了RuntimeException及其子类以外，其他的Exception类及其子类都属于可查异常。这种异常的特点是Java编译器会检查它，也就是说，当程序中可能出现这类异常，要么用try-catch语句捕获它，要么用throws子句声明抛出它，否则编译不会通过。
+
+### 不可查异常(编译器不要求强制处置的异常)
+
+包括运行时异常（RuntimeException与其子类）和错误（Error）。
 
 Exception 这种异常分两大类运行时异常和非运行时异常(编译异常)。程序中应当尽可能去处理这些异常。
 
@@ -664,8 +677,6 @@ HashMap和Hashtable都实现了Map接口，并且都是key-value的数据结构�
 1、LinkedHashMap可以认为是HashMap+LinkedList，即它既使用HashMap操作数据结构，又使用LinkedList维护插入元素的先后顺序。
 2、LinkedHashMap的基本实现思想就是-多态。可以说，理解多态，再去理解LinkedHashMap原理会事半功倍；反之也是，对于LinkedHashMap原理的学习，也可以促进和加深对于多态的理解。
 ```
-
-
 
 # 流
 
@@ -1511,81 +1522,88 @@ class AtomicIntegerTest {
 
 ## 基础类
 
-```java
-一、InetAddress（代表IP信息的类，两个子类Inet4Address，Inet6Address）
-二、URLDecoder和URLEncoder（字符转义）
-URL、URLConnection和URLPermission
-1、URL对象代统一资源定位器，URL可由协议名、主机、端口和资源组成
-格式：protocol://host:port/resourceName
-2、URLConnection和HttpURLConnection
-URLConnection表示应用程序和URL之间的通信连接
-HttpURLConnection表示应用程序和URL之间的HTTP连接
-程序可以通过URLConnection实例向该URL发送请求、读取URL引用的资源
-3、URLPermission（jdk1.8新增）
-用于管理HttpURLConnection的权限问题，打开连接先要获取权限。
-```
++ InetAddress（代表IP信息的类，两个子类Inet4Address，Inet6Address）
+
++ URLDecoder和URLEncoder（字符转义）
+
+  URL、URLConnection和URLPermission
+
+  - URL对象代统一资源定位器，URL可由协议名、主机、端口和资源组成
+    格式：protocol://host:port/resourceName
+
+  - URLConnection和HttpURLConnection
+
+    1. URLConnection表示应用程序和URL之间的通信连接
+
+    2. HttpURLConnection表示应用程序和URL之间的HTTP连接
+       程序可以通过URLConnection实例向该URL发送请求、读取URL引用的资源
+
+  - URLPermission（jdk1.8新增）
+    用于管理HttpURLConnection的权限问题，打开连接先要获取权限。
 
 ## Socket
 
-```java
-# 简介
-TCP 或者 UDP 的报文中，除了数据本身还包含了包的信息，比如目的地址和端口，包的源地址和端口，以及其他附加校验信息。
-由于包的长度有限，在传输的过程中还需要拆包，到达目的地后再重新组合。
-如果有丢失或者损坏的包还需要重传，有的在到达目的地后还需要重新排序。
-这些工作是复杂且与业务无关的，Socket 为我们封装了这些处理工作。
-Socket 被称为“套接字”，它把复杂的 TCP/IP 协议簇隐藏在背后，为用户提供简单的客户端到服务端接口，让我们感觉这边输入数据，那边就直接收到了数据，像一个“管道”一样。
+### 简介
 
++ TCP 或者 UDP 的报文中，除了数据本身还包含了包的信息，比如目的地址和端口，包的源地址和端口，以及其他附加校验信息。
++ 由于包的长度有限，在传输的过程中还需要拆包，到达目的地后再重新组合。
++ 如果有丢失或者损坏的包还需要重传，有的在到达目的地后还需要重新排序。
++ 这些工作是复杂且与业务无关的，Socket 为我们封装了这些处理工作。
++ Socket 被称为“套接字”，它把复杂的 TCP/IP 协议簇隐藏在背后，为用户提供简单的客户端到服务端接口，让我们感觉这边输入数据，那边就直接收到了数据，像一个“管道”一样。
 
-# Socket 的基本操作
-Socket 的基本操作有以下几部分：
-1、连接远程机器
-2、发送数据
-3、接收数据
-4、关闭连接
-5、绑定端口
-6、监听到达数据
-7、在绑定的端口上接受来自远程机器的连接
-要实现客户端与服务端的通信，双方都需要实例化一个 Socket。
-在 Java 中，客户端可以实现上面的 1、2、3、4、，服务端实现 5、6、7.
-Java.net 中为我们提供了使用 TCP、UDP 通信的两种 Socket：
-ServerSocket：流套接字，TCP
-DatagramSocket：数据报套接字，UDP
-  
-     一、使用TCP通信的Socket流程
-服务端：
-          1、调用 ServerSocket(int port) 创建一个 ServerSocket，绑定到指定端口
-          2、调用 accept() 监听连接请求，如果客户端请求连接则接受，返回通信套接字
-          3、调用 Socket 类的 getOutputStream() 和 getInputStream() 获取输出和输入流，进行网络数据的收发
-          4、关闭套接字
+### 基本操作
 
-客户端：
-          1、调用 Socket() 创建一个流套接字，连接到服务端
-          2、调用 Socket 类的 getOutputStream() 和 getInputStream() 获取输出和输入流，进行网络数据的收发
-          3、关闭套接字
-      提高性能：
-      使用NIO实现非阻塞Socket通信（jdk1.4，提供了NIO API高性能）
-      使用AIO实现非阻塞通信（jdk1.7）
+1. 连接远程机器
+2. 发送数据
+3. 接收数据
+4. 关闭连接
+5. 绑定端口
+6. 监听到达数据
+7. 在绑定的端口上接受来自远程机器的连接
 
-     二、使用 UDP 通信的 Socket 流程
- 服务端：
-          1、调用 DatagramSocket(int port) 创建一个数据报套接字，绑定到指定端口
-          2、调用 DatagramPacket(byte[] buf, int length) 建立一个字节数组，以接受 UDP 包
-          3、调用 DatagramSocket 的 receive() 接收 UDP 包
-          4、调用 DatagramSocket.send() 发送 UDP 包
-          5、关闭数据报套接字
+#### 使用TCP通信的Socket流程
 
-客户端：
-          1、调用 DatagramSocket() 创建一个数据报套接字
-          2、调用 DatagramPacket(byte buf[], int offset, int length,InetAddress address, int port) 建立要发送的 UDP 包
-          3、调用 DatagramSocket 的 receive() 接收 UDP 包
-          4、调用 DatagramSocket.send() 发送 UDP 包
-          5、关闭数据报套接字
-    使用MulticastSocket实现多点广播
-```
++ 服务端
+
+  1. 调用 ServerSocket(int port) 创建一个 ServerSocket，绑定到指定端口
+  2. 调用 accept() 监听连接请求，如果客户端请求连接则接受，返回通信套接字
+  3. 调用 Socket 类的 getOutputStream() 和 getInputStream() 获取输出和输入流，进行网络数据的收发
+  4. 关闭套接字
+
++ 客户端
+
+  1. 调用 Socket() 创建一个流套接字，连接到服务端
+  2. 调用 Socket 类的 getOutputStream() 和 getInputStream() 获取输出和输入流，进行网络数据的收发
+  3. 关闭套接字
+
+  - 使用NIO实现非阻塞Socket通信（jdk1.4，提供了NIO API高性能）
+  - 使用AIO实现非阻塞通信（jdk1.7）
+
+#### 使用 UDP 通信的 Socket 流程
+
++ 服务端
+  1. 调用 DatagramSocket(int port) 创建一个数据报套接字，绑定到指定端口
+  2. 调用 DatagramPacket(byte[] buf, int length) 建立一个字节数组，以接受 UDP 包
+  3. 调用 DatagramSocket 的 receive() 接收 UDP 包
+  4. 调用 DatagramSocket.send() 发送 UDP 包
+  5. 关闭数据报套接字
++ 客户端（使用MulticastSocket实现多点广播）
+  1. 调用 DatagramSocket() 创建一个数据报套接字
+  2. 调用 DatagramPacket(byte buf[], int offset, int length,InetAddress address, int port) 建立要发送的 UDP 包
+  3. 调用 DatagramSocket 的 receive() 接收 UDP 包
+  4. 调用 DatagramSocket.send() 发送 UDP 包
+  5. 关闭数据报套接字
 
 # 反射
 
 ## 基本方法
+
+### 功能
+
+1. 在运行时判断任意一个对象所属的类。
+2. 在运行时构造任意一个类的对象。
+3. 在运行时判断任意一个类所具有的成员变量和方法。
+4. 在运行时调用任意一个对象的方法
 
 ```java
 一、功能
@@ -1790,7 +1808,8 @@ public class Main {
     }
 }
 
-//输出
+/**
+输出
 我来自有参构造函数：公有有参构造函数
 我来自私有的有参构造函数：私有有参构造函数,age:10
 b,d,a,b,c,d,
@@ -1802,6 +1821,7 @@ b,d,a,b,c,d,
 静态有参方法
 公有方法
 有参方法
+**/
 ```
 
 ## 反射之集合泛型的本质
