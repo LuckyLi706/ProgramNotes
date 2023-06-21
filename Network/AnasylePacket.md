@@ -120,7 +120,7 @@ Fiddler 或 Charles 这类使用的代理的抓包软件与Wireshark是完全不
        打开App，然后设置 -> SSL证书设置 -> 安装HttpCanary根证书，类型System Trusted (.0) 导出位置在/sdcard/HttpCanary/cert文件夹下面
        ```
 
-    2. 使用[OpenSSL](https://so.csdn.net/so/search?q=OpenSSL&spm=1001.2101.3001.7020)工具来修改证书文件名（Mac/Linux自带这个工具，Windows需要下载）
+    2. 使用[OpenSSL](https://blog.csdn.net/wuliang20/article/details/121014060)工具来修改证书文件名（Mac/Linux自带这个工具，Windows需要下载）
 
        ```
        //根据导出的证书类型来执行
